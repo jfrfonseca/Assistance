@@ -1,0 +1,65 @@
+[bitmessagesettings]
+settingsversion = 10
+port = 8444
+timeformat = %%a, %%d %%b %%Y  %%I:%%M %%p
+blackwhitelist = black
+startonlogon = False
+minimizetotray = False
+showtraynotifications = False
+startintray = False
+socksproxytype = none
+sockshostname = localhost
+socksport = 9050
+socksauthentication = False
+sockslisten = False
+socksusername = 
+sockspassword = 
+keysencrypted = false
+messagesencrypted = false
+defaultnoncetrialsperbyte = 1000
+defaultpayloadlengthextrabytes = 1000
+minimizeonclose = false
+maxacceptablenoncetrialsperbyte = 0
+maxacceptablepayloadlengthextrabytes = 0
+userlocale = system
+useidenticons = True
+identiconsuffix = qQHsVvRkaqE8
+replybelow = False
+maxdownloadrate = 0
+maxuploadrate = 0
+stopresendingafterxdays = 0
+stopresendingafterxmonths = 0
+namecoinrpctype = namecoind
+namecoinrpchost = localhost
+namecoinrpcuser = 
+namecoinrpcpassword = 
+namecoinrpcport = 8336
+sendoutgoingconnections = True
+willinglysendtomobile = False
+apienabled = true
+apiport = 8442
+apiinterface = 127.0.0.1
+apiusername = assistanceMaster
+apipassword = friendsAreFamily
+daemon = true
+
+[BM-2cVt4x98T4NT2Ews9CBGQmbf9diS84Mhof]
+label = new address label
+enabled = true
+decoy = false
+noncetrialsperbyte = 1050
+payloadlengthextrabytes = 1111
+privsigningkey = 5HqWvSProAuxcvzUqKwVL1X8SdmPY2yzjHb6muhjSMBJvnZy2M7
+privencryptionkey = 5JZnXquo8vbE3SgiuRiX5qEirEAnZF7KAHe8QxfhckAdQXoYQkG
+lastpubkeysendtime = 1420738515
+
+[BM-2cUBjVpVq3vv1VJBgPr1eyk9r3yc1SKVxL]
+label = assistance new address label
+enabled = true
+decoy = false
+noncetrialsperbyte = 1000
+payloadlengthextrabytes = 1000
+privsigningkey = 5JjcaadAfE1Ks4aN7AARnGE2vMfatMLDmBxkqAAyKdtXaMbdFRt
+privencryptionkey = 5JuGkjJkXXtPHkHRSf8SEB7guiVV6qsUwnaF7zU2HVP3wU3vRF2
+lastpubkeysendtime = 1420738605
+

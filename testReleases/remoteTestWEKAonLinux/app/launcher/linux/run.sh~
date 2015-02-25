@@ -1,0 +1,4 @@
+#!/bin/bash
+currentDirectory=$(dirname $0)
+
+time -p ./currentDirectory/bin/main.build currentDirectory/../tests/experimentData.dat 50000

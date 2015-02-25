@@ -1,0 +1,19 @@
+phantom.injectJs('peer.js')
+
+//peerB = new Peer({ key: 'pd27praxkdoq1tt9', debug: 3});
+
+//Once, I got the ID xexvzkf7bv8wipb9
+peerB = new Peer('xexvzkf7bv8wipb9');
+
+peerB.on('open', function(id) {
+  console.log('My peer ID is: ' + id);
+});
+
+//Listen to Anyone's connection
+peerB.on('connection', function(conn) {
+	conn.on('data', function(data) {
+    	console.log('Received', data);
+  	});
+});
+
+
