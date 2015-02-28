@@ -1,79 +1,125 @@
-
-/*
- * Constants
+/**
+ * __ASSISTANCE WebRTC PORTAL__ 0.8.270215
+ * 
+ * Copyright (c) 2015, José F. Fonseca <jose.f.fonseca@ieee.org>
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted,
+ * provided that the above copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE
+ * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.
+ * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES
+ * OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+ * NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ *  
+ * Based on the WebRTC Demo available in http://fosterelli.co/getting-started-with-webrtc-data-channels.html, that allows two clients to connect via WebRTC with Data Channels, using Firebase as a signalling server
+ * Allows processes in two or more different machines to communicate directly thorough the internet.
+ * - This version requires a web browser, mostly because nodeJS does not support WebRTC - yet.
+ * - This version requires Google Chrome as the web browser, due its dependence on webkit. working on it.
  */
-const verbosity = 1;
-const logDiv = 'consoleDiv';
-const transceiverPort = 23019;
-const wsUri = "ws://localhost:"+transceiverPort+"/";
 
-/*
- * Buffers
+
+/* ==================================================
+ * ~~~~~~~~~~~~~~~~~~ Constants on Defaults ~~~~~~~~~~~~~~~~~~
+ * ==================================================
  */
-var firebaseUrl;
-var database;
-var announceChannel;
-var signalChannel;
-var webSocket;
+const verbosity = 1;												// Level of importance of the messages logged by the Portal
+const logDiv = 'consoleDiv';									// DIV to print the messages logged by the Portal
+const portalPort = 23019;									// Port for the WebSocket to communicate thorough
+const wsUri = "ws://localhost:"+portalPort+"/";		// URL to communicate with the WebSocket
 
-/*
- * Variables
+
+
+/* =========================================
+ * ~~~~~~~~~~~~~~~~~~ Buffers ~~~~~~~~~~~~~~~~~~
+ * =========================================
  */
-var id;              // Our unique ID
-var sharedKey;       // Unique identifier for two clients to find each other
-var remote;          // ID of the remote peer -- set once they send an offer
-var peerConnection;  // This is our WebRTC connection
-var dataChannel;     // This is our outgoing data channel within WebRTC
-var running = false; // Keep track of our connection state
+var database;				// Buffer for the database control object
+var announceChannel;	// Buffer for the WebRTC announcement channel control object
+var signalChannel;		// Buffer for the WebRTC signal channel control object
+var webSocket;				// Buffer for the WebSocket control object
 
-/*
- * GUI Functions
+
+
+/* ==========================================
+ * ~~~~~~~~~~~~~~~~~~ Variables ~~~~~~~~~~~~~~~~~~
+ * ==========================================
+ */
+var firebaseUrl;				// URL for our database signaling server
+var id;              			// Our unique ID
+var sharedKey;       		// Unique identifier for two clients to find each other
+var remote;         			// ID of the remote peer -- set once they send an offer
+var peerConnection; 	// This is our WebRTC connection
+var dataChannel;     		// This is our outgoing data channel within WebRTC
+var running = false; 	// Keep track of our connection state
+
+
+
+/* =======================
+ * ------------------ GUI Functions ------------------
+ * =======================
+ */
+/**
+ * Log a message to a console DIV in the portal GUI, if the verbosity level is high enough 
+ * @param minVerb			= minimal verbosity level to this message to be logged (verbosity must be >= this value)
+ * @param divLogName	= name of the div to the message to be logged to
+ * @param message		= message to be logged
  */
 function logMsg(minVerb, divLogName, message){
-	//console.log(message);
 	if(verbosity >= minVerb){
 		$('#'+divLogName).append('<p>' + message + '</p>');
 	}
 }
 
+/**
+ * Log a message to a console DIV in the portal GUI, if the verbosity level is high enough. Adds some color to it
+ * @param minVerb			= minimal verbosity level to this message to be logged (verbosity must be >= this value)
+ * @param divLogName	= name of the div to the message to be logged to
+ * @param message		= message to be logged
+ * @param color				= color to the message to be logged on
+ */
 function logMsg(minVerb, divLogName, message, color){
-	//console.log(message);
 	if(verbosity >= minVerb){
 		$('#'+divLogName).append('<p><span style="color: '+color+';">' + message + '</span></p>');
 	}
 }
 
 
-
-/* Based on the WebRTC Demo avaliable in http://fosterelli.co/getting-started-with-webrtc-data-channels.html
- * Allows two clients to connect via WebRTC with Data Channels, using Firebase as a signalling server
- */
-
-/* == Announcement Channel Functions ==
+/* ===================================
+ * ------------------ Announcement Channel Functions ------------------
+ * ===================================
+ * 
  * The 'announcement channel' allows peers to find each other on Firebase
  * These functions are for communicating through the announcement channel
- * This is part of the signalling server mechanism
+ * This is part of the signaling server mechanism
  *
  * After two peers find each other on the announcement channel, they 
  * can directly send messages to each other to negotiate a WebRTC connection
  */
 
-//Announce our arrival to the announcement channel
+/**
+ * Variable that publishes the shared key and ID on the server, at the same time, announcing this instance's entrance on the announcement channel
+ */
 var sendAnnounceChannelMessage = function() {
 	announceChannel.remove(function() {
 		announceChannel.push({
 			sharedKey : sharedKey,
 			id : id
 		});
-		logMsg(2, logDiv, 'Announced our sharedKey is ' + sharedKey);
-		logMsg(0, logDiv, 'Announced our ID is ' + id);
+		logMsg(1, logDiv, 'Announced our sharedKey is ' + sharedKey);
+		logMsg(1, logDiv, 'Announced our ID is ' + id);
 	});
 };
 
-//Handle an incoming message on the announcement channel
+/**
+ * Handle an incoming message on the announcement channel, when someone looks for this instance's SharedKey
+ * Authenticates the message
+ * Always logs
+ */
 var handleAnnounceChannelMessage = function(snapshot) {
 	var message = snapshot.val();
-	if (message.id != id && message.sharedKey == sharedKey) {
+	// if the message can be authenticated
+	if (assistanceHandshake(message.id,  message.sharedKey)) {
 		logMsg(0, logDiv, 'Discovered matching announcement from ' + message.id);
 		remote = message.id;
 		initiateWebRTCState();
@@ -81,7 +127,10 @@ var handleAnnounceChannelMessage = function(snapshot) {
 	}
 };
 
-/* == Signal Channel Functions ==
+/* ==============================
+ * ------------------ Signal Channel Functions ------------------
+ * 
+ * 
  * The signal channels are used to delegate the WebRTC connection between 
  * two peers once they have found each other via the announcement channel.
  * 
@@ -293,6 +342,14 @@ function doSend(message)
 /*
  * Assistance Functions
  */
+function assistanceHandshake(outerId, outerSharedKey){
+	if(outerId != id && outerSharedKey == sharedKey){
+		return true;
+	} else {
+		return false
+	}
+}
+
 function performAssistancePeerHandshake(dataChan){
 	dataChan.send('ID-' + id +'; '+'TM-'+(new Date()).getTime()+'');
 	logMsg(0, logDiv, 'Handshake Successfull');
@@ -357,7 +414,29 @@ function assistanceTransceiverTestCloseup(){
 }
 
 
+/* =================================================
+ * ++++++++++++++++++ API Implementations ++++++++++++++++++
+ * =================================================
+ */
+var assistanceChannel = function(){
+	// Configure Firebase Signal Channel Servers
+	firebaseUrl = 'https://assistance-dev.firebaseio.com/';
+	database = new Firebase(firebaseUrl);
+	announceChannel = database.child('announce');
+	signalChannel = database.child('messages').child(id);
+	
+	
+}
 
+/* =============================================
+ * ++++++++++++++++++ API Functions ++++++++++++++++++
+ * =============================================
+ */
+
+function setupAssistancePortal(){
+	
+	//Configure 
+}
 
 
 

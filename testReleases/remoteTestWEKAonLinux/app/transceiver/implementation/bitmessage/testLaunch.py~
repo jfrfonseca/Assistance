@@ -1,9 +1,0 @@
-import subprocess
-import unittest
-
-class TestFun(unittest.TestCase):
-
-	subprocess.call(["python", "bitmessagemain.py"])
-
-if __name__ == '__main__':
-    unittest.main()
