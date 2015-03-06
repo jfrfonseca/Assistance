@@ -1,6 +1,0 @@
-console.log("Hello Slimer!");
-
-var webpageModule = require("serverless-webrtc-1.0.4/serverless-webrtc.js");
-
-
-slimer.exit();
