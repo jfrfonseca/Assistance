@@ -368,7 +368,7 @@ function startAssistanceTransceiver(dataChan){
 /*
  * tests
  */
-function assistanceTransceiverTest(){
+function assistanceCommunicationTest(){
 	/*
 	 * Setup of the Basic Tests
 	 */
@@ -406,7 +406,7 @@ function assistanceTransceiverTest(){
 }
 
 
-function assistanceTransceiverTestCloseup(){
+function assistanceCommunicationTestCloseup(){
 	var logtext = document.getElementById(logDiv).innerHTML;
 	database.child('logs').child(id).set(logtext);
 	logMsg(0, logDiv,"The test has properly ended", 'green'); 
