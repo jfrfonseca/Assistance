@@ -1,37 +1,21 @@
-import signal, sys
-from threading import Thread
-from SimpleWebSocketServer import WebSocket, SimpleWebSocketServer  # @UnresolvedImport
+import time
+from WebSocketThreadObject import WebSocketThreadObject  # @UnresolvedImport
 
-class SimpleEcho(WebSocket):
-    def handleMessage(self):
-        if self.data is None:
-            self.data = ''
-        try:
-            self.sendMessage(str(self.data))
-        except Exception as n:
-            print n
-         
-    def handleConnected(self):
-        print self.address, 'connected'
+verificationInterval = 0.02
 
-    def handleClose(self):
-        print self.address, 'closed'
-      
+print "setting up echo server"
+echoServer = WebSocketThreadObject(23019)
+print "Echo server all set up!"
 
-def serverThread(serverObject, port):
-    print "EchoServer on port "+str(port)+" Online"
-    serverObject.serveforever()
+print "getting messages:"
+message = ''
+while message == '':
+    time.sleep(verificationInterval)
+    message = echoServer.getMessagesBuffer()[0]
+print "we've got messages!"
+print "message: "+message
+print "sending echo back"
+echoServer.sendMessage(message)
+print "all done" 
 
-
-if __name__ == "__main__":
-    server1 = SimpleWebSocketServer('', 23019, SimpleEcho)
-    server2 = SimpleWebSocketServer('', 23193, SimpleEcho)
-    server3 = SimpleWebSocketServer('', 47913, SimpleEcho)
-    serverObject1 = Thread(target = serverThread, args = (server1,23019))
-    serverObject2 = Thread(target = serverThread, args = (server2,23193))
-    serverObject3 = Thread(target = serverThread, args = (server3,47913))
-    serverObject1.start()
-    serverObject2.start()
-    serverObject3.start()
-
-
+echoServer.printTest()

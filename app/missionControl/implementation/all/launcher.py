@@ -61,7 +61,9 @@ global transceiverObject
 # ===================
 # ------------------ Classes ------------------
 # ===================
-
+def socketThread(port):
+    droneSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    serverObject.serveforever()
 
 # =====================
 # ------------------ Functions ------------------
