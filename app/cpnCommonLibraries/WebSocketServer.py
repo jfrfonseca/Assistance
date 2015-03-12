@@ -8,10 +8,11 @@ import time
 import sys
 import errno
 import logging
+from threading import Lock
 from BaseHTTPServer import BaseHTTPRequestHandler
 from StringIO import StringIO
 from select import select
-
+        
 
 class HTTPRequest(BaseHTTPRequestHandler):
    def __init__(self, request_text):
@@ -20,6 +21,7 @@ class HTTPRequest(BaseHTTPRequestHandler):
       self.error_code = self.error_message = None
       self.parse_request()
       
+
 
 class WebSocket(object):
 
@@ -54,7 +56,8 @@ class WebSocket(object):
    LENGTHLONG = 5
    MASK = 6
    PAYLOAD = 7
-
+   
+   
    def __init__(self, server, sock, address):
       self.server = server
       self.client = sock
@@ -84,6 +87,7 @@ class WebSocket(object):
       self.maxheader = 65536
       self.maxpayload = 4194304
 
+   
    def close(self):
       self.client.close()
       self.state = self.HEADERB1
@@ -105,20 +109,27 @@ class WebSocket(object):
     
     
    def clearMessageBuffer(self):
+       lockTheBuffer = Lock()
+       lockTheBuffer.acquire()
        self.messageBuffer = []
+       lockTheBuffer.release()
    
    
    def addToMessageBuffer(self, message):
+      lockTheBuffer = Lock()
+      lockTheBuffer.acquire()
       self.messageBuffer.append(message)
       if len(self.messageBuffer) > self.MESSAGE_BUFFER_MAX:
          del self.messageBuffer[0]
+      lockTheBuffer.release()
    
 
    def handleMessage(self):
         if self.data is None:
             self.data = ''
         try:
-            self.addToMessageBuffer(str(self.data))
+            messageContent = str(self.data)                
+            self.addToMessageBuffer(messageContent)
         except Exception as n:
             print n
          
@@ -512,8 +523,6 @@ class WebSocket(object):
                self.data = None
          else:
             self.index += 1
-            
-
 
 class WebSocketServer(object):
    def __init__(self, host, port):
@@ -526,6 +535,13 @@ class WebSocketServer(object):
       self.listeners = [self.serversocket]
       self.instance = ''
       self.warmupDelay = 0.01
+      self.finale = False
+      
+   def concludere(self):
+       lockTheFinale = Lock()
+       lockTheFinale.acquire()
+       self.finale = True
+       lockTheFinale.release()
       
    def clearMessageBuffer(self):
       while self.instance == '':
@@ -561,7 +577,7 @@ class WebSocketServer(object):
 
 
    def serveforever(self):
-      while True:
+      while (not (self.finale)):
          rList, wList, xList = select(self.listeners, [], self.listeners, 1)    
 
          for ready in rList:

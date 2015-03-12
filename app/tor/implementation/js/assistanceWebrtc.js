@@ -1,5 +1,5 @@
 /**
- * __ASSISTANCE WebRTC PORTAL__ 0.8.270215
+ * __ASSISTANCE WebRTC TOR__ 0.8.270215
  * 
  * Copyright (c) 2015, José F. Fonseca <jose.f.fonseca@ieee.org>
  * 
@@ -23,10 +23,10 @@
  * ~~~~~~~~~~~~~~~~~~ Constants on Defaults ~~~~~~~~~~~~~~~~~~
  * ==================================================
  */
-const verbosity = 1;												// Level of importance of the messages logged by the Portal
-const logDiv = 'consoleDiv';									// DIV to print the messages logged by the Portal
-const portalPort = 23019;									// Port for the WebSocket to communicate thorough
-const wsUri = "ws://localhost:"+portalPort+"/";		// URL to communicate with the WebSocket
+const verbosity = 1;												// Level of importance of the messages logged by the Tor
+const logDiv = 'consoleDiv';									// DIV to print the messages logged by the Tor
+const torPort = 23193;									// Port for the WebSocket to communicate thorough
+const wsUri = "ws://localhost:"+torPort+"/";		// URL to communicate with the WebSocket
 
 
 
@@ -60,7 +60,7 @@ var running = false; 	// Keep track of our connection state
  * =======================
  */
 /**
- * Log a message to a console DIV in the portal GUI, if the verbosity level is high enough 
+ * Log a message to a console DIV in the tor GUI, if the verbosity level is high enough 
  * @param minVerb			= minimal verbosity level to this message to be logged (verbosity must be >= this value)
  * @param divLogName	= name of the div to the message to be logged to
  * @param message		= message to be logged
@@ -72,7 +72,7 @@ function logMsg(minVerb, divLogName, message){
 }
 
 /**
- * Log a message to a console DIV in the portal GUI, if the verbosity level is high enough. Adds some color to it
+ * Log a message to a console DIV in the tor GUI, if the verbosity level is high enough. Adds some color to it
  * @param minVerb			= minimal verbosity level to this message to be logged (verbosity must be >= this value)
  * @param divLogName	= name of the div to the message to be logged to
  * @param message		= message to be logged
@@ -302,12 +302,23 @@ var servers = {
 /*
  * 
  */
+
+
+var inputBox = document.getElementById("message");
+var output = document.getElementById("output");
+var form = document.getElementById("form");
+
+
 function setupWebSocket(){
-	websocket = new WebSocket(wsUri);
-	websocket.onopen = function(evt) { onOpen(evt) };
-	websocket.onclose = function(evt) { onClose(evt) };
-	websocket.onmessage = function(evt) { onMessage(evt) };
-	websocket.onerror = function(evt) { onError(evt) };
+	try{
+		websocket = new WebSocket(wsUri);
+		websocket.onopen = function(evt) { onOpen(evt) };
+		websocket.onclose = function(evt) { onClose(evt) };
+		websocket.onmessage = function(evt) { onMessage(evt) };
+		websocket.onerror = function(evt) { onError(evt) };
+	} catch (ex) {
+		logMsg(0, logDiv, "SOCKET EXCEPTION"+ex, 'red');
+	}
 }
 
 function onOpen(evt)
@@ -433,7 +444,7 @@ var assistanceChannel = function(){
  * =============================================
  */
 
-function setupAssistancePortal(){
+function setupAssistanceTor(){
 	
 	//Configure 
 }
