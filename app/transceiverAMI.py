@@ -1,4 +1,4 @@
-from transceiver.implementation.transceiverObject import Transceiver
+from transceiver.implementation.Transceiver import Transceiver
 
 def createTransceiverObject(missionControlOAuthID, transceiverOAuthToken, antennaPorts):
     if (missionControlOAuthID+":"+transceiverOAuthToken) == "intendant:0123456789ABCDEF":

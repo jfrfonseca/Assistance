@@ -1,22 +1,23 @@
 import SocketServer, threading, socket
-
-
+  
 
 class AssistanceSocketServer():
     
-    def startServer(self):
-        self.serverObject.serve_forever()
-    
+  
     def __init__(self, host, port, serverHandlerClass):   
         #define the variables
         self.HOST = host
         self.PORT = port
 
         # Create the server, binding to localhost on port 9999
+        #self.serverObject = SocketServer.TCPServer((self.HOST, self.PORT), serverHandlerClass)
         self.serverObject = SocketServer.TCPServer((self.HOST, self.PORT), serverHandlerClass)
-        self.serverThread = threading.Thread(target=self.startServer)
+        self.serverThread = threading.Thread(target=self.serverObject.serve_forever)
         self.serverThread.start()
-        print "Server started"
+        #print "Server started"
+        
+    def shutdown(self):
+        self.serverObject.shutdown()
 
 
 
@@ -34,17 +35,19 @@ class AssistanceSocketClient():
             self.socketObject.connect((self.host, self.port))
             self.socketObject.sendall(self.authToken + "\n"+ data + "\n")
         finally:
-            print "Data sent to "+str(self.host)+":"+str(self.port)
+            #print "Data sent to "+str(self.host)+":"+str(self.port)
+            stall = 1
             
     def receiveData(self):
         try:
             received = self.socketObject.recv(1024)
         finally:
-            print "Data received thought port "+str(self.port)
+            #print "Data received thought port "+str(self.port)
             return received
         
     def close(self):
         self.socketObject.close()
+
 
 
 
@@ -81,16 +84,15 @@ class AssistanceEchoServer(SocketServer.StreamRequestHandler):
         # to the client
         self.wfile.write(self.data)
 
-
-
 if __name__ == "__main__":
     host = 'localhost'
     port = 23019
     token = "0123456789ABCDEF"
     message = "It worked."
     
-    print "Running a Sockets Echo Test on host:port "+host+":"+str(port)
+    print "Running a Sockets Echo Test on "+host+":"+str(port)
     
+    #server = AssistanceSocketServer(host, port, AssistanceEchoServer)
     server = AssistanceSocketServer(host, port, AssistanceEchoServer)
     client = AssistanceSocketClient(host, port, token)
     print "Sockets are up. Sending message\n"
@@ -100,6 +102,7 @@ if __name__ == "__main__":
     print receivedString
     
     client.close()
+    server.shutdown()
     
     
     
