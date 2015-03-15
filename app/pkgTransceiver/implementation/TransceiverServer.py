@@ -1,6 +1,6 @@
 
 import SocketServer
-from transceiver.implementation import Transceiver
+from pkgTransceiver.implementation import Transceiver
 
 
 class AssistanceTransceiverProgramServer(SocketServer.StreamRequestHandler):

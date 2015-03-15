@@ -308,6 +308,7 @@ var inputBox = document.getElementById("message");
 var output = document.getElementById("output");
 var form = document.getElementById("form");
 
+/*
 
 function setupWebSocket(){
 	try{
@@ -324,7 +325,7 @@ function setupWebSocket(){
 function onOpen(evt)
 {
 	logMsg(1, logDiv,"CONNECTED", 'gray');
-	performAssistanceTransceiverHandshake();
+	//performAssistanceTransceiverHandshake();
 }
 
 function onClose(evt)
@@ -349,6 +350,7 @@ function doSend(message)
 	websocket.send(message);
 }
 
+*/
 
 /*
  * Assistance Functions
@@ -372,7 +374,7 @@ function performAssistanceTransceiverHandshake(){
 
 function startAssistanceTransceiver(dataChan){
 	performAssistancePeerHandshake(dataChan);
-	setupWebSocket();
+	//setupWebSocket();
 }
 
 

@@ -63,14 +63,14 @@ class AssistanceInstance():
     # general
     global droneSocket
     
-    # transceiver
+    # pkgTransceiver
     global transceiverObject
     
     # =====================
     # ------------------ Functions ------------------
     # =====================
     def testTorTransceiverEcho(self):
-        # initiate the transceiver service
+        # initiate the pkgTransceiver service
         print "Setting Up Transceiver Service Package as a Echo Server on the Tor Component port"
         transceiverProcess  = createTransceiverObject(self.missionControlOAuthID, self.transceiverOAuthToken, self.transceiverListenningPorts)
         transceiverProcess.testEchoServer()
