@@ -79,6 +79,7 @@ class Transceiver():
         
     def shutdown(self):
         self.programAntenna.shutdown()
+        print "Transceiver is Off"
         
 
     
