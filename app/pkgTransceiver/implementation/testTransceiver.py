@@ -10,22 +10,26 @@ del path
 
 
 class TestTransceiverObject(unittest.TestCase):
-    transceiver = ''
-    dummySocket = ''
     
-    def setUp(self):
-        self.transceiver = Transceiver()
-        
-    def tearDown(self):
-        self.transceiver.shutdown()
+#    def test_programCalling(self):
+#        self.dummySocket = AssistanceSocketClient('', 29112, '0123456789ABCDEF')
+#        self.dummySocket.sendData('HS it worked')
+#        print "data sent"
+#        recovered = self.dummySocket.receiveData()
+#        self.dummySocket.close()
+#        self.assertEqual(recovered, 'HS it worked'.upper())
 
-    
-    def test_programCalling(self):
-        self.dummySocket = AssistanceSocketClient('', 29112, '0123456789ABCDEF')
-        self.dummySocket.sendData('HS it worked')
-        recovered = self.dummySocket.receiveData()
-        self.dummySocket.close()
-        self.assertEqual(recovered, 'HS it worked'.upper())
+    def testTicket(self):
+        transceiver = Transceiver()
+        dummySocket = AssistanceSocketClient('', 29112, '0123456789ABCDEF')
+        dummySocket.sendData('echo\n'+'immediate\n'+'hello world!\n'+'none\n'+'none\n')
+        print "data sent"
+        recovered = dummySocket.receiveData()
+        dummySocket.close()
+        self.assertEqual(recovered, "0123")
+        print "it worked"
+        transceiver.shutdown()
+         
     
 if __name__ == '__main__':
     unittest.main()
