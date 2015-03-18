@@ -2,9 +2,8 @@ import SocketServer, threading, socket
   
 
 class AssistanceSocketServer():
-    
   
-    def __init__(self, host, port, serverHandlerClass):   
+    def __init__(self, host, port, serverHandlerClass, serverArguments = []):   
         #define the variables
         self.HOST = host
         self.PORT = port
@@ -12,6 +11,7 @@ class AssistanceSocketServer():
         # Create the server, binding to localhost on port 9999
         #self.serverObject = SocketServer.TCPServer((self.HOST, self.PORT), serverHandlerClass)
         self.serverObject = SocketServer.TCPServer((self.HOST, self.PORT), serverHandlerClass)
+        self.serverObject.serverArguments = serverArguments
         self.serverThread = threading.Thread(target=self.serverObject.serve_forever)
         self.serverThread.start()
         #print "Server started"

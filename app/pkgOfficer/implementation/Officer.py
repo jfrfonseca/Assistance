@@ -1,3 +1,7 @@
 
-def includeNewTask(taskDescription):
-    return "0123"
+
+class Officer():
+    def includeNewTask(self, taskDescription):
+        return "0123"
+
+

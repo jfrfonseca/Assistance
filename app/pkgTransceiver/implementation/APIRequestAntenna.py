@@ -1,5 +1,5 @@
 import os, sys, time, ConfigParser, SocketServer
-from pkgOfficer.implementation import Officer
+import launch
 
 path = os.path.abspath(os.path.join(os.path.dirname(__file__), '...'))
 if not path in sys.path:
@@ -26,6 +26,7 @@ class APIRequestAntenna (SocketServer.StreamRequestHandler):
     
     # Objects ------------------------------------
     settingsParser = ''
+    officerInstance = ''
 
    
     def setSettings(self):
@@ -69,7 +70,9 @@ class APIRequestAntenna (SocketServer.StreamRequestHandler):
     
     def getTicket(self):    
         taskDescription = self.parseAssistanceRequest()
-        newTicket = Officer.includeNewTask(taskDescription)
+        if self.officerInstance == '' :
+            self.officerInstance = self.server.serverArguments[0]
+        newTicket = self.officerInstance.includeNewTask(taskDescription)
         return newTicket
     
     
@@ -77,7 +80,7 @@ class APIRequestAntenna (SocketServer.StreamRequestHandler):
         #get settings
         if self.settingsParser == '' :
             self.settingsParser = ConfigParser.SafeConfigParser()
-            self.settingsParser.read("../asssistanceTransceiverLocalSettingsFile.alsf")
+            self.settingsParser.read("pkgTransceiver/assistanceTransceiverLocalSettingsFile.alsf")
             self.setSettings()
         # treats the data received and returns a service ticket
         taskTicket = self.getTicket()

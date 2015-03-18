@@ -19,68 +19,69 @@ import time
 # =============================================
 # ~~~~~~~~~~~~~~~~~~ Local Imports ~~~~~~~~~~~~~~~~~~
 # =============================================
-from transceiverAMI import createTransceiverObject
-from cpnCommonLibraries.WebSocketThreadObject import WebSocketThreadObject
-
+from pkgTransceiver.implementation.Transceiver import Transceiver
+from pkgOfficer.implementation.Officer import Officer
 
 # ===================
 # ------------------ Classes ------------------
 # ===================
 
-class AssistanceInstance():
+class Assistance():    
     # ===========================================
     # ~~~~~~~~~~~~~~~~~~ Constants ~~~~~~~~~~~~~~~~~~
     # ===========================================
     #general
     defaultDelay = 0.5                                      # default delay time for a socket response
     socketWarmUpTime = 2.0                           # time for a socket to be set-up
-    missionControlOAuthID = "intendant"         # OAuth Token ID for this package
+    missionControlOAuthID = "0123456789ABCDEF"         # OAuth Token ID for this package
     commonModulesLoc = "/cpnCommonLibraries/"        # Location of the folder with the common modules for all launched scripts
     
     # Transceiver
     transceiverListenningPorts = [23019, 23193, 47913]      # Ports that the Transceiver Listens to
-    
-    
+     
+     
     # ==========================================
     # ~~~~~~~~~~~~~~~~~~ Variables ~~~~~~~~~~~~~~~~~~
     # ==========================================
     # Transceiver
     transceiverOAuthToken = "0123456789ABCDEF"                      # OAuth authentication token to Mission Control talk to Transceiver
-        
+         
     # ========================================================
     # ~~~~~~~~~~~~~~~~~~ Working Directory Manipulations ~~~~~~~~~~~~~~~~~~
     # ========================================================
-   
     
+     
     # =========================================
     # ~~~~~~~~~~~~~~~~~~ Buffers ~~~~~~~~~~~~~~~~~~
     # =========================================
-    
-    
+     
+     
     # ==============================================
     # ~~~~~~~~~~~~~~~~~~ Control Objects ~~~~~~~~~~~~~~~~~~
     # ==============================================
     # general
     global droneSocket
-    
+     
     # pkgTransceiver
-    global transceiverObject
-    
+    global transceiver
+     
+    # pkgOfficer
+    global officer
+     
     # =====================
     # ------------------ Functions ------------------
     # =====================
-    def testTorTransceiverEcho(self):
-        # initiate the pkgTransceiver service
-        print "Setting Up Transceiver Service Package as a Echo Server on the Tor Component port"
-        transceiverProcess  = createTransceiverObject(self.missionControlOAuthID, self.transceiverOAuthToken, self.transceiverListenningPorts)
-        transceiverProcess.testEchoServer()
-    
-    
+    def getOfficerInstance(self):
+        return officer
+     
     # =============================================
     # ++++++++++++++++++ Constructors ++++++++++++++++++
     # =============================================
-
-    
+    def __init__(self):
+        self.officer = Officer()
+        self.transceiver = Transceiver(self.officer)
+       
+     
     # ============================================
     # ++++++++++++++++++ Destructors ++++++++++++++++++
     # ============================================
