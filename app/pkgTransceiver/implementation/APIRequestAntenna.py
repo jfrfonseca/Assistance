@@ -1,49 +1,11 @@
-import os, sys, time, ConfigParser, SocketServer
-import launch
-
-path = os.path.abspath(os.path.join(os.path.dirname(__file__), '...'))
-if not path in sys.path:
-    sys.path.insert(1, path)
-del path
-
+import time, SocketServer
+from cpnLibrary.implementation import AssistanceDBMS
+from pkgOfficer.implementation.Officer import TaskDescription, includeNewTask
 
 
 class APIRequestAntenna (SocketServer.StreamRequestHandler):
-    # Settings ------------------------------------
-    #General Settings
-    #SETTINGS_FILE = ""
-    MAX_MESSAGE_LINES = 16
-    # Server Ports
-    #PROGRAM_PORT = -1
-    #PORTAL_PORT = -1
-    # Client Ports
-    #LIBRARY_PORT = -1
-    # Server Tokens
-    PROGRAM_TOKEN = ''
-    #PORTAL_TOKEN = ''
-    # Client Tokens
-    #LIBRARY_TOKEN = ''
-    
-    # Objects ------------------------------------
-    settingsParser = ''
-    officerInstance = ''
-
-   
-    def setSettings(self):
-        # Server Ports
-        #self.PROGRAM_PORT = int(self.settingsParser.get("SERVER_PORTS", "PROGRAM_PORT"))
-        #self.PORTAL_PORT = int(self.settingsParser.get("SERVER_PORTS", "PORTAL_PORT"))
-        # Client Ports
-        #self.LIBRARY_PORT = int(self.settingsParser.get("CLIENT_PORTS", "LIBRARY_PORT"))
-        # Server Tokens
-        self.PROGRAM_TOKEN = self.settingsParser.get("SERVER_TOKENS", "PROGRAM_TOKEN")
-        #self.PORTAL_TOKEN = self.settingsParser.get("SERVER_TOKENS", "PORTAL_TOKEN")
-        # Client Tokens
-        #self.LIBRARY_TOKEN = self.settingsParser.get("CLIENT_TOKENS", "LIBRARY_TOKEN")
-       
-            
-    def authenticate(self, remoteToken, localToken):
-        return remoteToken == localToken
+    def authenticate(self, remoteToken):
+        return remoteToken == AssistanceDBMS.getToken('API_REQUEST')
     
         
     def parseAssistanceRequest(self):
@@ -51,37 +13,34 @@ class APIRequestAntenna (SocketServer.StreamRequestHandler):
         timeReceived = time.time()
         # authentication token
         authToken = self.rfile.readline().strip()
-        if not self.authenticate(authToken, self.PROGRAM_TOKEN):
+        if not self.authenticate(authToken):
             raise ValueError("Security Alert! A client tried to connect to a Assistance Socket without the proper Authentication Token!")    
         # Assistance App Identification
-        assistanceAppID = self.rfile.readline().strip()
-        # form of transference of the Assistance App Arguments (none, immediate, localFile, FTP, torrentMagnetLink, torrentFile)
-        assistanceAppArgumentsChannel = self.rfile.readline().strip()
+        appID = self.rfile.readline().strip()
+        # form of transference of the Assistance App Arguments (none, immediate, localFile, torrentFile)
+        appArgsChannel = self.rfile.readline().strip()   
         # the AssistanceApp arguments (value for the method of getting arguments given above)
-        assistanceAppArgumentsRoute = self.rfile.readline().strip()
-        # form of transference of the Assistance App Data (none, immediate, localFile, FTP, torrentMagnetLink, torrentFile)
-        assistanceAppDataChannel = self.rfile.readline().strip()
+        appArgs = self.rfile.readline().strip()
+        # form of transference of the Assistance App Data (none, immediate, localFile, torrentFile)
+        appDataChannel = self.rfile.readline().strip()
         # the AssistanceApp data (value for the method of getting the data mentioned above)
-        assistanceAppDataRoute = self.rfile.readline().strip()
+        appDataDelivery = self.rfile.readline().strip()
+        # form of transference of the Assistance App Answer (none, immediate, localFile, torrentFile)
+        appAnswerChannel = self.rfile.readline().strip()
+        #  the AssistanceApp Answer delivery data (immediate, localFile, torrentFile)
+        appAnswerDelivery = self.rfile.readline().strip()
         
-        taskDescription = [timeReceived, authToken, assistanceAppID, assistanceAppArgumentsChannel, assistanceAppArgumentsRoute, assistanceAppDataChannel, assistanceAppDataRoute]
+        taskDescription = TaskDescription(authToken, timeReceived, AssistanceDBMS.getSymbol("LOCALHOST"), appID, appArgsChannel, appArgs, appDataChannel, appDataDelivery, appAnswerChannel, appAnswerDelivery)
         return taskDescription
           
     
     def getTicket(self):    
         taskDescription = self.parseAssistanceRequest()
-        if self.officerInstance == '' :
-            self.officerInstance = self.server.serverArguments[0]
-        newTicket = self.officerInstance.includeNewTask(taskDescription)
+        newTicket = includeNewTask(taskDescription)
         return newTicket
     
     
     def handle(self):
-        #get settings
-        if self.settingsParser == '' :
-            self.settingsParser = ConfigParser.SafeConfigParser()
-            self.settingsParser.read("pkgTransceiver/assistanceTransceiverLocalSettingsFile.alsf")
-            self.setSettings()
         # treats the data received and returns a service ticket
         taskTicket = self.getTicket()
         #writeback

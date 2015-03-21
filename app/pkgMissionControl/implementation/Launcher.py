@@ -20,7 +20,6 @@ import time
 # ~~~~~~~~~~~~~~~~~~ Local Imports ~~~~~~~~~~~~~~~~~~
 # =============================================
 from pkgTransceiver.implementation.Transceiver import Transceiver
-from pkgOfficer.implementation.Officer import Officer
 
 # ===================
 # ------------------ Classes ------------------
@@ -70,18 +69,18 @@ class Assistance():
      
     # =====================
     # ------------------ Functions ------------------
-    # =====================
-    def getOfficerInstance(self):
-        return officer
+    # =====================    
+    def shutdown(self):
+        self.transceiver.shutdown()
      
     # =============================================
     # ++++++++++++++++++ Constructors ++++++++++++++++++
     # =============================================
     def __init__(self):
-        self.officer = Officer()
-        self.transceiver = Transceiver(self.officer)
+        self.transceiver = Transceiver()
        
      
     # ============================================
     # ++++++++++++++++++ Destructors ++++++++++++++++++
     # ============================================
+

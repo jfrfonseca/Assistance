@@ -1,4 +1,4 @@
-import launch
+from AssistanceInstance.txt import py
 import argparse
 
 if __name__ == "__main__":
@@ -8,7 +8,7 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
     
-    thisInstance = launch.AssistanceInstance()
+    thisInstance = AssistanceInstance.py.AssistanceInstance()
     
     if (args.test_tor_transceiver_echo):
         thisInstance.testTorTransceiverEcho()
