@@ -20,64 +20,32 @@ import time
 # ~~~~~~~~~~~~~~~~~~ Local Imports ~~~~~~~~~~~~~~~~~~
 # =============================================
 from pkgTransceiver.implementation.Transceiver import Transceiver
+from pkgOfficer.implementation.Officer import Officer
 
-# ===================
-# ------------------ Classes ------------------
-# ===================
+# ====================
+# ------------------ Objects ------------------
+# ==================== 
+global transceiver
+global officer
 
-class Assistance():    
-    # ===========================================
-    # ~~~~~~~~~~~~~~~~~~ Constants ~~~~~~~~~~~~~~~~~~
-    # ===========================================
-    #general
-    defaultDelay = 0.5                                      # default delay time for a socket response
-    socketWarmUpTime = 2.0                           # time for a socket to be set-up
-    missionControlOAuthID = "0123456789ABCDEF"         # OAuth Token ID for this package
-    commonModulesLoc = "/cpnCommonLibraries/"        # Location of the folder with the common modules for all launched scripts
-    
-    # Transceiver
-    transceiverListenningPorts = [23019, 23193, 47913]      # Ports that the Transceiver Listens to
-     
-     
-    # ==========================================
-    # ~~~~~~~~~~~~~~~~~~ Variables ~~~~~~~~~~~~~~~~~~
-    # ==========================================
-    # Transceiver
-    transceiverOAuthToken = "0123456789ABCDEF"                      # OAuth authentication token to Mission Control talk to Transceiver
-         
-    # ========================================================
-    # ~~~~~~~~~~~~~~~~~~ Working Directory Manipulations ~~~~~~~~~~~~~~~~~~
-    # ========================================================
-    
-     
-    # =========================================
-    # ~~~~~~~~~~~~~~~~~~ Buffers ~~~~~~~~~~~~~~~~~~
-    # =========================================
-     
-     
-    # ==============================================
-    # ~~~~~~~~~~~~~~~~~~ Control Objects ~~~~~~~~~~~~~~~~~~
-    # ==============================================
-    # general
-    global droneSocket
-     
-    # pkgTransceiver
+
+# =====================
+# ------------------ Functions ------------------
+# =====================    
+def shutdown():
     global transceiver
-     
-    # pkgOfficer
+    transceiver.shutdown()
+        
+
+def setup():
+    global transceiver
     global officer
-     
-    # =====================
-    # ------------------ Functions ------------------
-    # =====================    
-    def shutdown(self):
-        self.transceiver.shutdown()
-     
-    # =============================================
-    # ++++++++++++++++++ Constructors ++++++++++++++++++
-    # =============================================
-    def __init__(self):
-        self.transceiver = Transceiver()
+    transceiver = Transceiver()
+    officer = Officer()
+    
+def getOfficerInstance():
+    global officer
+    return officer
        
      
     # ============================================

@@ -28,11 +28,11 @@ class AssistanceSocketClient():
         self.port = port
         self.authToken = authToken
         self.socketObject = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socketObject.connect((self.host, self.port))
         
     def sendData(self, data):
         try:
             # Connect to server and send data
-            self.socketObject.connect((self.host, self.port))
             self.socketObject.sendall(self.authToken + "\n"+ data + "\n")
         finally:
             #print "Data sent to "+str(self.host)+":"+str(self.port)

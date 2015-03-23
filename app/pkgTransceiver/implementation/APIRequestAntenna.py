@@ -30,22 +30,23 @@ class APIRequestAntenna (SocketServer.StreamRequestHandler):
         #  the AssistanceApp Answer delivery data (immediate, localFile, torrentFile)
         appAnswerDelivery = self.rfile.readline().strip()
         
-        taskDescription = TaskDescription(authToken, timeReceived, AssistanceDBMS.getSymbol("LOCALHOST"), appID, appArgsChannel, appArgs, appDataChannel, appDataDelivery, appAnswerChannel, appAnswerDelivery)
+        taskDescription = TaskDescription(authToken, timeReceived, appID, appArgsChannel, appArgs, appDataChannel, appDataDelivery, appAnswerChannel, appAnswerDelivery)
         return taskDescription
           
     
     def getTicket(self):    
-        taskDescription = self.parseAssistanceRequest()
-        newTicket = includeNewTask(taskDescription)
+        newTicket = includeNewTask(self.taskDescription)
         return newTicket
     
     
     def handle(self):
+        # parse the received data
+        self.taskDescription = self.parseAssistanceRequest()
         # treats the data received and returns a service ticket
         taskTicket = self.getTicket()
+        # print out some info
+        print "Assistance APIRequest Server: received an AssistanceRequest\n\tfor AssistanceApp "+self.taskDescription.appID+";\n\tfrom API token "+self.taskDescription.authToken+";\n\ton port "+str(self.client_address[0])+";\n\tassigned Assistance ServiceTicket "+str(self.taskDescription.ticket)
         #writeback
         self.wfile.write(taskTicket)      
-        
-        
         
         
