@@ -1,5 +1,6 @@
 from cpnLibrary.implementation import AssistanceDBMS
 import pkgMissionControl.implementation.Launcher
+import random
 
 
 def includeNewTask(taskDescription):
@@ -45,6 +46,16 @@ class TaskDescription():
 class Officer():
     taskBuffer = {}
     testTicket = 0
+    assignerThread = ''
+    
+    
+#    def assignTask(self):
+#        # get a task from the buffer
+#        random.choice(self.taskBuffer.keys())
+#        if 
+        
+        
+        
         
     def generateTicket(self, taskDescription):
         self.testTicket += 1
