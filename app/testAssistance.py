@@ -1,6 +1,7 @@
 import unittest, time
-import pkgMissionControl.implementation.Launcher
+import Assistance
 from cpnCommonLibraries.AssistanceSockets import AssistanceSocketClient
+from pkgMissionControl.implementation import Launcher
 
 
 
@@ -19,32 +20,41 @@ class TestAssistance(unittest.TestCase):
 #        pkgMissionControl.implementation.Launcher.shutdown()
         
     def testTwoEchoesVerbose(self):
-        pkgMissionControl.implementation.Launcher.setup()
+        Assistance.setup()
         try:
             # request echo
             dummySocket = AssistanceSocketClient('', 29112, '0123456789ABCDEF')
-            dummySocket.sendData('ASSISTANCE_ECHO_TEST\n'+'immediate\n'+'hello world!\n'+'none\n'+'none\n'+'immediate\n'+'none\n')
-            print "data verboselly sent\n"
+            dummySocket.sendData('ASSISTANCE_ECHO_TEST\n'+'immediate\n'+'hello world!\n'+'none\n'+'none\n')
+            print "data sent\n"
             ticket1 = dummySocket.receiveData()
             dummySocket.close()
             
             print ""
-            time.sleep(2)
+            #time.sleep(2)
             
             dummySocket = AssistanceSocketClient('', 29112, '0123456789ABCDEF')
-            dummySocket.sendData('ASSISTANCE_ECHO_TEST\n'+'immediate\n'+'hello world 2!\n'+'none\n'+'none\n'+'immediate\n'+'none\n')
-            print "more data verboselly sent\n"
+            dummySocket.sendData('ASSISTANCE_ECHO_TEST\n'+'immediate\n'+'hello world again!\n'+'none\n'+'none\n')
+            print "more data sent\n"
             ticket2 = dummySocket.receiveData()
+            # the test below will not work, since the handler class only finishes dealing with a connection once it is closed
+            #dummySocket.sendData('ASSISTANCE_ECHO_TEST\n'+'immediate\n'+'hello world and all who live upon it!\n'+'none\n'+'none\n')
+            #print "more data sent, but without closing the socket first! \n"
+            #ticket3 = dummySocket.receiveData()
             dummySocket.close()
                         
             self.assertEqual(ticket1, "testTicket1")
             self.assertEqual(ticket2, "testTicket2")
+            #self.assertEqual(ticket3, "testTicket3")
             
             print "it worked"
-            pkgMissionControl.implementation.Launcher.getOfficerInstance().printTaskBuffer()
+            
+            time.sleep(2)
+            
+            Launcher.getOfficerInstance().printLogs()
         finally:
-            pkgMissionControl.implementation.Launcher.shutdown()
+            Assistance.shutdown()
         
     
 if __name__ == '__main__':
     unittest.main()
+    Assistance.shutdown()

@@ -25,12 +25,8 @@ class APIRequestAntenna (SocketServer.StreamRequestHandler):
         appDataChannel = self.rfile.readline().strip()
         # the AssistanceApp data (value for the method of getting the data mentioned above)
         appDataDelivery = self.rfile.readline().strip()
-        # form of transference of the Assistance App Answer (none, immediate, localFile, torrentFile)
-        appAnswerChannel = self.rfile.readline().strip()
-        #  the AssistanceApp Answer delivery data (immediate, localFile, torrentFile)
-        appAnswerDelivery = self.rfile.readline().strip()
         
-        taskDescription = TaskDescription(authToken, timeReceived, appID, appArgsChannel, appArgs, appDataChannel, appDataDelivery, appAnswerChannel, appAnswerDelivery)
+        taskDescription = TaskDescription(authToken, timeReceived, appID, appArgsChannel, appArgs, appDataChannel, appDataDelivery)
         return taskDescription
           
     

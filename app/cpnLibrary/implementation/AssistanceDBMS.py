@@ -7,6 +7,20 @@ def getSymbol(constName, category=''):
     if category=="STATUS":
         if constName ==  'DRAFT':
             return 'DRAFT'
+        if constName == 'WAITING':
+            return 'WAITING'
+        if constName == 'PERFORMING-LOCAL':
+            return 'PERFORMING-LOCAL'
+        if constName == 'PERFORMING-PEER':
+            return 'PERFORMING-PEER'
+        if constName == 'COMPLETED-LOCAL':
+            return 'COMPLETED-LOCAL'
+        if constName == 'COMPLETED-PEER':
+            return 'COMPLETED-PEER'
+        if constName == 'INTERRUPTED-LOCAL':
+            return 'INTERRUPTED-LOCAL'
+        if constName == 'INTERRUPTED-PEER':
+            return 'INTERRUPTED-PEER'
     
     elif category=="CHANNEL":
         if constName ==  'IMMEDIATE':
@@ -32,6 +46,11 @@ def getToken(tokenHolder):
         return '0123456789ABCDEF'
     else:
         return ''
+    
+    
+def getCallerScript(taskDescription):
+    return ["AssistanceApps/echoInAllCaps.assistanceApp", taskDescription.args]
+
 
 
 

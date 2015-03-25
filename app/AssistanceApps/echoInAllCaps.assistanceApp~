@@ -1,0 +1,3 @@
+#!/bin/bash
+string="hello world again!"
+echo ${string^^}

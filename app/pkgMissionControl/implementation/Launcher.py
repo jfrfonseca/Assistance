@@ -22,11 +22,23 @@ import time
 from pkgTransceiver.implementation.Transceiver import Transceiver
 from pkgOfficer.implementation.Officer import Officer
 
+
+# =====================
+# ------------------ Constants ------------------
+# =====================
+
+
 # ====================
 # ------------------ Objects ------------------
 # ==================== 
 global transceiver
 global officer
+global performer
+
+
+# ====================
+# ------------------ Variables ------------------
+# ====================
 
 
 # =====================
@@ -40,13 +52,18 @@ def shutdown():
 def setup():
     global transceiver
     global officer
-    transceiver = Transceiver()
+    global performer
+    global assistanceAppRootDirectory
     officer = Officer()
+    transceiver = Transceiver()
+    
+    
+
     
 def getOfficerInstance():
     global officer
     return officer
-       
+ 
      
     # ============================================
     # ++++++++++++++++++ Destructors ++++++++++++++++++
