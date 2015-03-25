@@ -1,4 +1,3 @@
-import os
 from pkgMissionControl.implementation import Launcher
 
 
@@ -10,5 +9,5 @@ def setup():
     Launcher.setup()
 
 
-def getCWD():
-    return os.getcwd()
+if __name__ == '__main__':
+    setup()

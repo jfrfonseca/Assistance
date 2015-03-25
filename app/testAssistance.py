@@ -2,6 +2,7 @@ import unittest, time
 import Assistance
 from cpnCommonLibraries.AssistanceSockets import AssistanceSocketClient
 from pkgMissionControl.implementation import Launcher
+from cpnLibrary.implementation import AssistanceDBMS
 
 
 
@@ -24,7 +25,7 @@ class TestAssistance(unittest.TestCase):
         try:
             # request echo
             dummySocket = AssistanceSocketClient('', 29112, '0123456789ABCDEF')
-            dummySocket.sendData('ASSISTANCE_ECHO_TEST\n'+'immediate\n'+'hello world!\n'+'none\n'+'none\n')
+            dummySocket.sendData('ASSISTANCE_ECHO_TEST\n'+'immediate\n'+'hello world!\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n')
             print "data sent\n"
             ticket1 = dummySocket.receiveData()
             dummySocket.close()
@@ -33,7 +34,7 @@ class TestAssistance(unittest.TestCase):
             #time.sleep(2)
             
             dummySocket = AssistanceSocketClient('', 29112, '0123456789ABCDEF')
-            dummySocket.sendData('ASSISTANCE_ECHO_TEST\n'+'immediate\n'+'hello world again!\n'+'none\n'+'none\n')
+            dummySocket.sendData('ASSISTANCE_ECHO_TEST\n'+'immediate\n'+'hello world again!\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n')
             print "more data sent\n"
             ticket2 = dummySocket.receiveData()
             # the test below will not work, since the handler class only finishes dealing with a connection once it is closed
@@ -42,17 +43,29 @@ class TestAssistance(unittest.TestCase):
             #ticket3 = dummySocket.receiveData()
             dummySocket.close()
                         
+            dummySocket = AssistanceSocketClient('', 29112, '0123456789ABCDEF')
+            dummySocket.sendData('ASSISTANCE_SHA256_TEST\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n')
+            print "requesting a SHA256 that SHOUD take a second to run!\n"
+            ticket4 = dummySocket.receiveData()
+            dummySocket.close()
+                        
             self.assertEqual(ticket1, "testTicket1")
             self.assertEqual(ticket2, "testTicket2")
             #self.assertEqual(ticket3, "testTicket3")
+            self.assertEqual(ticket4, "testTicket3")
             
-            print "it worked"
+            print "If we got here, it means that all the inner Assistance Echo Caps tests AND the SHA256 test were completed successfully. Now, you can run the external test, and check the logs"
             
-            time.sleep(2)
+            timeToFinish = raw_input("When you are done testing, type 'finish' and 'enter' in this window - ")
+            while timeToFinish != 'finish':
+                print "you entered: "+timeToFinish
+                timeToFinish = raw_input("When you are done testing, type 'finish' and 'enter' in this window - ")
+
             
             Launcher.getOfficerInstance().printLogs()
         finally:
-            Assistance.shutdown()
+            Assistance.shutdown()            
+            print "it worked"
         
     
 if __name__ == '__main__':

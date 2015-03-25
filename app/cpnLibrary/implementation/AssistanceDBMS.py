@@ -49,7 +49,10 @@ def getToken(tokenHolder):
     
     
 def getCallerScript(taskDescription):
-    return ["AssistanceApps/echoInAllCaps.assistanceApp", taskDescription.args]
+    if taskDescription.appID == "ASSISTANCE_ECHO_TEST":
+        return ["AssistanceApps/echoInAllCaps.assistanceApp", taskDescription.args]
+    elif taskDescription.appID == "ASSISTANCE_SHA256_TEST":
+        return ["AssistanceApps/sha256Example.assistanceApp"]
 
 
 

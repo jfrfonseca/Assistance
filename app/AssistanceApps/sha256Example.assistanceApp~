@@ -1,0 +1,2 @@
+#!/bin/bash
+time -p AssistanceApps/sha256/V0.5/linux/bin/main.build assistanceApps/sha256/V0.5/tests/experimentData.dat 60000
