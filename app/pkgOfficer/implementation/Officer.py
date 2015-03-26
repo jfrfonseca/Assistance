@@ -1,6 +1,6 @@
+import time, datetime, threading
+import pkgMissionControl.implementation.Launcher, SystemStats
 from cpnLibrary.implementation import AssistanceDBMS
-import pkgMissionControl.implementation.Launcher
-import random, time, datetime, threading
 from pkgPerformer.implementation import Performer
 
 
@@ -63,17 +63,47 @@ class Officer():
     
                     
     def generateTicket(self, taskDescription):
+        #TODO Make it more robust and coherent
         self.testTicket += 1
         return "testTicket"+str(self.testTicket)
 
 
+    def checkLocalAvailability(self, taskDescription):
+        #checks if there are enough resources so it is resonable to request remote assistance. the SystemStats module provides this information
+        #Gets the minimal usage needed to request assistance
+        thresholds = AssistanceDBMS.getThresholds(taskDescription, request=True)
+        #Checks the usage of Memory
+        memoryStatus = SystemStats.getMemoryUsage()
+        for memoryKind in memoryStatus.keys():
+            if memoryStatus[memoryKind] < thresholds[memoryKind]:
+                return False      
+        #CHecks the usage of CPU, in total
+        CPUstatus = SystemStats.getCPUusage()
+        CPUtotal = 0
+        for index in range(len(CPUstatus)):
+            CPUtotal += CPUstatus[index]
+        CPUtotal /= len(CPUstatus)
+        if CPUtotal < thresholds["CPU"]:
+            return False
+        
+        #TODO Checks the disk usage in each partition
+        #partitions = SystemStats.getDiskFreeSpace()
+        #for index in range(len(partitions)):
+        #    CPUtotal += CPUstatus[index]
+        
+        return True
+
+
     def assignTask(self, task):
+        #TODO implement the call for remote execution, the interrupt f the still not ready execution, the check for availability
         # starts the run locally
         Performer.perform(task)
         # check if there is local availability for the chosen task. if not, requests Assistance from a peer
-        #if not localAvailability(chosenTask):
-        # requests assistance from remote TODO
-        # waits the first to complete
+        if not self.checkLocalAvailability(task):
+            #TODO requests assistance from remote peer
+            #this is a "nop" operation
+            nop = 1
+        # waits the first (remote or local) to complete
         task.lock.acquire()
         while task.timeCompleted == '':
             task.lock.wait()
@@ -93,9 +123,11 @@ class Officer():
         # starts the run process of the task
         newTask.workerThreads["director"] = threading.Thread(target=self.assignTask, args=(newTask, ))
         newTask.workerThreads["director"].start()
-        
         return newTask.ticket
-                
+    
+    
+    def getStatus(self, taskTicket):
+        return self.getTask(taskTicket).status               
        
     
     # DevTools methods ----------------------------------------

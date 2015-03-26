@@ -55,8 +55,12 @@ def getCallerScript(taskDescription):
         return ["AssistanceApps/sha256Example.assistanceApp"]
 
 
-
-
+def getThresholds(taskDescription, request=False):
+    #memory
+    thresholds = {"physical" : 0, "virtual" : 0, "swap" : 0}
+    #CPU
+    thresholds["CPU"]=0
+    return thresholds
 
 
 
