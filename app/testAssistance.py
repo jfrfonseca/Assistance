@@ -25,7 +25,7 @@ class TestAssistance(unittest.TestCase):
         try:
             # request echo
             dummySocket = AssistanceSocketClient('', 29112, '0123456789ABCDEF')
-            dummySocket.sendData('ASSISTANCE_ECHO_TEST\n'+'immediate\n'+'hello world!\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n')
+            dummySocket.sendData('ASSISTANCE_ECHO_TEST\n'+'hello world!\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n')
             print "data sent\n"
             ticket1 = dummySocket.receiveData()
             dummySocket.close()
@@ -34,7 +34,7 @@ class TestAssistance(unittest.TestCase):
             #time.sleep(2)
             
             dummySocket = AssistanceSocketClient('', 29112, '0123456789ABCDEF')
-            dummySocket.sendData('ASSISTANCE_ECHO_TEST\n'+'immediate\n'+'hello world again!\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n')
+            dummySocket.sendData('ASSISTANCE_ECHO_TEST\n'+'hello world again!\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n')
             print "more data sent\n"
             ticket2 = dummySocket.receiveData()
             # the test below will not work, since the handler class only finishes dealing with a connection once it is closed
@@ -44,7 +44,7 @@ class TestAssistance(unittest.TestCase):
             dummySocket.close()
                         
             dummySocket = AssistanceSocketClient('', 29112, '0123456789ABCDEF')
-            dummySocket.sendData('ASSISTANCE_SHA256_TEST\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n')
+            dummySocket.sendData('ASSISTANCE_SHA256_TEST\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n')
             print "requesting a SHA256 that SHOUD take a second to run!\n"
             ticket4 = dummySocket.receiveData()
             dummySocket.close()

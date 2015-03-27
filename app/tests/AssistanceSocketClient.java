@@ -19,7 +19,7 @@ public class AssistanceSocketClient {
 	}
 
 	public void sendData(String data2send){
-		output.println(authToken+"\n"+data2send);
+		output.println(authToken+"\n"+data2send+"\n");
 	}
 
 	public String receiveData() throws IOException{

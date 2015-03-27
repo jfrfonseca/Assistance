@@ -13,4 +13,4 @@ class Transceiver():
     def shutdown(self):
         self.apiRequestAntenna.shutdown()
         print "Transceiver is Off"
-        
+

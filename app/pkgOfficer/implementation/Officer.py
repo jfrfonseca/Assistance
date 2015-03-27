@@ -12,7 +12,7 @@ def includeNewTask(taskDescription):
 
 
 class TaskDescription():
-    def __init__(self, authToken, timeReceived, appID, appArgsChannel, appArgs, appDataChannel, appDataDelivery):
+    def __init__(self, authToken, timeReceived, appID, appArgs, appDataChannel, appDataDelivery):
         #Task General Meta
         self.ticket = AssistanceDBMS.getSymbol('NONE')
         self.status = AssistanceDBMS.getSymbol('DRAFT', 'STATUS')
@@ -22,10 +22,9 @@ class TaskDescription():
         
         # Task Request Meta
         self.appID = appID
-        self.argsChannel = appArgsChannel
         self.dataChannel = appDataChannel
             # Task Request Data
-        self.args = appArgs
+        self.appArgs = appArgs
         self.dataDelivery = appDataDelivery
         
         # Task Answer Meta

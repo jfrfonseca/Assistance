@@ -1,9 +1,13 @@
 import time, SocketServer
 from cpnLibrary.implementation import AssistanceDBMS
-from pkgOfficer.implementation.Officer import TaskDescription, includeNewTask
+from pkgOfficer.implementation.Officer import TaskDescription
 
 
-class APIRequestAntenna (SocketServer.StreamRequestHandler):
+class DataAntenna (SocketServer.StreamRequestHandler):
+    # INPUT Methods
+    
+    
+    
     def authenticate(self, remoteToken):
         return remoteToken == AssistanceDBMS.getToken('API_REQUEST')
     
@@ -17,14 +21,16 @@ class APIRequestAntenna (SocketServer.StreamRequestHandler):
             raise ValueError("Security Alert! A client tried to connect to a Assistance Socket without the proper Authentication Token!")    
         # Assistance App Identification
         appID = self.rfile.readline().strip()
-        # the AssistanceApp arguments
+        # form of transference of the Assistance App Arguments (none, immediate, localFile, torrentFile)
+        appArgsChannel = self.rfile.readline().strip()   
+        # the AssistanceApp arguments (value for the method of getting arguments given above)
         appArgs = self.rfile.readline().strip()
         # form of transference of the Assistance App Data (none, immediate, localFile, torrentFile)
         appDataChannel = self.rfile.readline().strip()
         # the AssistanceApp data (value for the method of getting the data mentioned above)
         appDataDelivery = self.rfile.readline().strip()
         
-        taskDescription = TaskDescription(authToken, timeReceived, appID, appArgs, appDataChannel, appDataDelivery)
+        taskDescription = TaskDescription(authToken, timeReceived, appID, appArgsChannel, appArgs, appDataChannel, appDataDelivery)
         return taskDescription
           
     

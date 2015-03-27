@@ -1,4 +1,5 @@
 
+
 def getNewTicketNumber(objectHash):
     return objectHash
 
@@ -49,10 +50,19 @@ def getToken(tokenHolder):
     
     
 def getCallerScript(taskDescription):
+    #ALL ARGUMENTS COME AS A STRING - the data they refer may differ. EVERY ASSISTANCEAPP MUST HAVE A DEFAULT DATA FILES (DATA AND ANSWER) FOLDER, AND THIS FOLDER WILL DE SUBSCRIBED IN THE DBMS FOR EACH APP, SO THE APP CAN CALL ITS FILES FROM THE DEFAULT
+    args = ""
+    if(taskDescription.appArgs == getSymbol("NONE")):
+        args = ""
+    else:
+        args = taskDescription.appArgs
+        
+    #Stub METHOD
+    assistanceAppDataFolder = ""
     if taskDescription.appID == "ASSISTANCE_ECHO_TEST":
-        return ["AssistanceApps/echoInAllCaps.assistanceApp", taskDescription.args]
+        return ["AssistanceApps/echoInAllCaps.assistanceApp", args, assistanceAppDataFolder]
     elif taskDescription.appID == "ASSISTANCE_SHA256_TEST":
-        return ["AssistanceApps/sha256Example.assistanceApp"]
+        return ["AssistanceApps/sha256Example.assistanceApp", args, assistanceAppDataFolder]
 
 
 def getThresholds(taskDescription, request=False):

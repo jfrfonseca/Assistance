@@ -58,6 +58,9 @@ def setup():
     transceiver = Transceiver()
     
     
+def getTransceiverInstance():
+    global transceiver
+    return transceiver
 
     
 def getOfficerInstance():
