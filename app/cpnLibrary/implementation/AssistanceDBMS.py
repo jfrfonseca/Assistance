@@ -60,20 +60,39 @@ def getCallerScript(taskDescription):
     #Stub METHOD
     assistanceAppDataFolder = ""
     if taskDescription.appID == "ASSISTANCE_ECHO_TEST":
-        return ["AssistanceApps/echoInAllCaps.assistanceApp", args, assistanceAppDataFolder]
+        return ["AssistanceApps/echoInAllCaps.assistanceApp", str(taskDescription.localProcessPriority), args, assistanceAppDataFolder]
     elif taskDescription.appID == "ASSISTANCE_SHA256_TEST":
-        return ["AssistanceApps/sha256Example.assistanceApp", args, assistanceAppDataFolder]
+        return ["AssistanceApps/sha256Example.assistanceApp", str(taskDescription.localProcessPriority), args, assistanceAppDataFolder]
 
 
 def getThresholds(taskDescription, request=False):
+    #ansers the question "what usage percentage of the resources is enough, and limit, so I can perform locally? and remotelly? in the case of disks, is how many bytes are needed, and -1 or 101 to "ignore constraint"
+    thresholds = {"performLocal":{"memory":{}, "CPU":{}, "disk":{}}, "performRemote":{"memory":{}, "CPU":{}, "disk":{}}}
     #memory
-    thresholds = {"physical" : 0, "virtual" : 0, "swap" : 0}
+    #aaaalways perform local
+    thresholds["performLocal"]["memory"]["minimum"] = {"physical" : -1, "virtual" : -1, "swap" : -1}
+    thresholds["performLocal"]["memory"]["maximum"] = {"physical" : 101, "virtual" : 101, "swap" : 101}    
+    thresholds["performRemote"]["memory"]["priorityIncreaseDelta"] = 10  
+    #adjust to decide if there will be a remote execution or not
+    thresholds["performRemote"]["memory"]["minimum"] = {"physical" : -1, "virtual" : -1, "swap" : -1}
+    thresholds["performRemote"]["memory"]["maximum"] = {"physical" : 101, "virtual" : 101, "swap" : 101}
+    thresholds["performRemote"]["memory"]["priorityIncreaseDelta"] = 10 
     #CPU
-    thresholds["CPU"]=0
+    #always perform local
+    thresholds["performLocal"]["CPU"]["minimum"] = -1
+    thresholds["performLocal"]["CPU"]["maximum"] = 101
+    thresholds["performRemote"]["CPU"]["priorityIncreaseDelta"] = 10  
+    #adjust to decide if there will be a remote execution or not
+    thresholds["performRemote"]["CPU"]["minimum"] = -1
+    thresholds["performRemote"]["CPU"]["maximum"] = 101
+    thresholds["performRemote"]["CPU"]["priorityIncreaseDelta"] = 10  
+    #Disk
+    thresholds["performLocal"]["disk"]["minimum"] = -1
+    thresholds["performLocal"]["disk"]["maximum"] = -1     
+    thresholds["performRemote"]["disk"]["minimum"] = -1
+    thresholds["performRemote"]["disk"]["maximum"] = -1
+    
     return thresholds
-
-
-
 
 
 

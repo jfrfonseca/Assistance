@@ -8,18 +8,7 @@ from cpnLibrary.implementation import AssistanceDBMS
 
 class TestAssistance(unittest.TestCase):
 
-#    def testEchoVerbose(self):
-#        pkgMissionControl.implementation.Launcher.setup()
-#        # request echo
-#        dummySocket = AssistanceSocketClient('', 29112, '0123456789ABCDEF')
-#        dummySocket.sendData('ASSISTANCE_ECHO_TEST\n'+'immediate\n'+'hello world!\n'+'none\n'+'none\n'+'immediate\n'+'none\n')
-#        print "data verboselly sent"
-#        ticket = dummySocket.receiveData()
-#        dummySocket.close()
-#        self.assertEqual(ticket, "0123")
-#        print "it worked"
-#        pkgMissionControl.implementation.Launcher.shutdown()
-        
+
     def testTwoEchoesVerbose(self):
         Assistance.setup()
         try:

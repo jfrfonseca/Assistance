@@ -37,11 +37,17 @@ class TaskDescription():
         self.callerScript = ''
         self.workerThreads = {}
         self.lock = threading.Condition()
+        self.localProcessPriority = 10
         
         
     def updateStatus(self, newStatus):
         self.log += "\t"+datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S:%f')+" |- Status update: ("+str(self.status)+" --> "+str(newStatus)+");\n"
         self.status = newStatus
+        
+        
+    def changePriority(self, newPriority):
+        self.log += "\t"+datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S:%f')+" |- Changed Local processing priority from "+str(self.localProcessPriority)+" to "+str(newPriority)+");\n"
+        self.status = newPriority
         
         
     def setTicket(self, ticketValue):
@@ -67,38 +73,57 @@ class Officer():
         return "testTicket"+str(self.testTicket)
 
 
-    def checkLocalAvailability(self, taskDescription):
-        #checks if there are enough resources so it is resonable to request remote assistance. the SystemStats module provides this information
-        #Gets the minimal usage needed to request assistance
+    def defineDistribution(self, taskDescription):
+        distribution = {"local": True, "remote":True}
+        #checks if there are enough resources so it is reasonable to request remote assistance. the SystemStats module provides this information
+        
+        #Gets the minimal usage needed to request assistance remotely
         thresholds = AssistanceDBMS.getThresholds(taskDescription, request=True)
+        
         #Checks the usage of Memory
         memoryStatus = SystemStats.getMemoryUsage()
-        for memoryKind in memoryStatus.keys():
-            if memoryStatus[memoryKind] < thresholds[memoryKind]:
-                return False      
-        #CHecks the usage of CPU, in total
+        
+        #checks the TOTAL usage of CPU
         CPUstatus = SystemStats.getCPUusage()
         CPUtotal = 0
         for index in range(len(CPUstatus)):
             CPUtotal += CPUstatus[index]
         CPUtotal /= len(CPUstatus)
-        if CPUtotal < thresholds["CPU"]:
-            return False
         
-        #TODO Checks the disk usage in each partition
-        #partitions = SystemStats.getDiskFreeSpace()
-        #for index in range(len(partitions)):
-        #    CPUtotal += CPUstatus[index]
+        #decides if there should be a local and a remote execution of this task. Maybe there should always be a local
+        #if the CPU usage is smaller than the minimum usage to perform locally, or larger than the maximum, so it should not perform locally
+        if CPUtotal < thresholds["performLocal"]["CPU"]["minimum"] or CPUtotal > thresholds["performLocal"]["CPU"]["maximum"]:
+            distribution["local"]=False
+        #if the CPU usage is smaller than the minimum usage to perform remotely, or larger than the maximum, so it should not perform remotely
+        if CPUtotal < thresholds["performRemote"]["CPU"]["minimum"] or CPUtotal > thresholds["performRemote"]["CPU"]["maximum"]:
+            distribution["remote"]=False
+            
+        #decides to see if there will be a local or remote performance of the task. Maybe there should be ALWAYS a local performance
+        for memoryKind in memoryStatus.keys():
+            #if the memory usage is smaller than the minimum usage to perform locally, or larger than the maximum, so it should not perform locally
+            if memoryStatus[memoryKind] < thresholds["performLocal"]["memory"]["minimum"][memoryKind] or memoryStatus[memoryKind] > thresholds["performLocal"]["memory"]["maximum"][memoryKind]:
+                distribution["local"]=False
+            #if the memory usage is smaller than the minimum usage to perform remotely, or larger than the maximum, so it should not perform remotely
+            if memoryStatus[memoryKind] < thresholds["performRemote"]["memory"]["minimum"][memoryKind] or memoryStatus[memoryKind] > thresholds["performRemote"]["memory"]["maximum"][memoryKind]:
+                distribution["remote"]=False  
         
-        return True
+        #TODO Checks the disk usage in each partition, to only perform if there are enough space in the partition destined for the performer data and answer
+        #TODO calculate performance priority given the delta of the actual system usage to the ideal constraints
+        
+        return distribution
 
 
     def assignTask(self, task):
         #TODO implement the call for remote execution, the interrupt f the still not ready execution, the check for availability
-        # starts the run locally
-        Performer.perform(task)
-        # check if there is local availability for the chosen task. if not, requests Assistance from a peer
-        if not self.checkLocalAvailability(task):
+        #launches the performers (local and remote) depending on the defined availability
+        distributionOfExecution = self.defineDistribution(task)
+        #the OR NOT is here to be sure that it will always run, even if only in one hemisphere!!
+        #if it is to run locally
+        if distributionOfExecution["local"] or not distributionOfExecution["remote"]:
+            # starts the run locally
+            Performer.perform(task)
+        #if it is to run remotely
+        if distributionOfExecution["remote"] or not distributionOfExecution["local"]:
             #TODO requests assistance from remote peer
             #this is a "nop" operation
             nop = 1
