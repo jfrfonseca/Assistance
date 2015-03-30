@@ -14,7 +14,7 @@ class TestAssistance(unittest.TestCase):
         try:
             # request echo
             dummySocket = AssistanceSocketClient('', 29112, '0123456789ABCDEF')
-            dummySocket.sendData('ASSISTANCE_ECHO_TEST\n'+'hello world!\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n')
+            dummySocket.sendData('NEW_REQUEST\n'+'ASSISTANCE_ECHO_TEST\n'+'hello world!\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n')
             print "data sent\n"
             ticket1 = dummySocket.receiveData()
             dummySocket.close()
@@ -23,7 +23,7 @@ class TestAssistance(unittest.TestCase):
             #time.sleep(2)
             
             dummySocket = AssistanceSocketClient('', 29112, '0123456789ABCDEF')
-            dummySocket.sendData('ASSISTANCE_ECHO_TEST\n'+'hello world again!\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n')
+            dummySocket.sendData('NEW_REQUEST\n'+'ASSISTANCE_ECHO_TEST\n'+'hello world again!\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n')
             print "more data sent\n"
             ticket2 = dummySocket.receiveData()
             # the test below will not work, since the handler class only finishes dealing with a connection once it is closed
@@ -33,7 +33,7 @@ class TestAssistance(unittest.TestCase):
             dummySocket.close()
                         
             dummySocket = AssistanceSocketClient('', 29112, '0123456789ABCDEF')
-            dummySocket.sendData('ASSISTANCE_SHA256_TEST\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n')
+            dummySocket.sendData('NEW_REQUEST\n'+'ASSISTANCE_SHA256_TEST\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n'+AssistanceDBMS.getSymbol('NONE')+'\n')
             print "requesting a SHA256 that SHOUD take a second to run!\n"
             ticket4 = dummySocket.receiveData()
             dummySocket.close()
@@ -42,6 +42,24 @@ class TestAssistance(unittest.TestCase):
             self.assertEqual(ticket2, "testTicket2")
             #self.assertEqual(ticket3, "testTicket3")
             self.assertEqual(ticket4, "testTicket3")
+            
+            time.sleep(2)
+            
+            # check echo status
+            dummySocket = AssistanceSocketClient('', 29112, '0123456789ABCDEF')
+            dummySocket.sendData('STATUS_CHECK\n'+'testTicket1\n')
+            print "status check for ticket 1 sent!\n"
+            status1 = dummySocket.receiveData()
+            dummySocket.close()
+            
+            dummySocket = AssistanceSocketClient('', 29112, '0123456789ABCDEF')
+            dummySocket.sendData('STATUS_CHECK\n'+'testTicket3\n')
+            print "status check for ticket 3 sent!\n"
+            status3 = dummySocket.receiveData()
+            dummySocket.close()
+            
+            print "The status for the first call to Assistance Echo Test, service ticket "+ticket1+" is: "+status1
+            print "The status for the first call to Assistance SHA256 Test, service ticket "+ticket4+" is: "+status3
             
             print "If we got here, it means that all the inner Assistance Echo Caps tests AND the SHA256 test were completed successfully. Now, you can run the external test, and check the logs"
             

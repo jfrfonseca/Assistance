@@ -1,4 +1,7 @@
 
+def validMessageKind(msgKind):
+    return ( (msgKind == getSymbol("NEW_REQUEST", "MESSAGE_KIND")) or  (msgKind == getSymbol("STATUS_CHECK", "MESSAGE_KIND")) )
+
 
 def getNewTicketNumber(objectHash):
     return objectHash
@@ -26,6 +29,13 @@ def getSymbol(constName, category=''):
     elif category=="CHANNEL":
         if constName ==  'IMMEDIATE':
             return 'IMMEDIATE'
+        
+    elif category=="MESSAGE_KIND":
+        if constName ==  'NEW_REQUEST':
+            return 'NEW_REQUEST'
+        if constName ==  'STATUS_CHECK':
+            return 'STATUS_CHECK'
+        
     else:
         if constName == 'NONE':
             return 'NONE'

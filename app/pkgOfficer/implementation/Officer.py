@@ -50,6 +50,13 @@ class TaskDescription():
         self.status = newPriority
         
         
+    def logResourcesStatus(self, cpuMemUsage):
+        self.log += "\t"+datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S:%f')+" |- The current usage of system resources is: "
+        for resourceName in cpuMemUsage.keys():
+            self.log += "--"+str(resourceName)+": "+str(cpuMemUsage[resourceName])+" %; "
+        self.log += "\n"
+            
+        
     def setTicket(self, ticketValue):
         if self.ticket != AssistanceDBMS.getSymbol('NONE'):
             raise ValueError("Security Alert! Attempt to overwrite Assistance ServiceTicket of task ticket "+str(self.ticket)+"!")
@@ -89,6 +96,8 @@ class Officer():
         for index in range(len(CPUstatus)):
             CPUtotal += CPUstatus[index]
         CPUtotal /= len(CPUstatus)
+        
+        taskDescription.logResourcesStatus({"memory": memoryStatus, "CPU (average)": CPUtotal})
         
         #decides if there should be a local and a remote execution of this task. Maybe there should always be a local
         #if the CPU usage is smaller than the minimum usage to perform locally, or larger than the maximum, so it should not perform locally

@@ -16,11 +16,19 @@ public class runTest {
 		}
 		try {
 		    dummySocket = new AssistanceSocketClient(assistanceServer, 29112, "0123456789ABCDEF");
-		    dummySocket.sendData("ASSISTANCE_SHA256_TEST\n"+"NONE"+"\n"+"NONE"+"\n"+"NONE"+"\n");
+		    dummySocket.sendData("NEW_REQUEST\n"+"ASSISTANCE_SHA256_TEST\n"+"NONE"+"\n"+"NONE"+"\n"+"NONE"+"\n");
 		    System.out.println("requesting a SHA256 that SHOUD take a second to run!");
 		    String ticket = dummySocket.receiveData();
 		    dummySocket.close();
 		    System.out.println("Received Assistance ServiceTicket "+ticket);
+		    
+		    dummySocket = new AssistanceSocketClient(assistanceServer, 29112, "0123456789ABCDEF");
+		    dummySocket.sendData("STATUS_CHECK\n"+ticket+"\n");
+		    System.out.println("checking the status of the task with the ServiceTicket '"+ticket+"'!");
+		    String status = dummySocket.receiveData();
+		    dummySocket.close();
+		    System.out.println("Received the Status '"+status+"' for Assistance ServiceTicket "+ticket);		   
+		    
 		}catch (ConnectException c){
 			System.out.println("No instance of the Assistance System was found in host IP:"+assistanceServer);
 		}catch (IOException e) {

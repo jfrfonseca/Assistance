@@ -12,7 +12,7 @@ class DataAntenna (SocketServer.StreamRequestHandler):
         return remoteToken == AssistanceDBMS.getToken('API_REQUEST')
     
         
-    def parseAssistanceRequest(self):
+    def parseMessageType(self):
         # logTime
         timeReceived = time.time()
         # authentication token
@@ -32,12 +32,7 @@ class DataAntenna (SocketServer.StreamRequestHandler):
         
         taskDescription = TaskDescription(authToken, timeReceived, appID, appArgsChannel, appArgs, appDataChannel, appDataDelivery)
         return taskDescription
-          
-    
-    def getTicket(self):    
-        newTicket = includeNewTask(self.taskDescription)
-        return newTicket
-    
+
     
     def handle(self):
         # parse the received data
