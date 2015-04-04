@@ -1,5 +1,8 @@
 import time, subprocess, threading
 from cpnLibrary.implementation import AssistanceDBMS
+import pkgMissionControl.implementation.Launcher
+from cpnLibrary.implementation.AssistanceDBMS import STATUS_COMPLETED_LOCAL,\
+    STATUS_PERFORMING_LOCAL, STATUS_INTERRUPTED_LOCAL
         
         
 def callScript(taskDescription):
@@ -15,14 +18,15 @@ def callScript(taskDescription):
         taskDescription.timeCompleted = time.time()
         taskDescription.answer["output"]=output
         taskDescription.answer["errors"]=errors
-        taskDescription.updateStatus(AssistanceDBMS.getSymbol("COMPLETED-LOCAL","STATUS"))
+        taskDescription.updateStatus(STATUS_COMPLETED_LOCAL)
         taskDescription.lock.notify()
         taskDescription.lock.release()
 
     
     
 def perform(taskDescription):
-    taskDescription.updateStatus(AssistanceDBMS.getSymbol("PERFORMING-LOCAL","STATUS"))
+    taskDescription.updateStatus(STATUS_PERFORMING_LOCAL)
+    taskDescription.gatheredDataLocation = pkgMissionControl.implementation.Launcher.getTransceiverInstance().gatherData(taskDescription) 
     taskDescription.callScript = AssistanceDBMS.getCallerScript(taskDescription)
     taskDescription.workerThreads["localPerformerSupporter"] = threading.Thread(target=callScript, args=(taskDescription,))
     taskDescription.workerThreads["localPerformerSupporter"].start()
@@ -32,4 +36,6 @@ def perform(taskDescription):
 def interrupt(taskDescription):
     taskDescription.timeInterrupted = time.time()
     taskDescription.workerThreads["localPerformerScript"].terminate()
-    taskDescription.updateStatus(AssistanceDBMS.getSymbol("INTERRUPTED-LOCAL","STATUS"))
+    taskDescription.updateStatus(STATUS_INTERRUPTED_LOCAL)
+    
+    

@@ -2,6 +2,8 @@ import time, datetime, threading
 import pkgMissionControl.implementation.Launcher, SystemStats
 from cpnLibrary.implementation import AssistanceDBMS
 from pkgPerformer.implementation import Performer
+from cpnLibrary.implementation.AssistanceDBMS import NOT_APPLYED, STATUS_DRAFT,\
+    STATUS_WAITING
 
 
 def includeNewTask(taskDescription):
@@ -14,8 +16,8 @@ def includeNewTask(taskDescription):
 class TaskDescription():
     def __init__(self, authToken, timeReceived, appID, appArgs, appDataChannel, appDataDelivery):
         #Task General Meta
-        self.ticket = AssistanceDBMS.getSymbol('NONE')
-        self.status = AssistanceDBMS.getSymbol('DRAFT', 'STATUS')
+        self.ticket = NOT_APPLYED
+        self.status = STATUS_DRAFT
         self.log = "\t"+datetime.datetime.fromtimestamp(timeReceived).strftime('%Y-%m-%d %H:%M:%S:%f')+" |- New task (appID '"+str(appID)+"') received by Assistance from token "+authToken+";\n"
         self.authToken = authToken
         self.timeReceived = timeReceived
@@ -23,9 +25,10 @@ class TaskDescription():
         # Task Request Meta
         self.appID = appID
         self.dataChannel = appDataChannel
-            # Task Request Data
+        # Task Request Data
         self.appArgs = appArgs
         self.dataDelivery = appDataDelivery
+        self.gatheredDataLocation = ''
         
         # Task Answer Meta
         self.answer = {}
@@ -38,8 +41,9 @@ class TaskDescription():
         self.workerThreads = {}
         self.lock = threading.Condition()
         self.localProcessPriority = 10
-        
-        
+    
+    
+       
     def updateStatus(self, newStatus):
         self.log += "\t"+datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S:%f')+" |- Status update: ("+str(self.status)+" --> "+str(newStatus)+");\n"
         self.status = newStatus
@@ -58,12 +62,12 @@ class TaskDescription():
             
         
     def setTicket(self, ticketValue):
-        if self.ticket != AssistanceDBMS.getSymbol('NONE'):
+        if self.ticket != NOT_APPLYED:
             raise ValueError("Security Alert! Attempt to overwrite Assistance ServiceTicket of task ticket "+str(self.ticket)+"!")
         else:
             self.ticket = ticketValue
             self.log +=  "\t"+datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S:%f')+" |- Assigned ticket '"+str(self.ticket)+"';\n"
-            self.updateStatus(AssistanceDBMS.getSymbol('WAITING', 'STATUS'))
+            self.updateStatus(STATUS_WAITING)
             
         
         

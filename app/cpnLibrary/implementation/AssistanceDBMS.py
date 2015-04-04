@@ -1,78 +1,48 @@
+# CONSTANTS
+#TESTS VERSION
+    #TOKENS
+TOKEN_TRANSCEIVER_TEST = "0123456789ABCDEF"
+    #TEST AssistanceApps
+AppID_LOCAL_ECHO_TEST = "LOCAL_ECHO_TEST"
+AppID_SHA256_TEST = "SHA256_TEST"
 
-def validMessageKind(msgKind):
-    return ( (msgKind == getSymbol("NEW_REQUEST", "MESSAGE_KIND")) or  (msgKind == getSymbol("STATUS_CHECK", "MESSAGE_KIND")) )
+#DEFAULT VALUES
+#SYMBOLS
+NOT_APPLYED = "NOT_APPLYED"
+#TIMES
+TIME_SOCK_COOLDOWN = 0.0
+#PORTS
+PORT_API_REQUESTS = 29112
+#TYPES
+TYPE_API_REQUEST_MSG = "MSG_API_REQUEST"
+TYPE_API_REQUEST_ANS = "ANS_API_REQUEST"
+#CHANNELS
+CHANNEL_LOCAL_FILE = "LOCAL_FILE"
+#TASK STATUS
+STATUS_DRAFT = "DRAFT"
+STATUS_WAITING = "WAITING"
+STATUS_PERFORMING_LOCAL = "PERFORMING_LOCAL"
+STATUS_COMPLETED_LOCAL = "COMPLETED_LOCAL"
+STATUS_INTERRUPTED_LOCAL = "INTERRUPTED_LOCAL"
 
 
-def getNewTicketNumber(objectHash):
-    return objectHash
 
 
-def getSymbol(constName, category=''):
-    if category=="STATUS":
-        if constName ==  'DRAFT':
-            return 'DRAFT'
-        if constName == 'WAITING':
-            return 'WAITING'
-        if constName == 'PERFORMING-LOCAL':
-            return 'PERFORMING-LOCAL'
-        if constName == 'PERFORMING-PEER':
-            return 'PERFORMING-PEER'
-        if constName == 'COMPLETED-LOCAL':
-            return 'COMPLETED-LOCAL'
-        if constName == 'COMPLETED-PEER':
-            return 'COMPLETED-PEER'
-        if constName == 'INTERRUPTED-LOCAL':
-            return 'INTERRUPTED-LOCAL'
-        if constName == 'INTERRUPTED-PEER':
-            return 'INTERRUPTED-PEER'
-    
-    elif category=="CHANNEL":
-        if constName ==  'IMMEDIATE':
-            return 'IMMEDIATE'
-        
-    elif category=="MESSAGE_KIND":
-        if constName ==  'NEW_REQUEST':
-            return 'NEW_REQUEST'
-        if constName ==  'STATUS_CHECK':
-            return 'STATUS_CHECK'
-        
-    else:
-        if constName == 'NONE':
-            return 'NONE'
-        if constName == 'LOCALHOST':
-            return 'LOCALHOST'
-        else:
-            return 0
-        
-        
-def getPort(constName):
-    if constName ==  'API_REQUEST':
-        return 29112
-    else:
-        return 0
-    
-    
-def getToken(tokenHolder):
-    if tokenHolder ==  'API_REQUEST':
-        return '0123456789ABCDEF'
-    else:
-        return ''
-    
-    
+
+
 def getCallerScript(taskDescription):
     #ALL ARGUMENTS COME AS A STRING - the data they refer may differ. EVERY ASSISTANCEAPP MUST HAVE A DEFAULT DATA FILES (DATA AND ANSWER) FOLDER, AND THIS FOLDER WILL DE SUBSCRIBED IN THE DBMS FOR EACH APP, SO THE APP CAN CALL ITS FILES FROM THE DEFAULT
-    args = ""
-    if(taskDescription.appArgs == getSymbol("NONE")):
+    args = taskDescription.appArgs
+    if args == NOT_APPLYED:
         args = ""
-    else:
-        args = taskDescription.appArgs
         
-    #Stub METHOD
-    assistanceAppDataFolder = ""
-    if taskDescription.appID == "ASSISTANCE_ECHO_TEST":
-        return ["AssistanceApps/echoInAllCaps.assistanceApp", str(taskDescription.localProcessPriority), args, assistanceAppDataFolder]
-    elif taskDescription.appID == "ASSISTANCE_SHA256_TEST":
-        return ["AssistanceApps/sha256Example.assistanceApp", str(taskDescription.localProcessPriority), args, assistanceAppDataFolder]
+    if taskDescription.appID == AppID_LOCAL_ECHO_TEST:
+        return ["AssistanceApps/echoInAllCaps.assistanceApp", str(taskDescription.localProcessPriority), args, str(taskDescription.gatheredDataLocation)]
+    elif taskDescription.appID == AppID_SHA256_TEST:
+        return ["AssistanceApps/sha256Example.assistanceApp", str(taskDescription.localProcessPriority), args, str(taskDescription.gatheredDataLocation)]
+
+
+
 
 
 def getThresholds(taskDescription, request=False):
