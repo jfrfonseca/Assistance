@@ -1,6 +1,7 @@
 import SocketServer
 from cpnLibrary.implementation import AssistanceDBMS
-from cpnLibrary.implementation.AssistanceDBMS import TYPE_API_REQUEST_MSG
+from cpnLibrary.implementation.AssistanceDBMS import TYPE_API_REQUEST_MSG,\
+    TYPE_STATUS_CHECK_MSG
 
 
 class AssistanceGenericAntenna (SocketServer.StreamRequestHandler):
@@ -26,6 +27,6 @@ class AssistanceGenericAntenna (SocketServer.StreamRequestHandler):
             raise ValueError("Security Alert! A client tried to connect to a Assistance Socket without the proper Authentication Token!")
         # Kind of the message: New request, or status check on already assigned Service Ticket
         msgKind = self.rfile.readline().strip()
-        if not msgKind in [TYPE_API_REQUEST_MSG]:
-            raise ValueError("Assistance APIRequest Server ERROR: Unknown Message Type!")
+        #if not msgKind in [TYPE_API_REQUEST_MSG, TYPE_STATUS_CHECK_MSG]:
+            #raise ValueError("Assistance APIRequest Server ERROR: Unknown Message Type!")
         return msgKind, authToken

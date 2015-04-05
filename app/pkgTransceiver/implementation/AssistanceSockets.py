@@ -38,6 +38,7 @@ class AssistanceSocketClient():
     def sendData(self, data):
         try:
             self.socketObject.sendall(data)
+            time.sleep(0.1)
         finally:
             stall = 1
             
@@ -45,6 +46,7 @@ class AssistanceSocketClient():
     def receiveData(self):
         try:
             received = self.socketObject.recv(self.bufferSize)
+            time.sleep(0.1)
         finally:
             return received
         

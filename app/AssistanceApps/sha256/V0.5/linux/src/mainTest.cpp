@@ -9,6 +9,7 @@
 #include <fstream>
 #include <streambuf>
 #include <stdlib.h>
+#include <string.h>
 
 #include "sha256.h"
 
@@ -20,7 +21,9 @@ using std::istreambuf_iterator;
 
 int main(int argc, char *argv[]) {
 	int verbose = 0;
-	if (argc > 3) {verbose = 1;}
+	int report = 100000;
+	if ((argc > 3) && (strcmp(argv[3], "-verbose") == 0)) {verbose = 1;}
+	if ((argc > 4)) {report = atoi(argv[4]);}
 
 	if(verbose == 1) {cout << "Calculating the SHA256 of file " << argv[1] << ", " << argv[2] << " times.\n";}
 	ifstream t(argv[1]);
@@ -45,7 +48,7 @@ int main(int argc, char *argv[]) {
 			cout << "ERROR! STRINGS DO NOT MATCH!\n";
 			break;
 		}
-		if ((verbose == 1) && (current % 100000 == 0)) {cout << "Calculated " << current << " out of " << total << "\n"; }
+		if ((verbose == 1) && (current % report == 0)) {cout << "Calculated " << current << " out of " << total << "\n"; }
 	}
  
     //cout << "sha256('"<< input << "'): " << output1 << "\n\n";

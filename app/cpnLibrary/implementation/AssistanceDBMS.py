@@ -13,17 +13,25 @@ NOT_APPLYED = "NOT_APPLYED"
 TIME_SOCK_COOLDOWN = 0.0
 #PORTS
 PORT_API_REQUESTS = 29112
+PORT_DATA = 21902
 #TYPES
 TYPE_API_REQUEST_MSG = "MSG_API_REQUEST"
 TYPE_API_REQUEST_ANS = "ANS_API_REQUEST"
+TYPE_STATUS_CHECK_MSG = "MSG_STATUS_CHECK"
+TYPE_STATUS_CHECK_ANS = "ANS_STATUS_CHECK"
+TYPE_RECOVER_RESULTS_MSG = "MSG_RECOVER_RESULTS"
+TYPE_RECOVER_RESULTS_ANS = "ANS_RECOVER_RESULTS"
 #CHANNELS
+CHANNEL_IMMEDIATE = "IMMEDIATE"
 CHANNEL_LOCAL_FILE = "LOCAL_FILE"
 #TASK STATUS
 STATUS_DRAFT = "DRAFT"
 STATUS_WAITING = "WAITING"
 STATUS_PERFORMING_LOCAL = "PERFORMING_LOCAL"
 STATUS_COMPLETED_LOCAL = "COMPLETED_LOCAL"
+STATUS_COMPLETED_REMOTE = "COMPLETED_REMOTE"
 STATUS_INTERRUPTED_LOCAL = "INTERRUPTED_LOCAL"
+STATUS_READY = "READY"
 
 
 
@@ -35,12 +43,31 @@ def getCallerScript(taskDescription):
     args = taskDescription.appArgs
     if args == NOT_APPLYED:
         args = ""
+    
+    workingDirectory = "AssistanceApps/"
+    scriptSettings = {}
         
     if taskDescription.appID == AppID_LOCAL_ECHO_TEST:
-        return ["AssistanceApps/echoInAllCaps.assistanceApp", str(taskDescription.localProcessPriority), args, str(taskDescription.gatheredDataLocation)]
+        scriptSettings["assistanceAppFile"] = "echoInAllCaps.assistanceApp"
+        scriptSettings["processPriority"] = str(taskDescription.localProcessPriority)
+        scriptSettings["dataFiles"] = str(taskDescription.gatheredDataLocation)
+        scriptSettings["ticket"] = taskDescription.ticket
+        scriptSettings["args"] = args
+        
+        taskDescription.answer["answerChannel"] = CHANNEL_IMMEDIATE
+        taskDescription.answer["outputsDirectory"] = workingDirectory+"outputs/"
+        
     elif taskDescription.appID == AppID_SHA256_TEST:
-        return ["AssistanceApps/sha256Example.assistanceApp", str(taskDescription.localProcessPriority), args, str(taskDescription.gatheredDataLocation)]
-
+        scriptSettings["assistanceAppFile"] = "sha256Example.assistanceApp"
+        scriptSettings["processPriority"] = str(taskDescription.localProcessPriority)
+        scriptSettings["dataFiles"] = str(taskDescription.gatheredDataLocation)
+        scriptSettings["ticket"] = taskDescription.ticket
+        scriptSettings["args"] = args
+        
+        taskDescription.answer["answerChannel"] = CHANNEL_LOCAL_FILE
+        taskDescription.answer["outputsDirectory"] = workingDirectory+"outputs/"
+        
+    return [workingDirectory+scriptSettings["assistanceAppFile"], scriptSettings["processPriority"], scriptSettings["dataFiles"], scriptSettings["ticket"], scriptSettings["args"]]
 
 
 
@@ -74,6 +101,12 @@ def getThresholds(taskDescription, request=False):
     
     return thresholds
 
+
+def normalizeOutput(taskDescription):      
+    if taskDescription.appID == AppID_LOCAL_ECHO_TEST:
+        return CHANNEL_IMMEDIATE, taskDescription.answer["output"], taskDescription.answer["errors"]
+    elif taskDescription.appID == AppID_SHA256_TEST:
+        return CHANNEL_LOCAL_FILE, taskDescription.answer["output"], taskDescription.answer["errors"]
 
 
 

@@ -68,8 +68,10 @@ class TaskDescription():
             self.ticket = ticketValue
             self.log +=  "\t"+datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S:%f')+" |- Assigned ticket '"+str(self.ticket)+"';\n"
             self.updateStatus(STATUS_WAITING)
-            
         
+            
+    def getResults(self):
+        return self.answer
         
         
         
