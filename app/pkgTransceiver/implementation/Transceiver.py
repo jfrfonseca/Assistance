@@ -4,7 +4,7 @@ from pkgTransceiver.implementation.AssistanceSockets import AssistanceSocketClie
 from pkgTransceiver.implementation.APIRequestAntenna import APIRequestAntenna
 from pkgTransceiver.implementation.DataAntenna import DataAntenna
 from cpnLibrary.implementation.AssistanceDBMS import PORT_API_REQUESTS,\
-    NOT_APPLYED, CHANNEL_LOCAL_FILE, PORT_DATA
+    NOT_APPLYED, CHANNEL_LOCAL_FILE, PORT_DATA_REQUESTS
 
         
         
@@ -22,7 +22,7 @@ class Transceiver():
         #set the API requests Antenna
         self.apiRequestAntenna = AssistanceSocketServer('', PORT_API_REQUESTS, APIRequestAntenna)
         #set the Data  Antenna
-        self.dataAntenna = AssistanceSocketServer('', PORT_DATA, DataAntenna)
+        self.dataAntenna = AssistanceSocketServer('', PORT_DATA_REQUESTS, DataAntenna)
         
         
     def shutdown(self):

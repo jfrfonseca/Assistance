@@ -1,6 +1,6 @@
 from cpnLibrary.implementation.AssistanceDBMS import TOKEN_TRANSCEIVER_TEST,\
     TYPE_API_REQUEST_MSG, NOT_APPLYED, PORT_API_REQUESTS,\
-    AppID_SHA256_TEST, CHANNEL_LOCAL_FILE, TYPE_STATUS_CHECK_MSG, PORT_DATA,\
+    AppID_SHA256_TEST, CHANNEL_LOCAL_FILE, TYPE_STATUS_CHECK_MSG, PORT_DATA_REQUESTS,\
     TYPE_RECOVER_RESULTS_MSG, STATUS_READY, TYPE_RECOVER_RESULTS_ANS
 from pkgTransceiver.implementation.AssistanceSockets import AssistanceSocketClient
 import time
@@ -23,7 +23,7 @@ def request():
 def checkStatus(serviceTicket):
     header = TOKEN_TRANSCEIVER_TEST+'\n'+TYPE_STATUS_CHECK_MSG+'\n'
     statusCheckMsg = serviceTicket+'\n'
-    dummySocket = AssistanceSocketClient('', PORT_DATA)
+    dummySocket = AssistanceSocketClient('', PORT_DATA_REQUESTS)
     #print "sending message"
     dummySocket.sendData(header+statusCheckMsg)
     #print "receiving ticket"
@@ -39,7 +39,7 @@ def synchronise(serviceTicket):
     while not msgType == TYPE_RECOVER_RESULTS_ANS:
         header = TOKEN_TRANSCEIVER_TEST+'\n'+TYPE_RECOVER_RESULTS_MSG+'\n'
         recoverMsg = serviceTicket+'\n'
-        dummySocket = AssistanceSocketClient('', PORT_DATA)
+        dummySocket = AssistanceSocketClient('', PORT_DATA_REQUESTS)
         #print "sending message"
         dummySocket.sendData(header+recoverMsg)
         #print "receiving ticket"
