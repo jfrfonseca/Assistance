@@ -3,13 +3,19 @@ import pkgMissionControl.implementation.Launcher, SystemStats
 from cpnLibrary.implementation import AssistanceDBMS
 from pkgPerformer.implementation import Performer
 from cpnLibrary.implementation.AssistanceDBMS import NOT_APPLYED, STATUS_DRAFT,\
-    STATUS_WAITING
+    STATUS_WAITING, TOKEN_LOCAL, TUNNING_DEFAULT_PROCESS_PRIORITY, setTaskPriority,\
+    DIR_LOGS
+import hashlib
 
 
 def includeNewTask(taskDescription):
     officerInstance = pkgMissionControl.implementation.Launcher.getOfficerInstance()
-    ticket = officerInstance.includeTask(taskDescription)
-    return ticket
+    #decides if there will be servicing to this request. If it does,
+    if officerInstance.goNoGo(taskDescription):
+        return officerInstance.includeTask(taskDescription)
+    # if the request will NOT be serviced, returns a negative ticket (literally). Default ticket for "no go":-1
+    else:
+        return '-1'
 
 
 
@@ -21,6 +27,7 @@ class TaskDescription():
         self.log = "\t"+datetime.datetime.fromtimestamp(timeReceived).strftime('%Y-%m-%d %H:%M:%S:%f')+" |- New task (appID '"+str(appID)+"') received by Assistance from token "+authToken+";\n"
         self.authToken = authToken
         self.timeReceived = timeReceived
+        self.timeLabeled = NOT_APPLYED
         
         # Task Request Meta
         self.appID = appID
@@ -40,7 +47,7 @@ class TaskDescription():
         self.callerScript = ''
         self.workerThreads = {}
         self.lock = threading.Condition()
-        self.localProcessPriority = 10
+        self.localProcessPriority = TUNNING_DEFAULT_PROCESS_PRIORITY
     
     
        
@@ -54,11 +61,11 @@ class TaskDescription():
         self.status = newPriority
         
         
-    def logResourcesStatus(self, cpuMemUsage):
+    def logResourcesStatus(self, cpuMemDiskUsage):
         self.log += "\t"+datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S:%f')+" |- The current usage of system resources is: "
-        for resourceName in cpuMemUsage.keys():
-            self.log += "--"+str(resourceName)+": "+str(cpuMemUsage[resourceName])+" %; "
-        self.log += "\n"
+        self.log += "--free space (in AssistanceApps CWD partition): "+str(cpuMemDiskUsage["space"])+";\t"
+        self.log += "--memory usage: "+str(cpuMemDiskUsage["memory"])+"%;\t"
+        self.log += "--CPU usage: "+str(cpuMemDiskUsage["CPU"])+"%;\n"
             
         
     def setTicket(self, ticketValue):
@@ -66,7 +73,7 @@ class TaskDescription():
             raise ValueError("Security Alert! Attempt to overwrite Assistance ServiceTicket of task ticket "+str(self.ticket)+"!")
         else:
             self.ticket = ticketValue
-            self.log +=  "\t"+datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S:%f')+" |- Assigned ticket '"+str(self.ticket)+"';\n"
+            self.log +=  "\t"+datetime.datetime.fromtimestamp(self.timeLabeled).strftime('%Y-%m-%d %H:%M:%S:%f')+" |- Assigned ticket '"+str(self.ticket)+"';\n"
             self.updateStatus(STATUS_WAITING)
         
             
@@ -77,13 +84,21 @@ class TaskDescription():
         
 class Officer():
     taskBuffer = {}
-    testTicket = 0
     
                     
     def generateTicket(self, taskDescription):
-        #TODO Make it more robust and coherent
-        self.testTicket += 1
-        return "testTicket"+str(self.testTicket)
+        #The ticket must be the timeLabeled (time.time() defined here, 10.6 digits without punctuation), appended to the #TODO-signed SHA256 of the task's timeLabeled, localInstanceAuthToken, task's authToken, appID, appArgs, dataDelivery
+        tokenHash = hashlib.sha256()
+        taskDescription.timeLabeled = time.time()
+        
+        tokenHash.update(str(taskDescription.timeLabeled))
+        tokenHash.update(TOKEN_LOCAL)
+        tokenHash.update(taskDescription.authToken)
+        tokenHash.update(taskDescription.appID)
+        tokenHash.update(taskDescription.appArgs)
+        tokenHash.update(taskDescription.dataDelivery)
+        
+        return str(taskDescription.timeLabeled).replace(".", "")+str(tokenHash.hexdigest())
 
 
     def defineDistribution(self, taskDescription):
@@ -103,7 +118,11 @@ class Officer():
             CPUtotal += CPUstatus[index]
         CPUtotal /= len(CPUstatus)
         
-        taskDescription.logResourcesStatus({"memory": memoryStatus, "CPU (average)": CPUtotal})
+        #checks the space(in Kb)  on the partition of the assistance working directory
+        diskStatus = SystemStats.getFreeKbInAssistanceAppsCWD()
+        
+        #logs the current status
+        taskDescription.logResourcesStatus({"memory": memoryStatus, "CPU": CPUtotal, "space": SystemStats.getFreeSpaceInAssistanceAppsCWD_HumanReadable()})
         
         #decides if there should be a local and a remote execution of this task. Maybe there should always be a local
         #if the CPU usage is smaller than the minimum usage to perform locally, or larger than the maximum, so it should not perform locally
@@ -122,8 +141,15 @@ class Officer():
             if memoryStatus[memoryKind] < thresholds["performRemote"]["memory"]["minimum"][memoryKind] or memoryStatus[memoryKind] > thresholds["performRemote"]["memory"]["maximum"][memoryKind]:
                 distribution["remote"]=False  
         
-        #TODO Checks the disk usage in each partition, to only perform if there are enough space in the partition destined for the performer data and answer
-        #TODO calculate performance priority given the delta of the actual system usage to the ideal constraints
+        #Checks the disk usage in each partition, to only perform if there are enough space in the partition destined for the performer data and answer
+        if diskStatus < thresholds["performLocal"]["disk"]["minimum"] or diskStatus > thresholds["performLocal"]["disk"]["maximum"]:
+                distribution["local"]=False
+        #if the disk usage is smaller than the minimum usage to perform remotely, or larger than the maximum, so it should not perform remotely
+        if diskStatus < thresholds["performRemote"]["disk"]["minimum"] or diskStatus > thresholds["performRemote"]["disk"]["maximum"]:
+                distribution["remote"]=False  
+        
+        #calculate performance priority of the task given the delta of the actual system usage to the ideal constraints
+        setTaskPriority(taskDescription, CPUtotal, memoryStatus, diskStatus)
         
         return distribution
 
@@ -141,7 +167,7 @@ class Officer():
         if distributionOfExecution["remote"] or not distributionOfExecution["local"]:
             #TODO requests assistance from remote peer
             #this is a "nop" operation
-            nop = 1
+            stall = 1
         # waits the first (remote or local) to complete
         task.lock.acquire()
         while task.timeCompleted == '':
@@ -169,11 +195,34 @@ class Officer():
         return self.getTask(taskTicket).status               
        
     
+    def goNoGo(self, taskDescription):
+        # temporarily, a #STUB
+        return True
+        """
+        if REJECTED:
+        
+        taskDescription.setTicket('-1')
+        taskDescription.timeLabeled = time.time()
+        AssistanceDBMS.logTask(taskDescription)
+        """
+    
+    
     # DevTools methods ----------------------------------------
     
     def printLogs(self):
-        print "\n====================================\nLogs for all Assistance ServiceTickets in the Officer's Buffers:"
+        print "\n====================================\nLogs for all Assistance ServiceTickets in the Officer's Buffers as in "+datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S:%f')
         for ticket in self.taskBuffer.keys():
             print "ServiceTicket "+str(ticket)+" ("+self.getTask(ticket).status+") Log:\n"+self.getTask(ticket).log
+            
+    def saveLogs(self):
+        logTime = time.time()
+        logFile = open(DIR_LOGS+str(int(time.time()))+".log", 'w')
+        logFile.write("\n====================================\nLogs for all Assistance ServiceTickets in the Officer's Buffers as in "+datetime.datetime.fromtimestamp(logTime).strftime('%Y-%m-%d %H:%M:%S:%f'))
+        for ticket in self.taskBuffer.keys():
+            logFile.write("\nServiceTicket "+str(ticket)+" ("+self.getTask(ticket).status+") Log:\n"+self.getTask(ticket).log)
+        logFile.close()
+            
+            
+            
         
         

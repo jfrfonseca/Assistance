@@ -2,6 +2,7 @@
 #TESTS VERSION
     #TOKENS
 TOKEN_TRANSCEIVER_TEST = "0123456789ABCDEF"
+TOKEN_LOCAL = "0123456789ABCDEF"
     #TEST AssistanceApps
 AppID_LOCAL_ECHO_TEST = "LOCAL_ECHO_TEST"
 AppID_SHA256_TEST = "SHA256_TEST"
@@ -25,6 +26,7 @@ TYPE_RECOVER_RESULTS_ANS = "ANS_RECOVER_RESULTS"
 #CHANNELS
 CHANNEL_IMMEDIATE = "IMMEDIATE"
 CHANNEL_LOCAL_FILE = "LOCAL_FILE"
+CHANNEL_FTP = "FTP"
 #TASK STATUS
 STATUS_DRAFT = "DRAFT"
 STATUS_WAITING = "WAITING"
@@ -33,6 +35,11 @@ STATUS_COMPLETED_LOCAL = "COMPLETED_LOCAL"
 STATUS_COMPLETED_REMOTE = "COMPLETED_REMOTE"
 STATUS_INTERRUPTED_LOCAL = "INTERRUPTED_LOCAL"
 STATUS_READY = "READY"
+#DIRECTORIES
+DIR_APPS_CWD = "AssistanceApps/"
+DIR_LOGS = "LOG/"
+#TUNNING
+TUNNING_DEFAULT_PROCESS_PRIORITY = 10
 
 
 
@@ -45,7 +52,6 @@ def getCallerScript(taskDescription):
     if args == NOT_APPLYED:
         args = ""
     
-    workingDirectory = "AssistanceApps/"
     scriptSettings = {}
         
     if taskDescription.appID == AppID_LOCAL_ECHO_TEST:
@@ -56,7 +62,7 @@ def getCallerScript(taskDescription):
         scriptSettings["args"] = args
         
         taskDescription.answer["answerChannel"] = CHANNEL_IMMEDIATE
-        taskDescription.answer["outputsDirectory"] = workingDirectory+"outputs/"
+        taskDescription.answer["outputsDirectory"] = DIR_APPS_CWD+"outputs/"
         
     elif taskDescription.appID == AppID_SHA256_TEST:
         scriptSettings["assistanceAppFile"] = "sha256Example.assistanceApp"
@@ -66,9 +72,9 @@ def getCallerScript(taskDescription):
         scriptSettings["args"] = args
         
         taskDescription.answer["answerChannel"] = CHANNEL_LOCAL_FILE
-        taskDescription.answer["outputsDirectory"] = workingDirectory+"outputs/"
+        taskDescription.answer["outputsDirectory"] = DIR_APPS_CWD+"outputs/"
         
-    return [workingDirectory+scriptSettings["assistanceAppFile"], scriptSettings["processPriority"], scriptSettings["dataFiles"], scriptSettings["ticket"], scriptSettings["args"]]
+    return [DIR_APPS_CWD+scriptSettings["assistanceAppFile"], scriptSettings["processPriority"], scriptSettings["dataFiles"], scriptSettings["ticket"], scriptSettings["args"]]
 
 
 
@@ -95,10 +101,11 @@ def getThresholds(taskDescription, request=False):
     thresholds["performRemote"]["CPU"]["maximum"] = 101
     thresholds["performRemote"]["CPU"]["priorityIncreaseDelta"] = 10  
     #Disk
+    #OK, the maximum is not a percentage. Only AFTER I get a computer that has MORE than a PetaByte FREE in space, you can tell me "I told you so", figure-of-speech me from the future! Remember, smartass, those amounts are in KBs!
     thresholds["performLocal"]["disk"]["minimum"] = -1
-    thresholds["performLocal"]["disk"]["maximum"] = -1     
+    thresholds["performLocal"]["disk"]["maximum"] = 1000000000000000    
     thresholds["performRemote"]["disk"]["minimum"] = -1
-    thresholds["performRemote"]["disk"]["maximum"] = -1
+    thresholds["performRemote"]["disk"]["maximum"] = 1000000000000000
     
     return thresholds
 
@@ -109,6 +116,10 @@ def normalizeOutput(taskDescription):
     elif taskDescription.appID == AppID_SHA256_TEST:
         return CHANNEL_LOCAL_FILE, taskDescription.answer["output"], taskDescription.answer["errors"]
 
+
+def setTaskPriority(taskDescription, CPUusage, memoryUsage, freeSpace):
+    #temporarily a #STUB that does not modify the task's priority
+    stall = 1
 
 
 

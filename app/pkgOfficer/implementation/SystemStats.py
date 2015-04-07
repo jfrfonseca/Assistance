@@ -1,4 +1,5 @@
 import psutil, os
+from cpnLibrary.implementation.AssistanceDBMS import DIR_APPS_CWD
 
 def bytes2human(n):
 	# http://code.activestate.com/recipes/578019
@@ -16,6 +17,7 @@ def bytes2human(n):
 			return '%.1f%s' % (value, s)
 	return "%sB" % n
 	
+	
 def getMemoryUsage():
 	phymem = psutil.phymem_usage()
 	virtmem = psutil.virtmem_usage()
@@ -27,8 +29,10 @@ def getCPUusage():
 	percentArray = psutil.cpu_percent(interval=1, percpu=True)
 	return percentArray
 
+"""
 def getFreeSpaceInDiskPartition(mountpoint):
 	return bytes2human(psutil.disk_usage(mountpoint).free)
+
 
 def getDiskFreeSpace():
 	spaceArray = []
@@ -39,4 +43,15 @@ def getDiskFreeSpace():
 				continue
 		spaceArray.append(getFreeSpaceInDiskPartition(part.mountpoint))			
 	return spaceArray
+"""
+
+def getFreeKbInAssistanceAppsCWD():
+	path = os.path.abspath(DIR_APPS_CWD)
+	kbytes = (psutil.disk_usage(path)[2])/1024
+	return kbytes
+
+
+def getFreeSpaceInAssistanceAppsCWD_HumanReadable():
+	return bytes2human(psutil.disk_usage(os.path.abspath(DIR_APPS_CWD))[2])
+
 
