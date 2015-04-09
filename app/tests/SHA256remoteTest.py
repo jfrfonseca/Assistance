@@ -1,25 +1,43 @@
-from cpnLibrary.implementation.AssistanceDBMS import TOKEN_TRANSCEIVER_TEST,\
-    TYPE_API_REQUEST_MSG, NOT_APPLYED, PORT_API_REQUESTS,\
-    AppID_SHA256_TEST, CHANNEL_LOCAL_FILE, TYPE_STATUS_CHECK_MSG, PORT_DATA_REQUESTS,\
-    TYPE_RECOVER_RESULTS_MSG, STATUS_READY, TYPE_RECOVER_RESULTS_ANS,\
-    CHANNEL_FTP
 from pkgTransceiver.implementation.AssistanceSockets import AssistanceSocketClient
 import time
+import os
+from cpnLibrary.implementation.Constants import *
 
 ASSISTANCE_SERVER = '127.0.0.1'
 
-def request():
-    header = TOKEN_TRANSCEIVER_TEST+'\n'+TYPE_API_REQUEST_MSG+'\n'
-    apiRequestMsg = AppID_SHA256_TEST+'\n'+"60000 -verbose 20000"+'\n'+CHANNEL_FTP+'\n'+"TODO THE DATA FILE"+'\n'
+def request(dataFile):
+    fileLength = str(os.stat(dataFile).st_size)
+    header = TOKEN_LOCAL+'\n'+TYPE_API_REQUEST_MSG+'\n'
+    apiRequestMsg = AppID_SHA256_TEST+'\n'+"60000 -verbose 20000"+'\n'+CHANNEL_FTP+'\n'+fileLength+'\n'
     dummySocket = AssistanceSocketClient(ASSISTANCE_SERVER, PORT_API_REQUESTS)
     #print "sending message"
     dummySocket.sendData(header+apiRequestMsg)
     #print "receiving ticket"
-    time.sleep(0.1)
+    time.sleep(TIME_SOCK_COOLDOWN)
     answerData = dummySocket.receiveData()
     #print "closing socket"
     dummySocket.close()
     return answerData.split('\n')[2]
+
+
+def submit(serviceTicket, fileName):
+    header = TOKEN_LOCAL+'\n'+TYPE_DATA_SUBMIT_MSG+'\n'
+    dataSubmitMsg = serviceTicket+'\n'
+    dummySocket = AssistanceSocketClient(ASSISTANCE_SERVER, PORT_DATA_REQUESTS)
+    dummySocket.sendData(header+dataSubmitMsg)
+    dummySocket.sendFile(os.path.abspath("tests/test0data.dat"), fileName)
+    dummySocket.close()
+
+
+def recover(serviceTicket):
+    header = TOKEN_LOCAL+'\n'+TYPE_DATA_RECOVER_MSG+'\n'
+    dataRecoverMsg = serviceTicket+'\n'
+    dummySocket = AssistanceSocketClient(ASSISTANCE_SERVER, PORT_DATA_REQUESTS)
+    dummySocket.sendData(header+dataRecoverMsg)
+    output = dummySocket.receiveFile(os.getcwd())
+    errors = dummySocket.receiveFile(os.getcwd())
+    dummySocket.close()
+    return output, errors
 
 
 def checkStatus(serviceTicket):
@@ -29,16 +47,12 @@ def checkStatus(serviceTicket):
     #print "sending message"
     dummySocket.sendData(header+statusCheckMsg)
     #print "receiving ticket"
-    time.sleep(0.1)
+    time.sleep(TIME_SOCK_COOLDOWN)
     answerData = dummySocket.receiveData()
     #print "closing socket"
     dummySocket.close()
     return answerData.split('\n')[3]
 
-
-def downloadData():
-    output = answerData.split('\n')[4]
-    errors = answerData.split('\n')[5]
 
 
 def synchronise(serviceTicket):
@@ -54,4 +68,5 @@ def synchronise(serviceTicket):
         #print "closing socket"
         dummySocket.close()
         msgType = answerData.split('\n')[1]
-    return answerData.split('\n')[4] +'\n'+ answerData.split('\n')[5]
+    outputPath, errorsPath = recover(serviceTicket)
+    return outputPath, errorsPath

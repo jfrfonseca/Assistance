@@ -1,8 +1,8 @@
-from pkgOfficer.implementation.Officer import TaskDescription, includeNewTask
+from pkgOfficer.implementation.TaskDescription import TaskDescription
 import pkgMissionControl.implementation.Launcher, time
 from pkgTransceiver.implementation.AssistanceGenericAntenna import AssistanceGenericAntenna
-from cpnLibrary.implementation.AssistanceDBMS import TOKEN_TRANSCEIVER_TEST,\
-    TYPE_API_REQUEST_MSG, TYPE_API_REQUEST_ANS
+from cpnLibrary.implementation.Constants import *
+from pkgOfficer.implementation.Officer import includeNewTask
 
 
 class APIRequestAntenna (AssistanceGenericAntenna):
@@ -33,7 +33,7 @@ class APIRequestAntenna (AssistanceGenericAntenna):
     
     def handle(self):
         #print "received message"
-        self.localToken = TOKEN_TRANSCEIVER_TEST
+        self.localToken = TOKEN_LOCAL
         # logTime
         timeReceived = time.time()
         # parse the received data header
@@ -45,11 +45,11 @@ class APIRequestAntenna (AssistanceGenericAntenna):
             #print "parsing request"
             self.taskDescription = self.parseAssistanceRequest(authToken, timeReceived)
             #print "request parsed"
-            # treats the data received and returns a service ticket
+            # treats the data received and returns a service TICKET
             taskTicket = self.getTicket()
-            #print "got ticket"
+            #print "got TICKET"
             # print out some info
-            pkgMissionControl.implementation.Launcher.getTransceiverInstance().logEvent("Assistance APIRequest Server: received an AssistanceRequest\n\tfor AssistanceApp "+self.taskDescription.appID+";\n\tfrom API token "+self.taskDescription.authToken+";\n\ton port "+str(self.client_address[0])+";\n\tassigned Assistance ServiceTicket "+str(self.taskDescription.ticket)+" ;")
+            pkgMissionControl.implementation.Launcher.getTransceiverInstance().logEvent("Assistance APIRequest Server: received an AssistanceRequest\n\tfor AssistanceApp "+self.taskDescription.APPID+";\n\tfrom API token "+self.taskDescription.TOKEN+";\n\ton port "+str(self.client_address[0])+";\n\tassigned Assistance ServiceTicket "+str(self.taskDescription.TICKET)+" ;")
             #writeback the answer header and the time of arrival of the message
             #print "sending answer"
             self.wfile.write(self.makeAnswerHeader(TYPE_API_REQUEST_ANS, taskTicket)+str(timeReceived)+"\n")

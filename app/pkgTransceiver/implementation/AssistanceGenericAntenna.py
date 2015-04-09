@@ -30,3 +30,4 @@ class AssistanceGenericAntenna (SocketServer.StreamRequestHandler):
         #if not msgKind in [TYPE_API_REQUEST_MSG, TYPE_STATUS_CHECK_MSG]:
             #raise ValueError("Assistance APIRequest Server ERROR: Unknown Message Type!")
         return msgKind, authToken
+

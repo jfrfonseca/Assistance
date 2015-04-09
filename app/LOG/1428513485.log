@@ -1,0 +1,45 @@
+
+====================================
+Logs for all Assistance ServiceTickets in the Officer's Buffers as in 2015-04-08 14:18:05:679613
+ServiceTicket 142851348286c871b7ad2997b79a9f57afcd71f6686ebdf5820b9d70f0173686d647fa87c265 (READY) Log:
+	2015-04-08 14:18:02:862284 |- New task (appID 'LOCAL_ECHO_TEST') received by Assistance from token 0123456789ABCDEF;
+	2015-04-08 14:18:02:862408 |- Assigned ticket '142851348286c871b7ad2997b79a9f57afcd71f6686ebdf5820b9d70f0173686d647fa87c265';
+	2015-04-08 14:18:02:862464 |- Status update: (DRAFT --> WAITING);
+	2015-04-08 14:18:03:878929 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 45.1G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 22.4}%;	--CPU usage: 39.2%;
+	2015-04-08 14:18:03:879109 |- Status update: (WAITING --> PERFORMING_LOCAL);
+	2015-04-08 14:18:05:570478 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-04-08 14:18:05:570940 |- Status update: (COMPLETED_LOCAL --> READY);
+
+ServiceTicket 142851348286c4d1691203babe8efb3e807854f7b09395a394979e9ed1f69f0c184a9a7872b6 (READY) Log:
+	2015-04-08 14:18:02:864560 |- New task (appID 'SHA256_TEST') received by Assistance from token 0123456789ABCDEF;
+	2015-04-08 14:18:02:864777 |- Assigned ticket '142851348286c4d1691203babe8efb3e807854f7b09395a394979e9ed1f69f0c184a9a7872b6';
+	2015-04-08 14:18:02:864840 |- Status update: (DRAFT --> WAITING);
+	2015-04-08 14:18:03:870170 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 45.1G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 22.4}%;	--CPU usage: 39.025%;
+	2015-04-08 14:18:03:870299 |- Status update: (WAITING --> PERFORMING_LOCAL);
+	2015-04-08 14:18:05:571420 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-04-08 14:18:05:571625 |- Status update: (COMPLETED_LOCAL --> READY);
+
+ServiceTicket 142851348297e3e639887319231685eed5cbbfc84a3e7f9e4289004c49b4da5ca061417a8749 (READY) Log:
+	2015-04-08 14:18:02:965212 |- New task (appID 'SHA256_TEST') received by Assistance from token 0123456789ABCDEF;
+	2015-04-08 14:18:02:965571 |- Assigned ticket '142851348297e3e639887319231685eed5cbbfc84a3e7f9e4289004c49b4da5ca061417a8749';
+	2015-04-08 14:18:02:965664 |- Status update: (DRAFT --> WAITING);
+	2015-04-08 14:18:03:970793 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 45.1G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 22.4}%;	--CPU usage: 40.525%;
+	2015-04-08 14:18:03:970923 |- Status update: (WAITING --> PERFORMING_LOCAL);
+	2015-04-08 14:18:05:673171 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-04-08 14:18:05:673582 |- Status update: (COMPLETED_LOCAL --> READY);
+
+ServiceTicket 142851348568e93fa40a197c785eed63598cdbdb1a443b23ff08da3a97cae10bbac63ef6e041 (PERFORMING_LOCAL) Log:
+	2015-04-08 14:18:05:675767 |- New task (appID 'SHA256_TEST') received by Assistance from token 0123456789ABCDEF;
+	2015-04-08 14:18:05:676008 |- Assigned ticket '142851348568e93fa40a197c785eed63598cdbdb1a443b23ff08da3a97cae10bbac63ef6e041';
+	2015-04-08 14:18:05:676095 |- Status update: (DRAFT --> WAITING);
+	2015-04-08 14:18:05:679742 |- Status update: (WAITING --> WAITING);
+	2015-04-08 14:18:05:679817 |- Status update: (WAITING --> PERFORMING_LOCAL);
+
+ServiceTicket 142851348286de62d353ce25bcfa530d43a4594500fd1f2829f397c91ecc09b535969778a047 (READY) Log:
+	2015-04-08 14:18:02:861226 |- New task (appID 'LOCAL_ECHO_TEST') received by Assistance from token 0123456789ABCDEF;
+	2015-04-08 14:18:02:861466 |- Assigned ticket '142851348286de62d353ce25bcfa530d43a4594500fd1f2829f397c91ecc09b535969778a047';
+	2015-04-08 14:18:02:861552 |- Status update: (DRAFT --> WAITING);
+	2015-04-08 14:18:03:868543 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 45.1G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 22.4}%;	--CPU usage: 39.025%;
+	2015-04-08 14:18:03:868666 |- Status update: (WAITING --> PERFORMING_LOCAL);
+	2015-04-08 14:18:03:890424 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-04-08 14:18:03:890916 |- Status update: (COMPLETED_LOCAL --> READY);

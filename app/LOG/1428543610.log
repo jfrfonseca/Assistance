@@ -1,0 +1,29 @@
+
+====================================
+Logs for all Assistance ServiceTickets in the Officer's Buffers as in 2015-04-08 22:40:10:572887
+ServiceTicket 1428543608179873dc62a1be21cce7948fa3a3e2b1ce0d880656cad9cc742c55fe86e487a72f (READY) Log:
+	2015-04-08 22:40:08:171976 |- New task (APPID 'SHA256_TEST') received by Assistance from token 0123456789ABCDEF;
+	2015-04-08 22:40:08:172309 |- Assigned TICKET '1428543608179873dc62a1be21cce7948fa3a3e2b1ce0d880656cad9cc742c55fe86e487a72f';
+	2015-04-08 22:40:08:172373 |- Status update: (DRAFT --> WAITING);
+	2015-04-08 22:40:09:183020 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 45.0G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 25.2}%;	--CPU usage: 46.55%;
+	2015-04-08 22:40:09:183104 |- Status update: (WAITING --> PERFORMING_LOCAL);
+	2015-04-08 22:40:10:568768 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-04-08 22:40:10:568982 |- Status update: (COMPLETED_LOCAL --> READY);
+
+ServiceTicket 142854360714e97e0ad7be0df305630c0cdd22d08e0d0c459daa7ae5fd0102f3a864c81fdcf2 (READY) Log:
+	2015-04-08 22:40:07:143208 |- New task (APPID 'LOCAL_ECHO_TEST') received by Assistance from token 0123456789ABCDEF;
+	2015-04-08 22:40:07:143424 |- Assigned TICKET '142854360714e97e0ad7be0df305630c0cdd22d08e0d0c459daa7ae5fd0102f3a864c81fdcf2';
+	2015-04-08 22:40:07:143470 |- Status update: (DRAFT --> WAITING);
+	2015-04-08 22:40:08:149697 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 45.0G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 25.1}%;	--CPU usage: 77.225%;
+	2015-04-08 22:40:08:149790 |- Status update: (WAITING --> PERFORMING_LOCAL);
+	2015-04-08 22:40:08:166941 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-04-08 22:40:08:167120 |- Status update: (COMPLETED_LOCAL --> READY);
+
+ServiceTicket 14285436071455ad10f60a0022a033048c029a341ee39f0010312716026351b41255b915a328 (READY) Log:
+	2015-04-08 22:40:07:141935 |- New task (APPID 'LOCAL_ECHO_TEST') received by Assistance from token 0123456789ABCDEF;
+	2015-04-08 22:40:07:142124 |- Assigned TICKET '14285436071455ad10f60a0022a033048c029a341ee39f0010312716026351b41255b915a328';
+	2015-04-08 22:40:07:142200 |- Status update: (DRAFT --> WAITING);
+	2015-04-08 22:40:08:146950 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 45.0G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 25.1}%;	--CPU usage: 77.55%;
+	2015-04-08 22:40:08:147079 |- Status update: (WAITING --> PERFORMING_LOCAL);
+	2015-04-08 22:40:08:165022 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-04-08 22:40:08:165544 |- Status update: (COMPLETED_LOCAL --> READY);
