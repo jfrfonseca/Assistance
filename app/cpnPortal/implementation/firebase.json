@@ -1,9 +1,0 @@
-{
-  "firebase": "assistance-dev",
-  "public": ".",
-  "ignore": [
-    "firebase.json",
-    "**/.*",
-    "**/node_modules/**"
-  ]
-}

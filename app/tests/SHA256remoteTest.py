@@ -1,7 +1,19 @@
-from pkgTransceiver.implementation.AssistanceSockets import AssistanceSocketClient
+#!/usr/bin/env python
+'''
+Performer.py - Class of the AssistancePerformer Package with the functions to execute a task from the Assistance Officer
+Jose F. R. Fonseca
+See Attached License file
+'''
+# NATIVE MODULE IMPORTS ------------------
 import time
-import os
-from cpnLibrary.implementation.Constants import *
+# ASSISTANCE MODULE IMPORTS ----------
+from pkgTransceiver.implementation.AssistanceSockets import AssistanceSocketClient
+from cpnLibrary.implementation.Constants import TOKEN_TESTS_VERSION,\
+    TYPE_API_REQUEST_MSG, TYPE_DATA_SUBMIT_MSG, TYPE_STATUS_CHECK_MSG,\
+    TYPE_RECOVER_RESULTS_MSG, PORT_API_REQUESTS, PORT_DATA_REQUESTS,\
+    STATUS_GATHERING_DATA, STATUS_READY, SYMBOL_SEPARATOR,\
+    TIME_DATA_SERVER_INTERVAL, AppID_SHA256_TEST, CHANNEL_FTP
+# ASSISTANCE CONSTANTS IMPORTS -----
 
 ASSISTANCE_SERVER = '127.0.0.1'
 

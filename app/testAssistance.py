@@ -1,22 +1,46 @@
+#!/usr/bin/env python
+'''
+Performer.py - Class of the AssistancePerformer Package with the functions to execute a task from the Assistance Officer
+Jose F. R. Fonseca
+See Attached License file
+'''
+# NATIVE MODULE IMPORTS ------------------
 import unittest
+# ASSISTANCE MODULE IMPORTS ----------
 import Assistance
 from pkgMissionControl.implementation import Launcher
+# ASSISTANCE OBJECT IMPORTS ------------
 from tests import SHA256Test, SHA256remoteTest, EchoTest
 
+'''
+Performs a series of functionality tests
+'''
 class TestAssistance(unittest.TestCase):
     
-    # Starts the Assistance Service
+    '''
+    Starts the Assistance Service
+    '''
     def setUp(self):        
         Assistance.setup()
         
-    # Finishes the Assistance Service  
+    '''
+    Shuts down Assistance Service  
+    '''
     def tearDown(self):      
         #time.sleep(10)  
         print "All tests are done. Saving  the LOGs and closing up"
         Launcher.getOfficerInstance().saveLogs() 
         Assistance.shutdown()
-        
-    # Test the local echo - submit and recover tickets, check the status, and synchronises each ticket.
+    
+    '''    
+    Basic functionality tests:
+        request a ticket (in 3 different apps, 2-3 times each)
+        checks the status of the task (probably it will be "waiting")
+        synchronizes the results
+    The EchoTest app sends a string, and receives it back in all caps. All as immediates. The performer runs in python
+    The SHA256test sends the path to a local file to a pre-compiled C app, that outputs the results in files, and returns the paths to stderr and stdout back
+    The SHA256remoteTest does almost the same that the last test, but this time, a file is submit by a socket and the results are returned by another
+    '''
     def test(self):        
         print "Echo Test"        
         ticket1 = EchoTest.request("Hello World")
@@ -63,10 +87,10 @@ class TestAssistance(unittest.TestCase):
         print "Synch: "
         print SHA256remoteTest.synch(ticket5)
         print SHA256remoteTest.synch(ticket6)
-        
-        #time.sleep(10)
     
         
-    
+'''
+Runs this file
+'''    
 if __name__ == '__main__':
     unittest.main()      
