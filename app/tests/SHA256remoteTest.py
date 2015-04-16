@@ -5,68 +5,105 @@ from cpnLibrary.implementation.Constants import *
 
 ASSISTANCE_SERVER = '127.0.0.1'
 
-def request(dataFile):
-    fileLength = str(os.stat(dataFile).st_size)
-    header = TOKEN_LOCAL+'\n'+TYPE_API_REQUEST_MSG+'\n'
-    apiRequestMsg = AppID_SHA256_TEST+'\n'+"60000 -verbose 20000"+'\n'+CHANNEL_FTP+'\n'+fileLength+'\n'
+fileLength = lambda filePath : str(len(open(filePath, 'rb').read()))
+
+def request(filePath):
+    '''
+    MAKE MSG
+    '''
+    header = TOKEN_TESTS_VERSION+'\n'+TYPE_API_REQUEST_MSG+'\n'
+    apiRequestMsg = AppID_SHA256_TEST+'\n'\
+                             +"60000 -verbose 20000"+'\n'\
+                             +CHANNEL_FTP+'\n'\
+                             +fileLength(filePath)+'\n'\
+                             +CHANNEL_FTP+'\n'
+    '''
+    SEND
+    '''
     dummySocket = AssistanceSocketClient(ASSISTANCE_SERVER, PORT_API_REQUESTS)
-    #print "sending message"
     dummySocket.sendData(header+apiRequestMsg)
-    #print "receiving ticket"
-    time.sleep(TIME_SOCK_COOLDOWN)
+    '''
+    GET TICKET
+    '''
     answerData = dummySocket.receiveData()
-    #print "closing socket"
     dummySocket.close()
-    return answerData.split('\n')[2]
+    ticket = answerData.split('\n')[2]
+    return ticket
 
 
-def submit(serviceTicket, fileName):
-    header = TOKEN_LOCAL+'\n'+TYPE_DATA_SUBMIT_MSG+'\n'
-    dataSubmitMsg = serviceTicket+'\n'
+
+def submit(serviceTicket, filePath):
+    while checkStatus(serviceTicket) != STATUS_GATHERING_DATA:
+        time.sleep(TIME_DATA_SERVER_INTERVAL)
     dummySocket = AssistanceSocketClient(ASSISTANCE_SERVER, PORT_DATA_REQUESTS)
-    dummySocket.sendData(header+dataSubmitMsg)
-    dummySocket.sendFile(os.path.abspath("tests/test0data.dat"), fileName)
+    header = TOKEN_TESTS_VERSION + '\n' + TYPE_DATA_SUBMIT_MSG + '\n'
+    submitMsg = serviceTicket+'\n'
+    dummySocket.sendData(header + submitMsg)
+    dummySocket.sendData(open(filePath, 'rb').read())
     dummySocket.close()
 
-
-def recover(serviceTicket):
-    header = TOKEN_LOCAL+'\n'+TYPE_DATA_RECOVER_MSG+'\n'
-    dataRecoverMsg = serviceTicket+'\n'
-    dummySocket = AssistanceSocketClient(ASSISTANCE_SERVER, PORT_DATA_REQUESTS)
-    dummySocket.sendData(header+dataRecoverMsg)
-    output = dummySocket.receiveFile(os.getcwd())
-    errors = dummySocket.receiveFile(os.getcwd())
-    dummySocket.close()
-    return output, errors
 
 
 def checkStatus(serviceTicket):
-    header = TOKEN_TRANSCEIVER_TEST+'\n'+TYPE_STATUS_CHECK_MSG+'\n'
+    '''
+    MAKE MSG
+    '''
+    header = TOKEN_TESTS_VERSION+'\n'+TYPE_STATUS_CHECK_MSG+'\n'
     statusCheckMsg = serviceTicket+'\n'
+    '''
+    SEND
+    '''
     dummySocket = AssistanceSocketClient(ASSISTANCE_SERVER, PORT_DATA_REQUESTS)
-    #print "sending message"
     dummySocket.sendData(header+statusCheckMsg)
-    #print "receiving ticket"
-    time.sleep(TIME_SOCK_COOLDOWN)
+    '''
+    GET STATUS
+    '''
     answerData = dummySocket.receiveData()
-    #print "closing socket"
     dummySocket.close()
-    return answerData.split('\n')[3]
+    status = answerData.split('\n')[3]
+    return status
 
 
 
-def synchronise(serviceTicket):
-    msgType = ""
-    while not msgType == TYPE_RECOVER_RESULTS_ANS:
-        header = TOKEN_TRANSCEIVER_TEST+'\n'+TYPE_RECOVER_RESULTS_MSG+'\n'
-        recoverMsg = serviceTicket+'\n'
-        dummySocket = AssistanceSocketClient(ASSISTANCE_SERVER, PORT_DATA_REQUESTS)
-        #print "sending message"
-        dummySocket.sendData(header+recoverMsg)
-        #print "receiving ticket"
-        answerData = dummySocket.receiveData()
-        #print "closing socket"
-        dummySocket.close()
-        msgType = answerData.split('\n')[1]
-    outputPath, errorsPath = recover(serviceTicket)
-    return outputPath, errorsPath
+def synch(serviceTicket):
+    '''
+    Waits untill the task is completed, and ready for redeem
+    '''
+    while checkStatus(serviceTicket) != STATUS_READY:
+        time.sleep(TIME_DATA_SERVER_INTERVAL)
+    '''
+    MAKE MSG
+    '''
+    header = TOKEN_TESTS_VERSION+'\n'+TYPE_RECOVER_RESULTS_MSG+'\n'
+    recoverMsg = serviceTicket+'\n'
+    '''
+    SEND
+    '''
+    dummySocket = AssistanceSocketClient(ASSISTANCE_SERVER, PORT_DATA_REQUESTS)
+    dummySocket.sendData(header+recoverMsg)
+    '''
+    GET THE ANSWER FILES
+    '''
+    #creates the files to return
+    stdout = "tests/"+serviceTicket+"-stdout.dat"
+    stderr = "tests/"+serviceTicket+"-stderr.dat"
+    stdoutFile = open(stdout, 'wb')
+    stderrFile = open(stderr, 'wb')
+    currentFile = stdoutFile
+    receivedData = dummySocket.receiveData()
+    while receivedData:
+        if SYMBOL_SEPARATOR in receivedData:
+            filePieces = receivedData.split(SYMBOL_SEPARATOR)
+            stdoutFile.write(filePieces[0])
+            stderrFile.write(filePieces[1])
+            currentFile = stderrFile
+        else:
+            currentFile.write(receivedData)
+        receivedData = dummySocket.receiveData()
+    #closes up and returns
+    stdoutFile.close()
+    stderrFile.close()
+    dummySocket.close()
+    return stdout+'\n'+stderr
+
+

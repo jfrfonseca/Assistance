@@ -1,6 +1,0 @@
-terminate called after throwing an instance of 'std::length_error'
-  what():  basic_string::_S_create
-Command terminated by signal 6
-real 0.20
-user 0.00
-sys 0.00

@@ -1,25 +1,23 @@
 from pkgTransceiver.implementation.AssistanceSockets import AssistanceSocketClient
 import time
-from cpnLibrary.implementation.Constants import *
+from cpnLibrary.implementation.Constants import NULL, TOKEN_TESTS_VERSION,\
+    AppID_LOCAL_ECHO_TEST, TYPE_API_REQUEST_MSG, PORT_API_REQUESTS,\
+    TYPE_STATUS_CHECK_MSG, PORT_DATA_REQUESTS, STATUS_READY,\
+    TYPE_RECOVER_RESULTS_MSG, CHANNEL_IMMEDIATE
 
 
-ASSISTANCE_SERVER = '127.0.0.1'
+HOST = ''
 
-#Sends the request to the API request server
-def request():
+def request(messageToEcho):
     '''
     MAKE MSG
     '''
     header = TOKEN_TESTS_VERSION+'\n'+TYPE_API_REQUEST_MSG+'\n'
-    apiRequestMsg = AppID_SHA256_TEST+'\n'\
-                             +"60000 -verbose 20000"+'\n'\
-                             +CHANNEL_LOCAL_FILE+'\n'\
-                             +"/home/zeff/Dropbox/ActiveWorkspace/Assistance/app/AssistanceApps/sha256/V0.5/tests/experimentData.dat"+'\n'\
-                             +CHANNEL_LOCAL_FILE+'\n'
+    apiRequestMsg = AppID_LOCAL_ECHO_TEST+'\n'+messageToEcho+'\n'+NULL+'\n'+NULL+'\n'+CHANNEL_IMMEDIATE+'\n'
     '''
     SEND
     '''
-    dummySocket = AssistanceSocketClient(ASSISTANCE_SERVER, PORT_API_REQUESTS)
+    dummySocket = AssistanceSocketClient(HOST, PORT_API_REQUESTS)
     dummySocket.sendData(header+apiRequestMsg)
     '''
     GET TICKET
@@ -39,7 +37,7 @@ def checkStatus(serviceTicket):
     '''
     SEND
     '''
-    dummySocket = AssistanceSocketClient(ASSISTANCE_SERVER, PORT_DATA_REQUESTS)
+    dummySocket = AssistanceSocketClient(HOST, PORT_DATA_REQUESTS)
     dummySocket.sendData(header+statusCheckMsg)
     '''
     GET STATUS
@@ -51,9 +49,6 @@ def checkStatus(serviceTicket):
 
 
 def synch(serviceTicket):
-    '''
-    Waits untill the task is completed, and ready for redeem
-    '''
     while checkStatus(serviceTicket) != STATUS_READY:
         time.sleep(0.1)
     '''
@@ -64,13 +59,12 @@ def synch(serviceTicket):
     '''
     SEND
     '''
-    dummySocket = AssistanceSocketClient(ASSISTANCE_SERVER, PORT_DATA_REQUESTS)
+    dummySocket = AssistanceSocketClient(HOST, PORT_DATA_REQUESTS)
     dummySocket.sendData(header+recoverMsg)
     '''
     GET RESULTS
     '''
     answerData = dummySocket.receiveData()
     dummySocket.close()
-    results = answerData.split('\n')[4] +'\n'+ answerData.split('\n')[5]
+    results = answerData.split('\n')[4]
     return results
-

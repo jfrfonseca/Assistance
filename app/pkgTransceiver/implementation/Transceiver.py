@@ -1,12 +1,11 @@
-import datetime, time, os.path
+import datetime, time, os
 from pkgTransceiver.implementation.AssistanceSockets import AssistanceSocketClient, AssistanceSocketServer
 from pkgTransceiver.implementation.APIRequestAntenna import APIRequestAntenna
 from pkgTransceiver.implementation.DataAntenna import DataAntenna
 from cpnLibrary.implementation.Constants import *
 
-        
-        
-        
+
+
 class Transceiver():        
     LOG = ""
     
@@ -27,17 +26,6 @@ class Transceiver():
         self.apiRequestAntenna.shutdown()
         self.dataAntenna.shutdown()
         print "Transceiver is Off"
-
-
-    def gatherData(self, taskDescription):
-        #if there is no data to be passed
-        if taskDescription.DATA_CHANNEL == NOT_APPLYED:
-            return ''
-        #if the data file is already on the local machine
-        elif taskDescription.DATA_CHANNEL == CHANNEL_LOCAL_FILE:
-            return os.path.relpath(taskDescription.DATA_DELIVERY, os.getcwd())
-        else:
-            return NOT_APPLYED
         
         
     def requestAssistance(self, taskDescription):

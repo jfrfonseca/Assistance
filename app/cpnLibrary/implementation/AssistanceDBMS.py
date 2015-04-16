@@ -5,37 +5,32 @@ from cpnLibrary.implementation.Constants import *
 def getCallerScript(taskDescription):
     #ALL ARGUMENTS COME AS A STRING - the data they refer may differ. EVERY ASSISTANCEAPP MUST HAVE A DEFAULT DATA FILES (DATA AND ANSWER) FOLDER, AND THIS FOLDER WILL DE SUBSCRIBED IN THE DBMS FOR EACH APP, SO THE APP CAN CALL ITS FILES FROM THE DEFAULT
     args = taskDescription.ARGUMENTS
-    if args == NOT_APPLYED:
+    if args == NULL:
         args = ""
     
     scriptSettings = {}
+    
+    
+    scriptSettings["processPriority"] = str(taskDescription.PROCESS_PRIORITY)
+    scriptSettings["dataFiles"] = str(taskDescription.DATA_LOCATION)
+    scriptSettings["TICKET"] = taskDescription.TICKET
+    scriptSettings["args"] = args
         
     if taskDescription.APPID == AppID_LOCAL_ECHO_TEST:
         scriptSettings["assistanceAppFile"] = "echoInAllCaps.assistanceApp"
-        scriptSettings["processPriority"] = str(taskDescription.PROCESS_PRIORITY)
-        scriptSettings["dataFiles"] = str(taskDescription.DATA_LOCATION)
-        scriptSettings["TICKET"] = taskDescription.TICKET
-        scriptSettings["args"] = args
-        
-        taskDescription.ANSWER_CHANNEL = CHANNEL_IMMEDIATE
-        taskDescription.OUTPUT_DIR = DIR_APPS_CWD+"outputs/"
         
     elif taskDescription.APPID == AppID_SHA256_TEST:
         scriptSettings["assistanceAppFile"] = "sha256Example.assistanceApp"
-        scriptSettings["processPriority"] = str(taskDescription.PROCESS_PRIORITY)
-        scriptSettings["dataFiles"] = str(taskDescription.DATA_LOCATION)
-        scriptSettings["TICKET"] = taskDescription.TICKET
-        scriptSettings["args"] = args
         
-        taskDescription.ANSWER_CHANNEL = CHANNEL_LOCAL_FILE
-        taskDescription.OUTPUT_DIR = DIR_APPS_CWD+"outputs/"
+    elif taskDescription.APPID == AppID_SHA256_REMOTE_TEST:
+        scriptSettings["assistanceAppFile"] = "sha256Example.assistanceApp"
         
     return [DIR_APPS_CWD+scriptSettings["assistanceAppFile"], scriptSettings["processPriority"], scriptSettings["dataFiles"], scriptSettings["TICKET"], scriptSettings["args"]]
 
 
 
 
-def getThresholds(taskDescription, request=False):
+def getThresholds(taskDescription):
     #ansers the question "what usage percentage of the resources is enough, and limit, so I can perform locally? and remotelly? in the case of disks, is how many bytes are needed, and -1 or 101 to "ignore constraint"
     thresholds = {"performLocal":{"memory":{}, "CPU":{}, "disk":{}}, "performRemote":{"memory":{}, "CPU":{}, "disk":{}}}
     #memory
@@ -66,16 +61,9 @@ def getThresholds(taskDescription, request=False):
     return thresholds
 
 
-def normalizeOutput(taskDescription):      
-    if taskDescription.APPID == AppID_LOCAL_ECHO_TEST:
-        return CHANNEL_IMMEDIATE, taskDescription.STDOUT, taskDescription.STDERR
-    elif taskDescription.APPID == AppID_SHA256_TEST:
-        return CHANNEL_LOCAL_FILE, str(taskDescription.STDOUT), str(taskDescription.STDERR)
-
-
-def setTaskPriority(taskDescription, CPUusage, memoryUsage, freeSpace):
+def getTaskPriority(taskDescription, CPUusage, memoryUsage, freeSpace):
     #temporarily a #STUB that does not modify the task's priority
-    stall = 1
+    return TUNNING_DEFAULT_PROCESS_PRIORITY
 
 
 

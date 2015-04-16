@@ -2,41 +2,147 @@ import time, datetime, threading, hashlib
 import pkgMissionControl.implementation.Launcher, SystemStats
 from cpnLibrary.implementation import AssistanceDBMS
 from pkgPerformer.implementation import Performer
-from cpnLibrary.implementation.Constants import *
-from cpnLibrary.implementation.AssistanceDBMS import setTaskPriority
+from cpnLibrary.implementation.AssistanceDBMS import getTaskPriority
 from pkgPerformer.implementation.Performer import interrupt
+from random import randint
+from pkgOfficer.implementation.TaskDescription import TaskDescription
+from cpnLibrary.implementation.Constants import STATUS_WAITING, STATUS_REJECTED,\
+    TOKEN_TESTS_VERSION, NULL, STATUS_GATHERING_DATA, DIR_LOGS, CHANNEL_FTP,\
+    STATUS_PERFORMING_LOCAL, STATUS_STANDBY, STATUS_SETTING_UP,\
+    CHANNEL_LOCAL_FILE, DIR_APPS_CWD, STATUS_READY, STATUS_DATA_READY
+import cpnLibrary.implementation.AssistanceDBMS
+import os.path
 
-
-def includeNewTask(taskDescription):
-    officerInstance = pkgMissionControl.implementation.Launcher.getOfficerInstance()
-    #decides if there will be servicing to this request. If it does,
-    if officerInstance.goNoGo(taskDescription):
-        return officerInstance.includeTask(taskDescription)
-    # if the request will NOT be serviced, returns a negative TICKET (literally). Default TICKET for "no go":-1
-    else:
-        return '-1'
        
-        
-        
 class Officer():
+    '''
+    BUFFER THAT CONTAINS ALL THE NON-FINISHED TASKS
+    '''
     taskBuffer = {}
     
-                    
+    '''
+    Includes a new task to the buffer, and decides if will access the task or not  it or not
+    '''
+    def include(self, taskDescription):
+        ticket = self.generateTicket(taskDescription)
+        self.taskBuffer[ticket] = taskDescription
+        taskDescription.TICKET = ticket
+        if self.decide(ticket):
+            taskDescription.updateStatus(STATUS_WAITING)
+            #creates a thread to manage the running of the task
+            taskDescription.workerThreads["director"] = threading.Thread(target=self.setup, args=(ticket, ))
+            taskDescription.workerThreads["director"].start()
+            #returns the ticket
+            return ticket
+        else:
+            taskDescription.updateStatus(STATUS_REJECTED)
+            #TODO add task to dead archive
+            return NULL
+    
+    '''
+    Generates a new ServiceTicket to the most recent task received and processed
+    '''
     def generateTicket(self, taskDescription):
-        #The TICKET must be the TIME_LABELED (time.time() defined here, 10.6 digits without punctuation), appended to the #TODO-signed SHA256 of the task's TIME_LABELED, localInstanceAuthToken, task's TOKEN, APPID, ARGUMENTS, DATA_DELIVERY
+        #The TICKET must be the TIME_LABELED (time.time() defined here, 10.6 digits without punctuation), appended to 4 random digits,  appended to the #TODO-signed SHA256 of the task's TIME_LABELED, localInstanceAuthToken, task's TOKEN, APPID, ARGUMENTS, DATA_DELIVERY
         tokenHash = hashlib.sha256()
         taskDescription.TIME_LABELED = time.time()
         
         tokenHash.update(str(taskDescription.TIME_LABELED))
-        tokenHash.update(TOKEN_LOCAL)
+        tokenHash.update(TOKEN_TESTS_VERSION)
         tokenHash.update(taskDescription.TOKEN)
         tokenHash.update(taskDescription.APPID)
         tokenHash.update(taskDescription.ARGUMENTS)
         tokenHash.update(taskDescription.DATA_DELIVERY)
         
-        return str(taskDescription.TIME_LABELED).replace(".", "")+str(tokenHash.hexdigest())
+        #the 4 random digits below are here to avoid that two equal tasks from the same source at the same time do not share a ticket!
+        randomQuartet = str(randint(0, 9999))
+        while len(randomQuartet) < 4:
+            randomQuartet = '0'+randomQuartet
+        
+        return str(taskDescription.TIME_LABELED).replace(".", "")+randomQuartet+str(tokenHash.hexdigest())
+
+    
+    '''
+    GETTER TO THE TASK BUFFER
+    '''
+    def getTask(self, ticket):
+        if ticket in self.taskBuffer.keys():
+            return self.taskBuffer[ticket]
+        else:
+            #TODO check the dead archive
+            return TaskDescription(NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+    
+    '''
+    Decides if this instance will attend to the task or not
+    TESTS VERSION
+    '''
+    def decide(self, ticket):
+        return True
 
 
+    def enoughLocalResources(self, ticket):
+        locallyAvailable = True
+        #gets the task that are being wirked with
+        task = self.getTask(ticket)
+        #gets the thrasholds of system limits for the current task to be performed
+        thresholds = AssistanceDBMS.getThresholds(task)
+        #Checks the current usage of Memory
+        memoryStatus = SystemStats.getMemoryUsage()
+        #checks the TOTAL current usage of CPU
+        CPUstatus = SystemStats.getCPUusage()
+        CPUtotal = 0
+        for index in range(len(CPUstatus)):
+            CPUtotal += CPUstatus[index]
+        CPUtotal /= len(CPUstatus)
+        #checks the space(in Kb)  on the partition of the assistance working directory
+        diskStatus = SystemStats.getFreeKbInAssistanceAppsCWD()
+        #logs the current status of the system
+        task.logResourcesStatus({"memory": memoryStatus, "CPU": CPUtotal, "space": SystemStats.getFreeSpaceInAssistanceAppsCWD_HumanReadable()})
+        #if the CPU usage is smaller than the minimum usage to perform locally, or larger than the maximum, so it should not perform locally
+        if CPUtotal < thresholds["performLocal"]["CPU"]["minimum"] or CPUtotal > thresholds["performLocal"]["CPU"]["maximum"]:
+            locallyAvailable=False
+        #if the memory usage is smaller than the minimum usage to perform locally, or larger than the maximum, so it should not perform locally    
+        for memoryKind in memoryStatus.keys():
+            if memoryStatus[memoryKind] < thresholds["performLocal"]["memory"]["minimum"][memoryKind] or memoryStatus[memoryKind] > thresholds["performLocal"]["memory"]["maximum"][memoryKind]:
+                locallyAvailable=False
+        #if there is too much or too little space, does not perform locally 
+        if diskStatus < thresholds["performLocal"]["disk"]["minimum"] or diskStatus > thresholds["performLocal"]["disk"]["maximum"]:
+                locallyAvailable=False
+        #calculate performance priority of the task given the delta of the actual system usage to the ideal constraints
+        task.PROCESS_PRIORITY = AssistanceDBMS.getTaskPriority(task, CPUtotal, memoryStatus, diskStatus)
+        #returns the availability of the current machine to this task
+        return locallyAvailable
+                    
+                    
+    def setup(self, ticket):
+        task = self.getTask(ticket)
+        #if it will perform locally
+        if self.enoughLocalResources(ticket):
+            task.updateStatus(STATUS_GATHERING_DATA) ########## GATHERING THE TASK DATA
+            #if the data file is already on the local machine, the data location will be the relative directory to the assistance CWD
+            if task.DATA_CHANNEL == CHANNEL_LOCAL_FILE:
+                task.DATA_LOCATION = os.path.relpath(task.DATA_DELIVERY, os.getcwd())
+                task.updateStatus(STATUS_DATA_READY)
+            #if the data file is not on the local machine, it expects it will be in the data folder of the Apps CWD
+            elif task.DATA_CHANNEL == CHANNEL_FTP:
+                task.DATA_LOCATION = DIR_APPS_CWD+'data/'
+                task.lock.wait()
+                task.lock.clear()
+            else:
+                task.updateStatus(STATUS_DATA_READY)
+            ##################################### MAKING THE TASK READY TO EXECUTE
+            task.SCRIPT = cpnLibrary.implementation.AssistanceDBMS.getCallerScript(task)
+            task.updateStatus(STATUS_STANDBY) ############### TASK IS READY TO BE RUN
+            Performer.perform(task)
+        #if it will be performed remotelly
+        #TODO request remote assistance
+        
+        
+        ######################################## WAITS FOR THE TASK TO BE COMPLETED, REMOTE OR LOCALLY!
+        task.lock.wait()
+        task.updateStatus(STATUS_READY)
+
+    '''
 
     def defineDistribution(self, taskDescription):
         distribution = {"local": True, "remote":True}
@@ -103,6 +209,8 @@ class Officer():
             if self.isReady2run(task):
                 # starts the run locally
                 Performer.perform(task)
+            else:
+                break
         #if it is to run remotely
         if distributionOfExecution["remote"] or not distributionOfExecution["local"]:
             remoteRun = True
@@ -126,16 +234,6 @@ class Officer():
     def getTask(self, taskTicket):        
         return self.taskBuffer[taskTicket]
     
-        
-    def includeTask(self, newTask):
-        newTask.setTicket(self.generateTicket(newTask))
-        self.taskBuffer[newTask.TICKET] = newTask
-        newTask = self.taskBuffer[newTask.TICKET]
-        # starts the run process of the task
-        newTask.workerThreads["director"] = threading.Thread(target=self.assignTask, args=(newTask, ))
-        newTask.workerThreads["director"].start()
-        return newTask.TICKET
-    
     
     def getStatus(self, taskTicket):
         return self.getTask(taskTicket).STATUS               
@@ -155,10 +253,11 @@ class Officer():
     def isReady2run(self, task):
         if task.DATA_CHANNEL==NOT_APPLYED or task.DATA_CHANNEL==CHANNEL_LOCAL_FILE:
             return True
-        elif task.DATA_CHANNEL==CHANNEL_FTP and not (self.getStatus(task.TICKET)==STATUS_WAITING or self.getStatus(task.TICKET)==STATUS_RECOVERING_DATA):
-            return True
+        elif task.DATA_CHANNEL==CHANNEL_FTP:
+            return False
         return False
     
+    '''
     
     # DevTools methods ----------------------------------------
     
@@ -174,7 +273,7 @@ class Officer():
         for ticket in self.taskBuffer.keys():
             logFile.write("\nServiceTicket "+str(ticket)+" ("+self.getTask(ticket).STATUS+") Log:\n"+self.getTask(ticket).LOG)
         logFile.close()
-            
+
             
             
         

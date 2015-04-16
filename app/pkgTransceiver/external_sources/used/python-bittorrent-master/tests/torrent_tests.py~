@@ -132,7 +132,7 @@ class Write_Torrent_File(unittest.TestCase):
 		self.comment = "test"
 		with open(self.filename, "w") as self.file:
 			self.file.write("Test file.")
-		print torrent.write_torrent_file(torrent = self.torrent,  \
+		torrent.write_torrent_file(torrent = self.torrent,  \
 			file = self.filename, tracker = self.tracker, \
 				comment = self.comment)
 
