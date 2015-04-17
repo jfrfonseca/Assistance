@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 '''
-Performer.py - Class of the AssistancePerformer Package with the functions to execute a task from the Assistance Officer
+Performer.py - Class of the AssistancePerformer Package with the functions to
+execute a task from the Assistance Officer
 Jose F. R. Fonseca
 See Attached License file
 '''
@@ -8,41 +9,44 @@ See Attached License file
 import unittest
 # ASSISTANCE MODULE IMPORTS ----------
 import Assistance
-from pkgMissionControl.implementation import Launcher
 # ASSISTANCE OBJECT IMPORTS ------------
+from pkgMissionControl.implementation import Launcher
 from tests import SHA256Test, SHA256remoteTest, EchoTest
 
-'''
-Performs a series of functionality tests
-'''
-class TestAssistance(unittest.TestCase):
-    
+
+class TestAssistance(unittest.TestCase):  # @IgnorePep8
     '''
-    Starts the Assistance Service
+    A series of Unit Tests to the Functionality of the Assistance System
     '''
-    def setUp(self):        
+
+    def setUp(self):
+        '''
+        Starts the Assistance Service
+        '''
         Assistance.setup()
-        
-    '''
-    Shuts down Assistance Service  
-    '''
-    def tearDown(self):      
-        #time.sleep(10)  
+
+    def tearDown(self):
+        '''
+        Shuts down Assistance Service
+        '''
         print "All tests are done. Saving  the LOGs and closing up"
-        Launcher.getOfficerInstance().saveLogs() 
+        Launcher.getOfficerInstance().saveLogs()
         Assistance.shutdown()
-    
-    '''    
-    Basic functionality tests:
-        request a ticket (in 3 different apps, 2-3 times each)
-        checks the status of the task (probably it will be "waiting")
-        synchronizes the results
-    The EchoTest app sends a string, and receives it back in all caps. All as immediates. The performer runs in python
-    The SHA256test sends the path to a local file to a pre-compiled C app, that outputs the results in files, and returns the paths to stderr and stdout back
-    The SHA256remoteTest does almost the same that the last test, but this time, a file is submit by a socket and the results are returned by another
-    '''
-    def test(self):        
-        print "Echo Test"        
+
+    def test(self):
+        '''
+        Basic functionality tests:
+            request a ticket (in 3 different apps, 2-3 times each)
+            checks the status of the task (probably it will be "waiting")
+            synchronizes the results
+        The EchoTest app sends a string, and receives it back in all caps.
+            All as immediates. The performer runs in python
+        The SHA256test sends the path to a local file to a pre-compiled C app,
+            that outputs the results in files, and returns the paths to stderr and stdout back  # @IgnorePep8
+        The SHA256remoteTest does almost the same that the last test, but this time,  # @IgnorePep8
+            a file is submit by a socket and the results are returned by another  # @IgnorePep8
+        '''
+        print "Echo Test"
         ticket1 = EchoTest.request("Hello World")
         ticket2 = EchoTest.request("Hello, World!")
         ticket3 = EchoTest.request("HeII0, W0r1d!!!111!")
@@ -58,7 +62,7 @@ class TestAssistance(unittest.TestCase):
         print EchoTest.synch(ticket1)
         print EchoTest.synch(ticket2)
         print EchoTest.synch(ticket3)
-        
+
         print "\nSHA256 test"
         ticket3 = SHA256Test.request()
         ticket4 = SHA256Test.request()
@@ -71,10 +75,12 @@ class TestAssistance(unittest.TestCase):
         print "Synch: "
         print SHA256Test.synch(ticket3)
         print SHA256Test.synch(ticket4)
-        
+
         print "\nSHA256 by Remote File test"
-        ticket5 = SHA256remoteTest.request("/home/zeff/Dropbox/ActiveWorkspace/Assistance/app/AssistanceApps/sha256/V0.5/tests/experimentData.dat")
-        ticket6 = SHA256remoteTest.request("/home/zeff/Dropbox/ActiveWorkspace/Assistance/app/AssistanceApps/sha256/V0.5/tests/experimentData.dat")
+        ticket5 = SHA256remoteTest.request(
+            "/home/zeff/Dropbox/ActiveWorkspace/Assistance/app/AssistanceApps/sha256/V0.5/tests/experimentData.dat")  # @IgnorePep8
+        ticket6 = SHA256remoteTest.request(
+            "/home/zeff/Dropbox/ActiveWorkspace/Assistance/app/AssistanceApps/sha256/V0.5/tests/experimentData.dat")  # @IgnorePep8
         print "Tickets: "
         print ticket5
         print ticket6
@@ -82,15 +88,19 @@ class TestAssistance(unittest.TestCase):
         print SHA256remoteTest.checkStatus(ticket5)
         print SHA256remoteTest.checkStatus(ticket6)
         print "Submitting data "
-        SHA256remoteTest.submit(ticket5, "/home/zeff/Dropbox/ActiveWorkspace/Assistance/app/AssistanceApps/sha256/V0.5/tests/experimentData.dat")
-        SHA256remoteTest.submit(ticket6, "/home/zeff/Dropbox/ActiveWorkspace/Assistance/app/AssistanceApps/sha256/V0.5/tests/experimentData.dat")
+        SHA256remoteTest.submit(
+            ticket5,
+            "/home/zeff/Dropbox/ActiveWorkspace/Assistance/app/AssistanceApps/sha256/V0.5/tests/experimentData.dat")  # @IgnorePep8
+        SHA256remoteTest.submit(
+            ticket6,
+            "/home/zeff/Dropbox/ActiveWorkspace/Assistance/app/AssistanceApps/sha256/V0.5/tests/experimentData.dat")  # @IgnorePep8
         print "Synch: "
         print SHA256remoteTest.synch(ticket5)
         print SHA256remoteTest.synch(ticket6)
-    
-        
+
+
 '''
 Runs this file
-'''    
+'''
 if __name__ == '__main__':
-    unittest.main()      
+    unittest.main()
