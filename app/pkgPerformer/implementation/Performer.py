@@ -14,15 +14,17 @@ from cpnLibrary.implementation.Constants import\
     STATUS_PERFORMING_LOCAL, STATUS_INTERRUPTED_LOCAL, STATUS_COMPLETED_LOCAL,\
     CHANNEL_IMMEDIATE, NULL
 
-'''
-Sets the task's status to performing, creates a thread that calls the script,
-    and waits until it is finished.
+
+def perform(task):
+    '''
+    Sets the task's status to performing, creates a thread that calls
+the script, and waits until it is finished.
 The Script calling thread may be interrupted externally
 If this execution finished normally, the STDOUT and STDERR of the script
     are sent to the task, and stored. THen the status of the task is set to
     completed
-'''
-def perform(task):  # @IgnorePep8
+    :param task: the task to perform
+    '''
     task.updateStatus(STATUS_PERFORMING_LOCAL)
     task.workerThreads["localPerformerScript"] = subprocess.Popen(
         task.SCRIPT,
@@ -44,10 +46,12 @@ def perform(task):  # @IgnorePep8
         task.updateStatus(STATUS_COMPLETED_LOCAL)
         task.lock.set()
 
-'''
+
+def interrupt(taskDescription):
+    '''
 Cleanly interrupts the thread, sets the status, and releases the director thread  # @IgnorePep8
-'''
-def interrupt(taskDescription):  # @IgnorePep8
+    :param taskDescription:the running task to interrupt
+    '''
     if taskDescription.TIME_INTERRUPTED == NULL:
         taskDescription.TIME_INTERRUPTED = time.time()
         taskDescription.workerThreads["localPerformerScript"].terminate()

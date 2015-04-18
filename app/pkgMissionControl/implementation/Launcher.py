@@ -1,74 +1,52 @@
-# 
-# __ASSISTANCE MISSION CONTROL LAUNCHER__ 0.5.030315
-# 
-# Copyright (c) 2015, Jose F. Fonseca <jose.f.fonseca@ieee.org>
-# 
-# SEE THE ATTACHED LICENSE FILE FOR IMPORTANT LEGAL INFORMATIONS
-#  
-# Launches 
-# - This version requires a web browser, mostly because nodeJS does not support WebRTC - yet.
-# - This version requires Google Chrome as the web browser, due its dependence on webkit. working on it.
-
-
-# ==============================================
-# ~~~~~~~~~~~~~~~~~~ System Imports ~~~~~~~~~~~~~~~~~~
-# ==============================================
-import time
-
-
-# =============================================
-# ~~~~~~~~~~~~~~~~~~ Local Imports ~~~~~~~~~~~~~~~~~~
-# =============================================
+#!/usr/bin/env python
+'''
+Starts the Assistance Service, and returns the running instances of its objects
+Jose F. R. Fonseca
+See Attached License file
+'''
+# ASSISTANCE MODULE IMPORTS ----------
 from pkgTransceiver.implementation.Transceiver import Transceiver
 from pkgOfficer.implementation.Officer import Officer
 
-
-# =====================
-# ------------------ Constants ------------------
-# =====================
-
-
 # ====================
 # ------------------ Objects ------------------
-# ==================== 
+# ====================
 global transceiver
 global officer
 global performer
 
 
-# ====================
-# ------------------ Variables ------------------
-# ====================
-
-
-# =====================
-# ------------------ Functions ------------------
-# =====================    
 def shutdown():
+    '''
+    Closes down all running threads and services of the system
+    '''
     global transceiver
     transceiver.shutdown()
-        
+
 
 def setup():
+    '''
+    Boots up the system
+    '''
     global transceiver
     global officer
     global performer
     global assistanceAppRootDirectory
     officer = Officer()
     transceiver = Transceiver()
-    
-    
+
+
 def getTransceiverInstance():
+    '''
+    returns the running instance of the Transceiver
+    '''
     global transceiver
     return transceiver
 
-    
+
 def getOfficerInstance():
+    '''
+    Returns the running istance of the Officer
+    '''
     global officer
     return officer
- 
-     
-    # ============================================
-    # ++++++++++++++++++ Destructors ++++++++++++++++++
-    # ============================================
-

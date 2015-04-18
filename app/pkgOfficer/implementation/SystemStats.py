@@ -1,57 +1,53 @@
-import psutil, os
-from cpnLibrary.implementation.AssistanceDBMS import DIR_APPS_CWD
+#!/usr/bin/env python
+'''
+Gets the data about the current situation of the host system
+Jose F. R. Fonseca
+See Attached License file
+'''
+# NATIVE MODULE IMPORTS ------------------
+import psutil
+import os
+# ASSISTANCE CONSTANTS IMPORTS -----
+from cpnLibrary.implementation.Constants import DIR_APPS_CWD
+
 
 def bytes2human(n):
-	# http://code.activestate.com/recipes/578019
-	# >>> bytes2human(10000)
-	# '9.8K'
-	# >>> bytes2human(100001221)
-	# '95.4M'
-	symbols = ('K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y')
-	prefix = {}
-	for i, s in enumerate(symbols):
-		prefix[s] = 1 << (i + 1) * 10
-	for s in reversed(symbols):
-		if n >= prefix[s]:
-			value = float(n) / prefix[s]
-			return '%.1f%s' % (value, s)
-	return "%sB" % n
-	
-	
+	'''
+	Converts a integer number of bytes in a human-readable string  # @IgnorePep8
+	:param n: The number of bytes to be converted  # @IgnorePep8
+	SOURCE: http://code.activestate.com/recipes/578019  # @IgnorePep8
+	'''  # @IgnorePep8
+	symbols = ('K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y')  # @IgnorePep8
+	prefix = {}  # @IgnorePep8
+	for i, s in enumerate(symbols):  # @IgnorePep8
+		prefix[s] = 1 << (i + 1) * 10  # @IgnorePep8
+	for s in reversed(symbols):  # @IgnorePep8
+		if n >= prefix[s]:  # @IgnorePep8
+			value = float(n) / prefix[s]  # @IgnorePep8
+			return '%.1f%s' % (value, s)  # @IgnorePep8
+	return "%sB" % n  # @IgnorePep8
+
+
 def getMemoryUsage():
-	phymem = psutil.phymem_usage()
-	virtmem = psutil.virtmem_usage()
-	swapmem = psutil.swap_memory()
-	return {"physical" : phymem.percent, "virtual" : virtmem.percent, "swap" : swapmem.percent}
+	phymem = psutil.phymem_usage()  # @IgnorePep8
+	virtmem = psutil.virtmem_usage()  # @IgnorePep8
+	swapmem = psutil.swap_memory()  # @IgnorePep8
+	return {  # @IgnorePep8
+		"physical" : phymem.percent,  # @IgnorePep8
+		"virtual" : virtmem.percent,  # @IgnorePep8
+		"swap" : swapmem.percent}  # @IgnorePep8
 
 
 def getCPUusage():
-	percentArray = psutil.cpu_percent(interval=1, percpu=True)
-	return percentArray
+	percentArray = psutil.cpu_percent(interval=1, percpu=True)  # @IgnorePep8
+	return percentArray  # @IgnorePep8
 
-"""
-def getFreeSpaceInDiskPartition(mountpoint):
-	return bytes2human(psutil.disk_usage(mountpoint).free)
-
-
-def getDiskFreeSpace():
-	spaceArray = []
-	for part in psutil.disk_partitions(all=False):
-		if os.name == 'nt':
-			if 'cdrom' in part.opts or part.fstype == '':
-				# skip cd-rom drives with no disk in it; they may raise ENOENT, pop-up a Windows GUI error for a non-ready partition or just hang.
-				continue
-		spaceArray.append(getFreeSpaceInDiskPartition(part.mountpoint))			
-	return spaceArray
-"""
 
 def getFreeKbInAssistanceAppsCWD():
-	path = os.path.abspath(DIR_APPS_CWD)
-	kbytes = (psutil.disk_usage(path)[2])/1024
-	return kbytes
+	path = os.path.abspath(DIR_APPS_CWD)  # @IgnorePep8
+	kbytes = (psutil.disk_usage(path)[2])/1024  # @IgnorePep8
+	return kbytes  # @IgnorePep8
 
 
 def getFreeSpaceInAssistanceAppsCWD_HumanReadable():
-	return bytes2human(psutil.disk_usage(os.path.abspath(DIR_APPS_CWD))[2])
-
-
+	return bytes2human(psutil.disk_usage(os.path.abspath(DIR_APPS_CWD))[2])  # @IgnorePep8
