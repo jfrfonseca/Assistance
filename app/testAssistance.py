@@ -7,6 +7,8 @@ See Attached License file
 '''
 # NATIVE MODULE IMPORTS ------------------
 import unittest
+import zipfile
+import os
 # ASSISTANCE MODULE IMPORTS ----------
 import Assistance
 # ASSISTANCE OBJECT IMPORTS ------------
@@ -19,6 +21,16 @@ class TestAssistance(unittest.TestCase):  # @IgnorePep8
     A series of Unit Tests to the Functionality of the Assistance System
     '''
 
+    def zipdir(self, path, zipf):
+        '''
+        Adds a directory to a zip file
+        :param path: relative path to the file
+        :param zipf: zipfile object to the directory to be added to
+        '''
+        for root, dirs, files in os.walk(path):  # @UnusedVariable
+            for fileObj in files:
+                zipf.write(os.path.join(root, fileObj))
+
     def setUp(self):
         '''
         Starts the Assistance Service
@@ -29,9 +41,16 @@ class TestAssistance(unittest.TestCase):  # @IgnorePep8
         '''
         Shuts down Assistance Service
         '''
-        print "All tests are done. Saving  the LOGs and closing up"
+        print "All tests are done. Saving  the LOGs"
         Launcher.getOfficerInstance().saveLogs()
+        zipf = zipfile.ZipFile('LOGs.zip', 'w')
+        self.zipdir('LOG/', zipf)
+        self.zipdir('AssistanceApps/outputs/', zipf)
+        self.zipdir('tests/', zipf)
+        zipf.close()
+        print "Created ZIP file"
         Assistance.shutdown()
+        print "Finished everything"
 
     def test(self):
         '''
