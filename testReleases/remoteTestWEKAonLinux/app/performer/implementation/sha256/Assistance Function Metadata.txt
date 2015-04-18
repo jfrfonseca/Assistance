@@ -1,9 +1,0 @@
-<<ASSISTANCE_VERSION>>	0.2
-<<FUNCTION_NAME>>	SHA-256
-<<CURRENT_FUNCTION_VERSION>>	0.5
-	<<VERSION_LANGUAGE>>		C++
-	<<VERSION_AUTHOR>>			zedwood.com
-	<<VERSION_SOURCE_URL>>		http://www.zedwood.com/article/cpp-sha256-function
-	<<VERSION_URL_ACCESS_DATE>>	2015-01-18 16:38:47+00:00 UTC
-
-

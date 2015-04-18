@@ -1,0 +1,3 @@
+#!/bin/bash
+string=$4
+echo ${string^^}

@@ -1,0 +1,3 @@
+#!/bin/bash
+string=$5
+echo ${string^^}
