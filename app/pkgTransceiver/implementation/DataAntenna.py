@@ -6,6 +6,7 @@ See Attached License file
 '''
 # NATIVE MODULE IMPORTS ------------------
 import time
+import os.path
 # ASSISTANCE MODULE IMPORTS ----------
 import pkgMissionControl.implementation.Launcher
 from AssistanceGenericAntenna import AssistanceGenericAntenna
@@ -14,7 +15,7 @@ from cpnLibrary.implementation.Constants import TOKEN_TESTS_VERSION, SYMBOL_SEPA
     STATUS_READY, STATUS_SENDING_DATA, STATUS_FINISHED, STATUS_GATHERING_DATA,\
     STATUS_DATA_READY, TIME_DATA_SERVER_INTERVAL, CHANNEL_FTP, CHANNEL_IMMEDIATE,\
     TYPE_STATUS_CHECK_MSG, TYPE_RECOVER_RESULTS_ANS, TYPE_RECOVER_RESULTS_MSG,\
-    TYPE_DATA_SUBMIT_MSG
+    TYPE_DATA_SUBMIT_MSG, DIR_APPS_CWD
 
 
 class DataAntenna (AssistanceGenericAntenna):
@@ -78,17 +79,21 @@ class DataAntenna (AssistanceGenericAntenna):
             time.sleep(TIME_DATA_SERVER_INTERVAL)
         # outputs the data of the task
         if task.ANSWER_CHANNEL == CHANNEL_FTP:
-            stdoutFile = open(task.STDOUT, 'rb')
-            stderrFile = open(task.STDERR, 'rb')
-            stdout = stdoutFile.read()
-            stderr = stderrFile.read()
             task.updateStatus(STATUS_SENDING_DATA)
-            self.request.sendall(stdout)
+            with open(task.STDOUT, 'rb') as stdoutFile:
+                while True:
+                    fileData = stdoutFile.read()
+                    if fileData == '':
+                        break
+                    self.request.sendall(fileData)
             self.request.sendall(SYMBOL_SEPARATOR)
-            self.request.sendall(stderr)
+            with open(task.STDERR, 'rb') as stderrFile:
+                while True:
+                    fileData = stderrFile.read()
+                    if fileData == '':
+                        break
+                    self.request.sendall(fileData)
             task.updateStatus(STATUS_FINISHED)
-            stdoutFile.close()
-            stderrFile.close()
         else:
             self.wfile.write(self.localToken + '\n'
                              + TYPE_RECOVER_RESULTS_ANS + '\n'
@@ -117,10 +122,13 @@ class DataAntenna (AssistanceGenericAntenna):
         fileSize = int(task.DATA_DELIVERY)
         task.DATA_LOCATION = task.DATA_LOCATION + fileName
         # recovers the data of the file, and saves it to a file
-        recoveredData = self.request.recv(fileSize)
-        dataFile = open(task.DATA_LOCATION, 'wb')
-        dataFile.write(recoveredData)
-        dataFile.close()
+        with open(task.DATA_LOCATION, 'wb') as dataFile:
+            while True:
+                recoveredData = self.rfile.readline()
+                if recoveredData == '':
+                    break
+                else:
+                    dataFile.write(recoveredData)
         # updates the task data location and status
         # and unlocks the task's setup thread
         task.updateStatus(STATUS_DATA_READY)

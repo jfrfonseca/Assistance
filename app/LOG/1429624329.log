@@ -1,0 +1,109 @@
+
+====================================
+Logs for all Assistance ServiceTickets in the Officer's Buffers as in 2015-04-21 10:52:09:622501
+ServiceTicket 14296243225579099c3fe64ed18edea07097800fd750663a6d6a79ab483c19282737888125d9f3e1 (READY) Log:
+	2015-04-21 10:52:02:546001 |- New task (APPID 'LOCAL_ECHO_TEST') received by Assistance from token 0123456789ABCDEF;
+	2015-04-21 10:52:02:546270 |- Status update: (DRAFT --> WAITING);
+	2015-04-21 10:52:03:557167 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 40.7G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 40.8}%;	--CPU usage: 40.775%;
+	2015-04-21 10:52:03:557367 |- Status update: (WAITING --> GATHERING);
+	2015-04-21 10:52:03:557413 |- Status update: (GATHERING --> DATA READY);
+	2015-04-21 10:52:03:557466 |- Status update: (DATA READY --> STANDBY);
+	2015-04-21 10:52:03:557512 |- Status update: (STANDBY --> PERFORMING_LOCAL);
+	2015-04-21 10:52:03:564529 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-04-21 10:52:03:564614 |- Status update: (COMPLETED_LOCAL --> READY);
+
+ServiceTicket 1429624328093921c1428e5cdb51703fe76b4ec6e355156e214199e16e53578f2db0a007c8a8cc97 (FINISHED) Log:
+	2015-04-21 10:52:08:094601 |- New task (APPID 'WEKA_3_6_12') received by Assistance from token 0123456789ABCDEF;
+	2015-04-21 10:52:08:094884 |- Status update: (DRAFT --> WAITING);
+	2015-04-21 10:52:09:100361 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 40.7G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 40.8}%;	--CPU usage: 17.6%;
+	2015-04-21 10:52:09:100527 |- Status update: (WAITING --> GATHERING);
+	2015-04-21 10:52:09:106678 |- Status update: (GATHERING --> DATA READY);
+	2015-04-21 10:52:09:106890 |- Status update: (DATA READY --> STANDBY);
+	2015-04-21 10:52:09:106937 |- Status update: (STANDBY --> PERFORMING_LOCAL);
+	2015-04-21 10:52:09:515439 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-04-21 10:52:09:515553 |- Status update: (COMPLETED_LOCAL --> READY);
+	2015-04-21 10:52:09:619269 |- Status update: (READY --> SENDING_DATA);
+	2015-04-21 10:52:09:619782 |- Status update: (SENDING_DATA --> FINISHED);
+
+ServiceTicket 1429624322537735a176aea10dc5105e104781aa72e6ea95809ab236f2d09cf9145a0ecf927ea895 (READY) Log:
+	2015-04-21 10:52:02:531067 |- New task (APPID 'LOCAL_ECHO_TEST') received by Assistance from token 0123456789ABCDEF;
+	2015-04-21 10:52:02:531334 |- Status update: (DRAFT --> WAITING);
+	2015-04-21 10:52:03:551013 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 40.7G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 40.8}%;	--CPU usage: 41.2%;
+	2015-04-21 10:52:03:551191 |- Status update: (WAITING --> GATHERING);
+	2015-04-21 10:52:03:551233 |- Status update: (GATHERING --> DATA READY);
+	2015-04-21 10:52:03:551274 |- Status update: (DATA READY --> STANDBY);
+	2015-04-21 10:52:03:551306 |- Status update: (STANDBY --> PERFORMING_LOCAL);
+	2015-04-21 10:52:03:559638 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-04-21 10:52:03:559957 |- Status update: (COMPLETED_LOCAL --> READY);
+
+ServiceTicket 1429624323580480b42b9c28e7a16f02b164aa1532f45bf314ca41d25f92667aae262e58ff57419a (READY) Log:
+	2015-04-21 10:52:03:580558 |- New task (APPID 'SHA256_TEST') received by Assistance from token 0123456789ABCDEF;
+	2015-04-21 10:52:03:582654 |- Status update: (DRAFT --> WAITING);
+	2015-04-21 10:52:04:587944 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 40.7G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 40.8}%;	--CPU usage: 12.15%;
+	2015-04-21 10:52:04:588057 |- Status update: (WAITING --> GATHERING);
+	2015-04-21 10:52:04:588173 |- Status update: (GATHERING --> DATA READY);
+	2015-04-21 10:52:04:588213 |- Status update: (DATA READY --> STANDBY);
+	2015-04-21 10:52:04:588246 |- Status update: (STANDBY --> PERFORMING_LOCAL);
+	2015-04-21 10:52:05:760890 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-04-21 10:52:05:761007 |- Status update: (COMPLETED_LOCAL --> READY);
+
+ServiceTicket 1429624322533449561e9ffce2d2159541a28388bf033d44d643c9caba777184b7e3aa2849bcad8e (READY) Log:
+	2015-04-21 10:52:02:533123 |- New task (APPID 'LOCAL_ECHO_TEST') received by Assistance from token 0123456789ABCDEF;
+	2015-04-21 10:52:02:534456 |- Status update: (DRAFT --> WAITING);
+	2015-04-21 10:52:03:539611 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 40.7G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 40.8}%;	--CPU usage: 41.8%;
+	2015-04-21 10:52:03:539773 |- Status update: (WAITING --> GATHERING);
+	2015-04-21 10:52:03:539811 |- Status update: (GATHERING --> DATA READY);
+	2015-04-21 10:52:03:539852 |- Status update: (DATA READY --> STANDBY);
+	2015-04-21 10:52:03:539889 |- Status update: (STANDBY --> PERFORMING_LOCAL);
+	2015-04-21 10:52:03:548894 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-04-21 10:52:03:549136 |- Status update: (COMPLETED_LOCAL --> READY);
+
+ServiceTicket 14296243258246871ccd15900a387a7883cf70acfa15e1c3bc2ed28ced11ae2e9c135c67a6d30cef (FINISHED) Log:
+	2015-04-21 10:52:05:818609 |- New task (APPID 'SHA256_TEST') received by Assistance from token 0123456789ABCDEF;
+	2015-04-21 10:52:05:818911 |- Status update: (DRAFT --> WAITING);
+	2015-04-21 10:52:06:824008 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 40.7G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 40.8}%;	--CPU usage: 26.475%;
+	2015-04-21 10:52:06:824118 |- Status update: (WAITING --> GATHERING);
+	2015-04-21 10:52:06:832699 |- Status update: (GATHERING --> DATA READY);
+	2015-04-21 10:52:06:832954 |- Status update: (DATA READY --> STANDBY);
+	2015-04-21 10:52:06:832991 |- Status update: (STANDBY --> PERFORMING_LOCAL);
+	2015-04-21 10:52:08:036103 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-04-21 10:52:08:036196 |- Status update: (COMPLETED_LOCAL --> READY);
+	2015-04-21 10:52:08:092887 |- Status update: (READY --> SENDING_DATA);
+	2015-04-21 10:52:08:093358 |- Status update: (SENDING_DATA --> FINISHED);
+
+ServiceTicket 1429624328197828afed05c32d7da5f09610b7461c60229e03a561c6a695799efc0ebb4202e8a56 (FINISHED) Log:
+	2015-04-21 10:52:08:096178 |- New task (APPID 'WEKA_3_6_12') received by Assistance from token 0123456789ABCDEF;
+	2015-04-21 10:52:08:096549 |- Status update: (DRAFT --> WAITING);
+	2015-04-21 10:52:09:101043 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 40.7G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 40.8}%;	--CPU usage: 17.6%;
+	2015-04-21 10:52:09:101105 |- Status update: (WAITING --> GATHERING);
+	2015-04-21 10:52:09:112423 |- Status update: (GATHERING --> DATA READY);
+	2015-04-21 10:52:09:112862 |- Status update: (DATA READY --> STANDBY);
+	2015-04-21 10:52:09:112920 |- Status update: (STANDBY --> PERFORMING_LOCAL);
+	2015-04-21 10:52:09:537807 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-04-21 10:52:09:537926 |- Status update: (COMPLETED_LOCAL --> READY);
+	2015-04-21 10:52:09:621395 |- Status update: (READY --> SENDING_DATA);
+	2015-04-21 10:52:09:621828 |- Status update: (SENDING_DATA --> FINISHED);
+
+ServiceTicket 14296243258224951ccd15900a387a7883cf70acfa15e1c3bc2ed28ced11ae2e9c135c67a6d30cef (FINISHED) Log:
+	2015-04-21 10:52:05:816630 |- New task (APPID 'SHA256_TEST') received by Assistance from token 0123456789ABCDEF;
+	2015-04-21 10:52:05:816936 |- Status update: (DRAFT --> WAITING);
+	2015-04-21 10:52:06:821908 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 40.7G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 40.8}%;	--CPU usage: 26.1%;
+	2015-04-21 10:52:06:822039 |- Status update: (WAITING --> GATHERING);
+	2015-04-21 10:52:06:829006 |- Status update: (GATHERING --> DATA READY);
+	2015-04-21 10:52:06:829323 |- Status update: (DATA READY --> STANDBY);
+	2015-04-21 10:52:06:829356 |- Status update: (STANDBY --> PERFORMING_LOCAL);
+	2015-04-21 10:52:08:004425 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-04-21 10:52:08:004537 |- Status update: (COMPLETED_LOCAL --> READY);
+	2015-04-21 10:52:08:090842 |- Status update: (READY --> SENDING_DATA);
+	2015-04-21 10:52:08:091295 |- Status update: (SENDING_DATA --> FINISHED);
+
+ServiceTicket 1429624323585502b42b9c28e7a16f02b164aa1532f45bf314ca41d25f92667aae262e58ff57419a (READY) Log:
+	2015-04-21 10:52:03:584352 |- New task (APPID 'SHA256_TEST') received by Assistance from token 0123456789ABCDEF;
+	2015-04-21 10:52:03:584943 |- Status update: (DRAFT --> WAITING);
+	2015-04-21 10:52:04:591667 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 40.7G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 40.8}%;	--CPU usage: 11.9%;
+	2015-04-21 10:52:04:591893 |- Status update: (WAITING --> GATHERING);
+	2015-04-21 10:52:04:592042 |- Status update: (GATHERING --> DATA READY);
+	2015-04-21 10:52:04:592094 |- Status update: (DATA READY --> STANDBY);
+	2015-04-21 10:52:04:592138 |- Status update: (STANDBY --> PERFORMING_LOCAL);
+	2015-04-21 10:52:05:775865 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-04-21 10:52:05:775909 |- Status update: (COMPLETED_LOCAL --> READY);

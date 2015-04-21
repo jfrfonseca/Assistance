@@ -13,13 +13,20 @@ import os
 import Assistance
 # ASSISTANCE OBJECT IMPORTS ------------
 from pkgMissionControl.implementation import Launcher
-from tests import SHA256Test, SHA256remoteTest, EchoTest
+import SHA256Test
+import SHA256remoteTest
+import EchoTest
+import WEKA
 
 
-class TestAssistance(unittest.TestCase):  # @IgnorePep8
+class TestDiagnose(unittest.TestCase):  # @IgnorePep8
     '''
     A series of Unit Tests to the Functionality of the Assistance System
     '''
+
+    def dual_print(self, string2Print):
+        self.ioFile.write(string2Print+'\n')
+        print string2Print
 
     def zipdir(self, path, zipf):
         '''
@@ -27,30 +34,39 @@ class TestAssistance(unittest.TestCase):  # @IgnorePep8
         :param path: relative path to the file
         :param zipf: zipfile object to the directory to be added to
         '''
+        filesIn = zipf.namelist()
+        for fileNum in range(len(filesIn)):
+            filesIn[fileNum] = filesIn[fileNum].split('/')[-1]
         for root, dirs, files in os.walk(path):  # @UnusedVariable
             for fileObj in files:
-                zipf.write(os.path.join(root, fileObj))
+                if fileObj not in filesIn:
+                    if not fileObj.endswith('~'):
+                        zipf.write(os.path.join(root, fileObj))
 
     def setUp(self):
         '''
         Starts the Assistance Service
         '''
+        self.ioFile = open("LOG/ioFile.txt", 'w')
         Assistance.setup()
 
     def tearDown(self):
         '''
         Shuts down Assistance Service
         '''
-        print "All tests are done. Saving  the LOGs"
+        self.dual_print("All tests are done. Saving  the LOGs")
+        self.ioFile.close()
         Launcher.getOfficerInstance().saveLogs()
-        zipf = zipfile.ZipFile('LOGs.zip', 'w')
+        zipf = zipfile.ZipFile('LOGs.zip', 'a')
         self.zipdir('LOG/', zipf)
+        self.zipdir('AssistanceApps/data/', zipf)
         self.zipdir('AssistanceApps/outputs/', zipf)
-        self.zipdir('tests/', zipf)
+        self.zipdir('testsResults/', zipf)
+        self.zipdir('testsData/', zipf)
         zipf.close()
-        print "Created ZIP file"
+        print("Created ZIP file")
         Assistance.shutdown()
-        print "Finished everything"
+        print("Finished everything")
 
     def test(self):
         '''
@@ -65,57 +81,81 @@ class TestAssistance(unittest.TestCase):  # @IgnorePep8
         The SHA256remoteTest does almost the same that the last test, but this time,  # @IgnorePep8
             a file is submit by a socket and the results are returned by another  # @IgnorePep8
         '''
-        print "Echo Test"
+        self.dual_print("Echo Test")
         ticket1 = EchoTest.request("Hello World")
         ticket2 = EchoTest.request("Hello, World!")
         ticket3 = EchoTest.request("HeII0, W0r1d!!!111!")
-        print "Tickets: "
-        print ticket1
-        print ticket2
-        print ticket3
-        print "Status: "
-        print EchoTest.checkStatus(ticket1)
-        print EchoTest.checkStatus(ticket2)
-        print EchoTest.checkStatus(ticket3)
-        print "Synch: "
-        print EchoTest.synch(ticket1)
-        print EchoTest.synch(ticket2)
-        print EchoTest.synch(ticket3)
+        self.dual_print("Tickets: ")
+        self.dual_print(ticket1)
+        self.dual_print(ticket2)
+        self.dual_print(ticket3)
+        self.dual_print("Status: ")
+        self.dual_print(EchoTest.checkStatus(ticket1))
+        self.dual_print(EchoTest.checkStatus(ticket2))
+        self.dual_print(EchoTest.checkStatus(ticket3))
+        self.dual_print("Synch: ")
+        self.dual_print(EchoTest.synch(ticket1))
+        self.dual_print(EchoTest.synch(ticket2))
+        self.dual_print(EchoTest.synch(ticket3))
 
-        print "\nSHA256 test"
+        self.dual_print("\nSHA256 test")
         ticket3 = SHA256Test.request()
         ticket4 = SHA256Test.request()
-        print "Tickets: "
-        print ticket3
-        print ticket4
-        print "Status: "
-        print SHA256Test.checkStatus(ticket3)
-        print SHA256Test.checkStatus(ticket4)
-        print "Synch: "
-        print SHA256Test.synch(ticket3)
-        print SHA256Test.synch(ticket4)
+        self.dual_print("Tickets: ")
+        self.dual_print(ticket3)
+        self.dual_print(ticket4)
+        self.dual_print("Status: ")
+        self.dual_print(SHA256Test.checkStatus(ticket3))
+        self.dual_print(SHA256Test.checkStatus(ticket4))
+        self.dual_print("Synch: ")
+        self.dual_print(SHA256Test.synch(ticket3))
+        self.dual_print(SHA256Test.synch(ticket4))
 
-        print "\nSHA256 by Remote File test"
+        self.dual_print("\nSHA256 by Remote File test")
         ticket5 = SHA256remoteTest.request(
-            "/home/zeff/Dropbox/ActiveWorkspace/Assistance/app/AssistanceApps/sha256/V0.5/tests/experimentData.dat")  # @IgnorePep8
+            "testsData/experimentData.dat")  # @IgnorePep8
         ticket6 = SHA256remoteTest.request(
-            "/home/zeff/Dropbox/ActiveWorkspace/Assistance/app/AssistanceApps/sha256/V0.5/tests/experimentData.dat")  # @IgnorePep8
-        print "Tickets: "
-        print ticket5
-        print ticket6
-        print "Status: "
-        print SHA256remoteTest.checkStatus(ticket5)
-        print SHA256remoteTest.checkStatus(ticket6)
-        print "Submitting data "
+            "testsData/experimentData.dat")  # @IgnorePep8
+        self.dual_print("Tickets: ")
+        self.dual_print(ticket5)
+        self.dual_print(ticket6)
+        self.dual_print("Status: ")
+        self.dual_print(SHA256remoteTest.checkStatus(ticket5))
+        self.dual_print(SHA256remoteTest.checkStatus(ticket6))
+        self.dual_print("Submitting data ")
         SHA256remoteTest.submit(
             ticket5,
-            "/home/zeff/Dropbox/ActiveWorkspace/Assistance/app/AssistanceApps/sha256/V0.5/tests/experimentData.dat")  # @IgnorePep8
+            "testsData/experimentData.dat")  # @IgnorePep8
         SHA256remoteTest.submit(
             ticket6,
-            "/home/zeff/Dropbox/ActiveWorkspace/Assistance/app/AssistanceApps/sha256/V0.5/tests/experimentData.dat")  # @IgnorePep8
-        print "Synch: "
-        print SHA256remoteTest.synch(ticket5)
-        print SHA256remoteTest.synch(ticket6)
+            "testsData/experimentData.dat")  # @IgnorePep8
+        self.dual_print("Synch: ")
+        self.dual_print(SHA256remoteTest.synch(ticket5))
+        self.dual_print(SHA256remoteTest.synch(ticket6))
+
+        self.dual_print("\nWEKA J48 tree classifier by Remote File test")
+        ticket7 = WEKA.request("weka.classifiers.trees.J48",
+                               "-t",
+                               "testsData/weather.nominal.arff")
+        ticket8 = WEKA.request("weka.classifiers.trees.J48",
+                               "-t",
+                               "testsData/weather.numeric.arff")
+        self.dual_print("Tickets: ")
+        self.dual_print(ticket7)
+        self.dual_print(ticket8)
+        self.dual_print("Status: ")
+        self.dual_print(WEKA.checkStatus(ticket7))
+        self.dual_print(WEKA.checkStatus(ticket8))
+        self.dual_print("Submitting data ")
+        WEKA.submit(
+            ticket7,
+            "testsData/weather.nominal.arff")
+        WEKA.submit(
+            ticket8,
+            "testsData/weather.numeric.arff")
+        self.dual_print("Synch: ")
+        self.dual_print(WEKA.synch(ticket7))
+        self.dual_print(WEKA.synch(ticket8))
 
 
 '''

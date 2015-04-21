@@ -5,8 +5,8 @@ Jose F. R. Fonseca
 See Attached License file
 '''
 # NATIVE MODULE IMPORTS ------------------
-import psutil
 import os
+import psutil
 # ASSISTANCE CONSTANTS IMPORTS -----
 from cpnLibrary.implementation.Constants import DIR_APPS_CWD
 

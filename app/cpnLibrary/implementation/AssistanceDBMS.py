@@ -8,7 +8,7 @@ See Attached License file
 # ASSISTANCE CONSTANTS IMPORTS -----
 from cpnLibrary.implementation.Constants import\
     AppID_LOCAL_ECHO_TEST, AppID_SHA256_TEST, AppID_SHA256_REMOTE_TEST,\
-    NULL, DIR_APPS_CWD, TUNNING_DEFAULT_PROCESS_PRIORITY
+    NULL, DIR_APPS_CWD, TUNNING_DEFAULT_PROCESS_PRIORITY, AppID_WEKA
 
 
 def getCallerScript(taskDescription):
@@ -34,12 +34,15 @@ SO THE APP CAN CALL ITS FILES FROM THE DEFAULT
         scriptSettings["assistanceAppFile"] = "sha256Example.assistanceApp"
     elif taskDescription.APPID == AppID_SHA256_REMOTE_TEST:
         scriptSettings["assistanceAppFile"] = "sha256Example.assistanceApp"
+    elif taskDescription.APPID == AppID_WEKA:
+        scriptSettings["assistanceAppFile"] = "assistanceWEKA.assistanceApp"
     return [
         DIR_APPS_CWD + scriptSettings["assistanceAppFile"],
         scriptSettings["processPriority"],
         scriptSettings["dataFiles"],
         scriptSettings["TICKET"],
-        scriptSettings["args"]]
+        scriptSettings["args"]
+        ]
 
 
 def getThresholds(taskDescription):  # @UnusedVariable
