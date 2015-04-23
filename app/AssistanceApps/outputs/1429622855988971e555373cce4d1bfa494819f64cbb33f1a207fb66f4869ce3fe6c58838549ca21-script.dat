@@ -1,1 +1,0 @@
-nice -n 10 time -p java -cp AssistanceApps/weka-3-6-12/all/weka.jar weka.classifiers.trees.J48 -t AssistanceApps/data/weather.numeric.arff >> AssistanceApps/outputs/1429622855988971e555373cce4d1bfa494819f64cbb33f1a207fb66f4869ce3fe6c58838549ca21-stdout.dat 2> AssistanceApps/outputs/1429622855988971e555373cce4d1bfa494819f64cbb33f1a207fb66f4869ce3fe6c58838549ca21-stderr.dat

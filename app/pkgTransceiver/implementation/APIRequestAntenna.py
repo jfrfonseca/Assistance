@@ -34,7 +34,7 @@ class APIRequestAntenna (AssistanceGenericAntenna):
         appID = self.rfile.readline().strip()
         appArgs = self.rfile.readline().strip()
         appDataChannel = self.rfile.readline().strip()
-        appDataDelivery = self.rfile.readline().strip()
+        appDataDelivery = self.rfile.readline().strip().split(' ')
         appAnswerChannel = self.rfile.readline().strip()
         task = TaskDescription(authToken, timeReceived,
                                appID, appArgs,

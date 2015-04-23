@@ -6,9 +6,11 @@ Jose F. R. Fonseca
 See Attached License file
 '''
 # NATIVE MODULE IMPORTS ------------------
-import unittest
 import zipfile
 import os
+import sys
+import unittest
+import time
 # ASSISTANCE MODULE IMPORTS ----------
 import Assistance
 # ASSISTANCE OBJECT IMPORTS ------------
@@ -17,9 +19,135 @@ import SHA256Test
 import SHA256remoteTest
 import EchoTest
 import WEKA
+from cpnLibrary.implementation.Constants import DIR_APPS_CWD
 
 
-class TestDiagnose(unittest.TestCase):  # @IgnorePep8
+'''
+A series tests of the Functionality of the Assistance System
+'''
+
+
+def run():
+    dual_print("---------------- NEW TEST RUN - "+str(time.time())+" ----------------")  # @IgnorePep8
+    if len(sys.argv) > 1:
+        if sys.argv[1] == '-server':
+            Assistance.setup()
+            stall = raw_input("\nAssistance Server Up! Press ENTER to finish")  # @UnusedVariable @IgnorePep8
+            Launcher.getOfficerInstance().saveLogs()
+            saveAll()
+            Assistance.shutdown()
+        else:
+            for peerIP in sys.argv[2:]:
+                test(peerIP)
+                saveAll()
+    else:
+        unittest.main()
+
+
+def test(peerIP):
+    dual_print("Echo Test to IP "+peerIP)
+    ticket1 = EchoTest.request("Hello World", peerIP)
+    ticket2 = EchoTest.request("Hello, World!", peerIP)
+    ticket3 = EchoTest.request("HeII0, W0r1d!!!111!", peerIP)
+    dual_print("Tickets: ")
+    dual_print(ticket1)
+    dual_print(ticket2)
+    dual_print(ticket3)
+    dual_print("Status: ")
+    dual_print(EchoTest.checkStatus(ticket1, peerIP))
+    dual_print(EchoTest.checkStatus(ticket2, peerIP))
+    dual_print(EchoTest.checkStatus(ticket3, peerIP))
+    dual_print("Synch: ")
+    dual_print(EchoTest.synch(ticket1, peerIP))
+    dual_print(EchoTest.synch(ticket2, peerIP))
+    dual_print(EchoTest.synch(ticket3, peerIP))
+
+    dual_print("\nSHA256 by Remote File test to IP "+peerIP)
+    ticket5 = SHA256remoteTest.request(
+        "testsData/experimentData.dat", peerIP)  # @IgnorePep8
+    ticket6 = SHA256remoteTest.request(
+        "testsData/experimentData.dat", peerIP)  # @IgnorePep8
+    dual_print("Tickets: ")
+    dual_print(ticket5)
+    dual_print(ticket6)
+    dual_print("Status: ")
+    dual_print(SHA256remoteTest.checkStatus(ticket5, peerIP))
+    dual_print(SHA256remoteTest.checkStatus(ticket6, peerIP))
+    dual_print("Submitting data ")
+    SHA256remoteTest.submit(
+        ticket5,
+        "testsData/experimentData.dat", peerIP)  # @IgnorePep8
+    SHA256remoteTest.submit(
+        ticket6,
+        "testsData/experimentData.dat", peerIP)  # @IgnorePep8
+    dual_print("Synch: ")
+    dual_print(SHA256remoteTest.synch(ticket5, peerIP))
+    dual_print(SHA256remoteTest.synch(ticket6, peerIP))
+
+    dual_print("\nWEKA J48 tree classifier by Remote File test to IP "+peerIP)
+    ticket7 = WEKA.request("weka.classifiers.trees.J48",
+                           "-t",
+                           "testsData/weather.nominal.arff", peerIP)
+    ticket8 = WEKA.request("weka.classifiers.trees.J48",
+                           "-t",
+                           "testsData/weather.numeric.arff", peerIP)
+    dual_print("Tickets: ")
+    dual_print(ticket7)
+    dual_print(ticket8)
+    dual_print("Status: ")
+    dual_print(WEKA.checkStatus(ticket7, peerIP))
+    dual_print(WEKA.checkStatus(ticket8, peerIP))
+    dual_print("Submitting data ")
+    WEKA.submit(
+        ticket7,
+        "testsData/weather.nominal.arff", peerIP)
+    WEKA.submit(
+        ticket8,
+        "testsData/weather.numeric.arff", peerIP)
+    dual_print("Synch: ")
+    dual_print(WEKA.synch(ticket7, peerIP))
+    dual_print(WEKA.synch(ticket8, peerIP))
+
+
+def dual_print(string2Print):
+    ioFile = open("LOG/ioFile.txt", 'a')
+    ioFile.write(string2Print+'\n')
+    ioFile.close()
+    print string2Print
+
+
+def zipdir(path, zipf):
+    '''
+    Adds a directory to a zip file
+    :param path: relative path to the file
+    :param zipf: zipfile object to the directory to be added to
+    '''
+    filesIn = zipf.namelist()
+    for fileNum in range(len(filesIn)):
+        filesIn[fileNum] = filesIn[fileNum].split('/')[-1]
+    for root, dirs, files in os.walk(path):  # @UnusedVariable
+        for fileObj in files:
+            if fileObj not in filesIn:
+                if not fileObj.endswith('~'):
+                    zipf.write(os.path.join(root, fileObj))
+
+
+def saveAll():
+    '''
+    Shuts down Assistance Service
+    '''
+    dual_print("All tests are done. Saving  the LOGs")
+    zipf = zipfile.ZipFile('LOGs.zip', 'a')
+    zipdir('LOG/', zipf)
+    zipdir(DIR_APPS_CWD, zipf)
+    zipdir('testsResults/', zipf)
+    zipdir('testsData/', zipf)
+    zipf.close()
+    print("Created ZIP file")
+    print("Finished everything")
+
+
+class TestDiagnose(unittest.TestCase):
     '''
     A series of Unit Tests to the Functionality of the Assistance System
     '''
@@ -81,6 +209,7 @@ class TestDiagnose(unittest.TestCase):  # @IgnorePep8
         The SHA256remoteTest does almost the same that the last test, but this time,  # @IgnorePep8
             a file is submit by a socket and the results are returned by another  # @IgnorePep8
         '''
+        self.dual_print("---------------- NEW TEST RUN - "+str(time.time())+" ----------------")  # @IgnorePep8
         self.dual_print("Echo Test")
         ticket1 = EchoTest.request("Hello World")
         ticket2 = EchoTest.request("Hello, World!")
@@ -162,4 +291,4 @@ class TestDiagnose(unittest.TestCase):  # @IgnorePep8
 Runs this file
 '''
 if __name__ == '__main__':
-    unittest.main()
+    run()

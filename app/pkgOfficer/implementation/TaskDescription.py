@@ -51,14 +51,13 @@ class TaskDescription():
         # Task Request Data
         self.ARGUMENTS = appArgs
         self.DATA_DELIVERY = appDataDelivery
-        self.DATA_LOCATION = NULL
+        self.DATA_FILES = []
 
         # Task Answer Meta
         self.answer = {}
         self.STDOUT = NULL
         self.STDERR = NULL
         self.ANSWER_CHANNEL = appAnswerChannel
-        self.OUTPUT_DIR = DIR_APPS_CWD+"outputs/"
         self.TIME_COMPLETED = NULL
         self.TIME_INTERRUPTED = NULL
         self.CHECKPOINT = NULL

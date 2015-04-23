@@ -8,7 +8,8 @@ from cpnLibrary.implementation.Constants import NULL, TOKEN_TESTS_VERSION,\
 
 HOST = ''
 
-def request(messageToEcho):
+
+def request(messageToEcho, peerIP=HOST):
     '''
     MAKE MSG
     '''
@@ -17,7 +18,8 @@ def request(messageToEcho):
     '''
     SEND
     '''
-    dummySocket = AssistanceSocketClient(HOST, PORT_API_REQUESTS)
+    print "requesting to "+str(peerIP)+":"+str(PORT_API_REQUESTS)
+    dummySocket = AssistanceSocketClient(peerIP, PORT_API_REQUESTS)
     dummySocket.sendData(header+apiRequestMsg)
     '''
     GET TICKET
@@ -28,7 +30,7 @@ def request(messageToEcho):
     return ticket
 
 
-def checkStatus(serviceTicket):
+def checkStatus(serviceTicket, peerIP=HOST):
     '''
     MAKE MSG
     '''
@@ -37,7 +39,7 @@ def checkStatus(serviceTicket):
     '''
     SEND
     '''
-    dummySocket = AssistanceSocketClient(HOST, PORT_DATA_REQUESTS)
+    dummySocket = AssistanceSocketClient(peerIP, PORT_DATA_REQUESTS)
     dummySocket.sendData(header+statusCheckMsg)
     '''
     GET STATUS
@@ -48,8 +50,8 @@ def checkStatus(serviceTicket):
     return status
 
 
-def synch(serviceTicket):
-    while checkStatus(serviceTicket) != STATUS_READY:
+def synch(serviceTicket, peerIP=HOST):
+    while checkStatus(serviceTicket, peerIP) != STATUS_READY:
         time.sleep(0.1)
     '''
     MAKE MSG
@@ -59,7 +61,7 @@ def synch(serviceTicket):
     '''
     SEND
     '''
-    dummySocket = AssistanceSocketClient(HOST, PORT_DATA_REQUESTS)
+    dummySocket = AssistanceSocketClient(peerIP, PORT_DATA_REQUESTS)
     dummySocket.sendData(header+recoverMsg)
     '''
     GET RESULTS

@@ -5,4 +5,4 @@ dataFiles=$2
 serviceTicket=$3
 arguments=$4
 binary=V0.5/linux/bin/main.build
-nice -n $processPriority time -p ./$currentDirectory/sha256/$binary $dataFiles $arguments >> $currentDirectory/outputs/$serviceTicket-stdout.dat 2> $currentDirectory/outputs/$serviceTicket-stderr.dat
+nice -n $processPriority time -p ./$currentDirectory/sha256/$binary $dataFiles $arguments >> $currentDirectory/runtimeIO/$serviceTicket/$serviceTicket-stdout.dat 2> $currentDirectory/runtimeIO/$serviceTicket/$serviceTicket-stderr.dat

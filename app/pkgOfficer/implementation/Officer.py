@@ -14,10 +14,10 @@ import SystemStats
 import os.path
 from random import randint
 # ASSISTANCE MODULE IMPORTS ----------
-from cpnLibrary.implementation.AssistanceDBMS import getThresholds,\
-    getTaskPriority, getCallerScript
 from pkgPerformer.implementation import Performer
-from pkgOfficer.implementation.TaskDescription import TaskDescription
+from AssistanceRules import getThresholds,\
+    getTaskPriority, getCallerScript, volunteer
+from TaskDescription import TaskDescription
 # ASSISTANCE CONSTANTS IMPORTS -----
 from cpnLibrary.implementation.Constants import STATUS_WAITING, STATUS_REJECTED,\
     STATUS_GATHERING_DATA, STATUS_STANDBY, STATUS_READY, STATUS_DATA_READY,\
@@ -73,7 +73,8 @@ appended to the (#TODO signed) SHA256 of the task's
         tokenHash.update(taskDescription.TOKEN)
         tokenHash.update(taskDescription.APPID)
         tokenHash.update(taskDescription.ARGUMENTS)
-        tokenHash.update(taskDescription.DATA_DELIVERY)
+        for dataFile in taskDescription.DATA_DELIVERY:
+            tokenHash.update(dataFile)
 
         # the 4 random digits below are here to avoid that
         # two equal tasks from the same source at the same time
@@ -99,11 +100,12 @@ appended to the (#TODO signed) SHA256 of the task's
 
     def decide(self, ticket):  # @UnusedVariable
         '''
-        Decides if this instance will attend to the task or not
-        Still a STUB
-        :param ticket:
+        Recovers the decision to run or not a task, given its ticket
+        :param ticket: ticket of the task to be decided
         '''
-        return True
+        task = self.getTask(ticket)
+        answer = volunteer(task)
+        return answer
 
     def enoughLocalResources(self, ticket):
         '''
@@ -143,15 +145,16 @@ appended to the (#TODO signed) SHA256 of the task's
         if self.enoughLocalResources(ticket):
             task.updateStatus(STATUS_GATHERING_DATA)
             if task.DATA_CHANNEL == CHANNEL_LOCAL_FILE:
-                task.DATA_LOCATION = os.path.relpath(
-                    task.DATA_DELIVERY, os.getcwd())
+                for dataFile in task.DATA_DELIVERY:
+                    task.DATA_FILES.append(os.path.relpath(dataFile, os.getcwd()))  # @IgnorePep8
                 task.updateStatus(STATUS_DATA_READY)
             elif task.DATA_CHANNEL == CHANNEL_FTP:
-                task.DATA_LOCATION = DIR_APPS_CWD+'data/'
+                os.makedirs(DIR_APPS_CWD+task.TICKET)
                 task.lock.wait()
                 task.lock.clear()
             else:
                 task.updateStatus(STATUS_DATA_READY)
+            # print task.DATA_FILES
             task.SCRIPT = getCallerScript(task)
             task.updateStatus(STATUS_STANDBY)
             Performer.perform(task)

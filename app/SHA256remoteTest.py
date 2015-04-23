@@ -17,12 +17,12 @@ from cpnLibrary.implementation.Constants import TOKEN_TESTS_VERSION,\
     STATUS_GATHERING_DATA, STATUS_READY, SYMBOL_SEPARATOR,\
     TIME_DATA_SERVER_INTERVAL, AppID_SHA256_TEST, CHANNEL_FTP
 # LOCAL CONSTANTS ----------------------------
-ASSISTANCE_SERVER = '127.0.0.1'
+HOST = '127.0.0.1'
 # LAMBDA FUNCTIONS --------------------------
 fileLength = lambda filePath: str(len(open(filePath, 'rb').read()))
 
 
-def request(filePath):
+def request(filePath, peerIP=HOST):
     '''
     Requests execution of the AssistanceApp.
 Forms the message to be sent, specifying the parameters of the execution
@@ -42,7 +42,7 @@ It will be used to determine the size of the file, necessary for the task submis
     '''
     SEND
     '''
-    dummySocket = AssistanceSocketClient(ASSISTANCE_SERVER, PORT_API_REQUESTS)
+    dummySocket = AssistanceSocketClient(peerIP, PORT_API_REQUESTS)
     dummySocket.sendData(header+apiRequestMsg)
     '''
     GET TICKET
@@ -53,16 +53,16 @@ It will be used to determine the size of the file, necessary for the task submis
     return ticket
 
 
-def submit(serviceTicket, filePath):
+def submit(serviceTicket, filePath, peerIP=HOST):
     '''
     Sends a file over Assistance.
 Waits until the task is ready to receive data, then sends it
     :param serviceTicket: the ticket of the task to be verified.
     :param filePath: The ABSPATH to the file to be sent.
     '''
-    while checkStatus(serviceTicket) != STATUS_GATHERING_DATA:
+    while checkStatus(serviceTicket, peerIP) != STATUS_GATHERING_DATA:
         time.sleep(TIME_DATA_SERVER_INTERVAL)
-    dummySocket = AssistanceSocketClient(ASSISTANCE_SERVER, PORT_DATA_REQUESTS)
+    dummySocket = AssistanceSocketClient(peerIP, PORT_DATA_REQUESTS)
     header = TOKEN_TESTS_VERSION + '\n' + TYPE_DATA_SUBMIT_MSG + '\n'
     submitMsg = serviceTicket+'\n'+filePath.split('/')[-1]+'\n'
     dummySocket.sendData(header + submitMsg)
@@ -70,7 +70,7 @@ Waits until the task is ready to receive data, then sends it
     dummySocket.close()
 
 
-def checkStatus(serviceTicket):
+def checkStatus(serviceTicket, peerIP=HOST):
     '''
     Sends a message checking the current status of the given ticket, and returns  # @IgnorePep8
         that status
@@ -84,7 +84,7 @@ def checkStatus(serviceTicket):
     '''
     SEND
     '''
-    dummySocket = AssistanceSocketClient(ASSISTANCE_SERVER, PORT_DATA_REQUESTS)
+    dummySocket = AssistanceSocketClient(peerIP, PORT_DATA_REQUESTS)
     dummySocket.sendData(header+statusCheckMsg)
     '''
     GET STATUS
@@ -95,13 +95,13 @@ def checkStatus(serviceTicket):
     return status
 
 
-def synch(serviceTicket):
+def synch(serviceTicket, peerIP=HOST):
     '''
     Waits until the task is completed, and ready for redeem.
 Then recovers the answers
     :param serviceTicket: ticket of the task to be recovered
     '''
-    while checkStatus(serviceTicket) != STATUS_READY:
+    while checkStatus(serviceTicket, peerIP) != STATUS_READY:
         time.sleep(TIME_DATA_SERVER_INTERVAL)
     '''
     MAKE MSG
@@ -111,7 +111,7 @@ Then recovers the answers
     '''
     SEND
     '''
-    dummySocket = AssistanceSocketClient(ASSISTANCE_SERVER, PORT_DATA_REQUESTS)
+    dummySocket = AssistanceSocketClient(peerIP, PORT_DATA_REQUESTS)
     dummySocket.sendData(header+recoverMsg)
     '''
     GET THE ANSWER FILES

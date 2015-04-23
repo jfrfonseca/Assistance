@@ -12,7 +12,7 @@ import os
 # ASSISTANCE CONSTANT IMPORTS -------
 from cpnLibrary.implementation.Constants import\
     STATUS_PERFORMING_LOCAL, STATUS_INTERRUPTED_LOCAL, STATUS_COMPLETED_LOCAL,\
-    CHANNEL_IMMEDIATE, NULL
+    CHANNEL_IMMEDIATE, NULL, DIR_APPS_CWD
 
 
 def perform(task):
@@ -41,7 +41,7 @@ If this execution finished normally, the STDOUT and STDERR of the script
             task.STDOUT, task.STDERR = stdout, stderr
         else:
             filepath = lambda outType: os.path.relpath(
-                task.OUTPUT_DIR+task.TICKET+"-"+outType+".dat")
+                DIR_APPS_CWD+task.TICKET+"/"+task.TICKET+"-"+outType+".dat")
             task.STDOUT, task.STDERR = filepath("stdout"), filepath("stderr")
         task.updateStatus(STATUS_COMPLETED_LOCAL)
         task.lock.set()

@@ -118,17 +118,20 @@ class DataAntenna (AssistanceGenericAntenna):
             time.sleep(TIME_DATA_SERVER_INTERVAL)
         # recovers the file name to be saved,
         # and its size must have already been sent on the message writeahead
-        fileName = self.rfile.readline().strip()
-        fileSize = int(task.DATA_DELIVERY)
-        task.DATA_LOCATION = task.DATA_LOCATION + fileName
+        # print "receiving "+str(len(task.DATA_DELIVERY))+" files"
+        for fileNum in range(len(task.DATA_DELIVERY)):
+            fileName = self.rfile.readline().strip()
+            # print "receiving file "+str(fileNum)+", "+fileName
+            task.DATA_FILES.append(DIR_APPS_CWD + task.TICKET + '/' + fileName)
         # recovers the data of the file, and saves it to a file
-        with open(task.DATA_LOCATION, 'wb') as dataFile:
-            while True:
-                recoveredData = self.rfile.readline()
-                if recoveredData == '':
-                    break
-                else:
-                    dataFile.write(recoveredData)
+        for fileNum in range(len(task.DATA_FILES)):
+            with open(task.DATA_FILES[fileNum], 'wb') as dataFile:
+                while True:
+                    recoveredData = self.rfile.readline()
+                    if recoveredData == '':
+                        break
+                    else:
+                        dataFile.write(recoveredData)
         # updates the task data location and status
         # and unlocks the task's setup thread
         task.updateStatus(STATUS_DATA_READY)

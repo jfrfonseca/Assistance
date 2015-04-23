@@ -5,5 +5,5 @@ dataFiles=$2
 serviceTicket=$3
 arguments=$4
 binary=all/weka.jar
-echo "nice -n $processPriority time -p java -cp $currentDirectory/weka-3-6-12/$binary $arguments $dataFiles >> $currentDirectory/outputs/$serviceTicket-stdout.dat 2> $currentDirectory/outputs/$serviceTicket-stderr.dat" 2> $currentDirectory/outputs/$serviceTicket-script.dat
+echo "nice -n $processPriority time -p java -cp $currentDirectory/weka-3-6-12/$binary $arguments $dataFiles >> $currentDirectory/outputs/$serviceTicket-stdout.dat 2> $currentDirectory/outputs/$serviceTicket-stderr.dat" >> $currentDirectory/outputs/$serviceTicket-script.dat
 nice -n $processPriority time -p java -cp $currentDirectory/weka-3-6-12/$binary $arguments $dataFiles >> $currentDirectory/outputs/$serviceTicket-stdout.dat 2> $currentDirectory/outputs/$serviceTicket-stderr.dat

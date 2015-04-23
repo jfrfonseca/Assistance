@@ -46,7 +46,7 @@ def getTransceiverInstance():
 
 def getOfficerInstance():
     '''
-    Returns the running istance of the Officer
+    Returns the running instance of the Officer
     '''
     global officer
     return officer
