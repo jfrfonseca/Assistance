@@ -8,9 +8,10 @@ See Attached License file
 # NATIVE MODULE IMPORTS ------------------
 import zipfile
 import os
-import sys
-import unittest
 import time
+import threading
+import multiprocessing
+from optparse import OptionParser
 # ASSISTANCE MODULE IMPORTS ----------
 import Assistance
 # ASSISTANCE OBJECT IMPORTS ------------
@@ -19,101 +20,182 @@ import SHA256Test
 import SHA256remoteTest
 import EchoTest
 import WEKA
+# ASSISTANCE CONSTANTS IMPORTS ----
 from cpnLibrary.implementation.Constants import DIR_APPS_CWD
-
+# LOCAL CONSTANTS ---------------------------
+TIME_WATCHDOG = 5
+MANUAL = "\nUsage:"\
+    + "\n\t ./testAssistance -server"\
+    + "\n\t ./testAssistance -client (-functionality | -fullExperiment)"\
+    + " (-local | ['one or more servers IPs in the local LAN'])"
 
 '''
-A series tests of the Functionality of the Assistance System
+A series tests to the Assistance System
 '''
 
 
-def run():
-    dual_print("---------------- NEW TEST RUN - "+str(time.time())+" ----------------")  # @IgnorePep8
-    if len(sys.argv) > 1:
-        if sys.argv[1] == '-server':
-            Assistance.setup()
-            stall = raw_input("\nAssistance Server Up! Press ENTER to finish")  # @UnusedVariable @IgnorePep8
-            Launcher.getOfficerInstance().saveLogs()
-            saveAll()
-            Assistance.shutdown()
-        else:
-            for peerIP in sys.argv[2:]:
-                test(peerIP)
-                saveAll()
-    else:
-        unittest.main()
+class ResultsPrinter():
+    def __init__(self, logFileName, mode='a'):
+        self.ioFile = open(logFileName, mode)
+        self.active = True
+        self.printBuffer = []
+        self.lock = threading.Event()
+        self.printerThread = threading.Thread(target=self.printerServer)
+
+    def printerServer(self):
+        while(self.active):
+            if len(self.printBuffer) > 0:
+                toPrint = self.printBuffer.pop(0)
+                self.ioFile.write(toPrint+'\n')
+            else:
+                self.lock.wait()
+                self.lock.clear()
+
+    def shutdown(self):
+        self.active = False
+        while len(self.printBuffer) > 0:
+            toPrint = self.printBuffer.pop(0)
+            print toPrint
+            self.ioFile.write(toPrint+'\n')
+        self.ioFile.close()
+
+    def dual_print(self, string2Print):
+        print string2Print
+        self.printBuffer.append(string2Print)
+        self.lock.set()
 
 
-def test(peerIP):
-    dual_print("Echo Test to IP "+peerIP)
-    ticket1 = EchoTest.request("Hello World", peerIP)
-    ticket2 = EchoTest.request("Hello, World!", peerIP)
-    ticket3 = EchoTest.request("HeII0, W0r1d!!!111!", peerIP)
-    dual_print("Tickets: ")
-    dual_print(ticket1)
-    dual_print(ticket2)
-    dual_print(ticket3)
-    dual_print("Status: ")
-    dual_print(EchoTest.checkStatus(ticket1, peerIP))
-    dual_print(EchoTest.checkStatus(ticket2, peerIP))
-    dual_print(EchoTest.checkStatus(ticket3, peerIP))
-    dual_print("Synch: ")
-    dual_print(EchoTest.synch(ticket1, peerIP))
-    dual_print(EchoTest.synch(ticket2, peerIP))
-    dual_print(EchoTest.synch(ticket3, peerIP))
+class AssistanceUnitTests():
+    '''
+    A series of Unit Tests to the Assistance System
+    '''
 
-    dual_print("\nSHA256 by Remote File test to IP "+peerIP)
-    ticket5 = SHA256remoteTest.request(
-        "testsData/experimentData.dat", peerIP)  # @IgnorePep8
-    ticket6 = SHA256remoteTest.request(
-        "testsData/experimentData.dat", peerIP)  # @IgnorePep8
-    dual_print("Tickets: ")
-    dual_print(ticket5)
-    dual_print(ticket6)
-    dual_print("Status: ")
-    dual_print(SHA256remoteTest.checkStatus(ticket5, peerIP))
-    dual_print(SHA256remoteTest.checkStatus(ticket6, peerIP))
-    dual_print("Submitting data ")
-    SHA256remoteTest.submit(
-        ticket5,
-        "testsData/experimentData.dat", peerIP)  # @IgnorePep8
-    SHA256remoteTest.submit(
-        ticket6,
-        "testsData/experimentData.dat", peerIP)  # @IgnorePep8
-    dual_print("Synch: ")
-    dual_print(SHA256remoteTest.synch(ticket5, peerIP))
-    dual_print(SHA256remoteTest.synch(ticket6, peerIP))
+    def setUp(self):
+        '''
+        Starts the Assistance Service
+        '''
+        self.printer = ResultsPrinter("LOG/terminalIO.log")
+        Assistance.setup()
 
-    dual_print("\nWEKA J48 tree classifier by Remote File test to IP "+peerIP)
-    ticket7 = WEKA.request("weka.classifiers.trees.J48",
-                           "-t",
-                           "testsData/weather.nominal.arff", peerIP)
-    ticket8 = WEKA.request("weka.classifiers.trees.J48",
-                           "-t",
-                           "testsData/weather.numeric.arff", peerIP)
-    dual_print("Tickets: ")
-    dual_print(ticket7)
-    dual_print(ticket8)
-    dual_print("Status: ")
-    dual_print(WEKA.checkStatus(ticket7, peerIP))
-    dual_print(WEKA.checkStatus(ticket8, peerIP))
-    dual_print("Submitting data ")
-    WEKA.submit(
-        ticket7,
-        "testsData/weather.nominal.arff", peerIP)
-    WEKA.submit(
-        ticket8,
-        "testsData/weather.numeric.arff", peerIP)
-    dual_print("Synch: ")
-    dual_print(WEKA.synch(ticket7, peerIP))
-    dual_print(WEKA.synch(ticket8, peerIP))
+    def tearDown(self):
+        '''
+        Shuts down Assistance Service
+        '''
+        self.printer.shutdown()
+        Launcher.getOfficerInstance().saveLogs()
+        saveAll()
+        Assistance.shutdown()
+        print("Finished everything")
 
+    def testFuncionality(self, peerIP='127.0.0.1'):
+        testSuite = ['Echo', 'SHA256LocalFile', 'SHA256FTP', 'WEKAfunctionality']  # @IgnorePep8
+        testsArray = []
+        testsResults = multiprocessing.Queue()
+        for testName in testSuite:
+            singleTest = getattr(self, testName)
+            process = multiprocessing.Process(target=singleTest, args=(testsResults, peerIP,))  # @IgnorePep8
+            testsArray.append(process)
+            process.start()
+        time.sleep(TIME_WATCHDOG)
+        for testNum in range(len(testSuite)):
+            if testsArray[testNum].is_alive():
+                testsArray[testNum].terminate()
+                self.printer.dual_print("WatchdogThread<TestFunctionality>::: ######## ERROR! ######## Test "  # @IgnorePep8
+                                        + testSuite[testNum] + " to "+peerIP+" has timed-out, (not ended in "+TIME_WATCHDOG+" seconds) and was terminated.")  # @IgnorePep8
+            else:
+                self.printer.dual_print("WatchdogThread<TestFunctionality>:::Test "  # @IgnorePep8
+                                        + testSuite[testNum] + " to "+peerIP+" has ended successfully.")  # @IgnorePep8
+        results = [testsResults.get() for process in testsArray]
+        for line in results:
+            self.printer.dual_print(line)
 
-def dual_print(string2Print):
-    ioFile = open("LOG/ioFile.txt", 'a')
-    ioFile.write(string2Print+'\n')
-    ioFile.close()
-    print string2Print
+    def Echo(self, resultsBuffer, peerIP='127.0.0.1'):
+        results = "\n<BEGIN><Echo><"+peerIP+">"
+        ticket1 = EchoTest.request("Hello World", peerIP)
+        ticket2 = EchoTest.request("Hello, World!", peerIP)
+        ticket3 = EchoTest.request("HeII0, W0r1d!!!111!", peerIP)
+        results += '\n' + ("Tickets: ")
+        results += '\n' + (ticket1)
+        results += '\n' + (ticket2)
+        results += '\n' + (ticket3)
+        results += '\n' + ("Status: ")
+        results += '\n' + (EchoTest.checkStatus(ticket1, peerIP))
+        results += '\n' + (EchoTest.checkStatus(ticket2, peerIP))
+        results += '\n' + (EchoTest.checkStatus(ticket3, peerIP))
+        results += '\n' + ("Synch: ")
+        results += '\n' + (EchoTest.synch(ticket1, peerIP))
+        results += '\n' + (EchoTest.synch(ticket2, peerIP))
+        results += '\n' + (EchoTest.synch(ticket3, peerIP))
+        results += "\n<END>"
+        resultsBuffer.put(results)
+
+    def SHA256LocalFile(self, resultsBuffer, peerIP='127.0.0.1'):  # @UnusedVariable , DAAAH! @IgnorePep8
+        results = "\n<BEGIN><SHA256LocalFile><127.0.0.1>"
+        ticket3 = SHA256Test.request()
+        ticket4 = SHA256Test.request()
+        results += '\n' + ("Tickets: ")
+        results += '\n' + (ticket3)
+        results += '\n' + (ticket4)
+        results += '\n' + ("Status: ")
+        results += '\n' + (SHA256Test.checkStatus(ticket3))
+        results += '\n' + (SHA256Test.checkStatus(ticket4))
+        results += '\n' + ("Synch: ")
+        results += '\n' + (SHA256Test.synch(ticket3))
+        results += '\n' + (SHA256Test.synch(ticket4))
+        results += "\n<END>"
+        resultsBuffer.put(results)
+
+    def SHA256FTP(self, resultsBuffer, peerIP='127.0.0.1'):
+        results = "\n<BEGIN><SHA256FTP><"+peerIP+">"
+        ticket5 = SHA256remoteTest.request(
+            "testsData/experimentData.dat", peerIP)  # @IgnorePep8
+        ticket6 = SHA256remoteTest.request(
+            "testsData/experimentData.dat", peerIP)  # @IgnorePep8
+        results += '\n' + ("Tickets: ")
+        results += '\n' + (ticket5)
+        results += '\n' + (ticket6)
+        results += '\n' + ("Status: ")
+        results += '\n' + (SHA256remoteTest.checkStatus(ticket5, peerIP))  # @IgnorePep8
+        results += '\n' + (SHA256remoteTest.checkStatus(ticket6, peerIP))  # @IgnorePep8
+        results += '\n' + ("Submitting data ")
+        SHA256remoteTest.submit(
+            ticket5,
+            "testsData/experimentData.dat", peerIP)  # @IgnorePep8
+        SHA256remoteTest.submit(
+            ticket6,
+            "testsData/experimentData.dat", peerIP)  # @IgnorePep8
+        results += '\n' + ("Synch: ")
+        results += '\n' + (SHA256remoteTest.synch(ticket5, peerIP))
+        results += '\n' + (SHA256remoteTest.synch(ticket6, peerIP))
+        results += "\n<END>"
+        resultsBuffer.put(results)
+
+    def WEKAfunctionality(self, resultsBuffer, peerIP='127.0.0.1'):
+        results = "\n<BEGIN><WEKA><"+peerIP+">"
+        ticket7 = WEKA.request("weka.classifiers.trees.J48",
+                               "-t",
+                               "testsData/weather.nominal.arff", peerIP)
+        ticket8 = WEKA.request("weka.classifiers.trees.J48",
+                               "-t",
+                               "testsData/weather.numeric.arff", peerIP)
+        results += '\n' + ("Tickets: ")
+        results += '\n' + (ticket7)
+        results += '\n' + (ticket8)
+        results += '\n' + ("Status: ")
+        results += '\n' + (WEKA.checkStatus(ticket7, peerIP))
+        results += '\n' + (WEKA.checkStatus(ticket8, peerIP))
+        results += '\n' + ("Submitting data ")
+        WEKA.submit(
+            ticket7,
+            "testsData/weather.nominal.arff", peerIP)
+        WEKA.submit(
+            ticket8,
+            "testsData/weather.numeric.arff", peerIP)
+        results += '\n' + ("Synch: ")
+        results += '\n' + (WEKA.synch(ticket7, peerIP))
+        results += '\n' + (WEKA.synch(ticket8, peerIP))
+        results += "\n<END>"
+        resultsBuffer.put(results)
 
 
 def zipdir(path, zipf):
@@ -136,159 +218,49 @@ def saveAll():
     '''
     Shuts down Assistance Service
     '''
-    dual_print("All tests are done. Saving  the LOGs")
+    print("All tests are done. Saving  the LOGs")
     zipf = zipfile.ZipFile('LOGs.zip', 'a')
     zipdir('LOG/', zipf)
     zipdir(DIR_APPS_CWD, zipf)
     zipdir('testsResults/', zipf)
     zipdir('testsData/', zipf)
     zipf.close()
-    print("Created ZIP file")
-    print("Finished everything")
-
-
-class TestDiagnose(unittest.TestCase):
-    '''
-    A series of Unit Tests to the Functionality of the Assistance System
-    '''
-
-    def dual_print(self, string2Print):
-        self.ioFile.write(string2Print+'\n')
-        print string2Print
-
-    def zipdir(self, path, zipf):
-        '''
-        Adds a directory to a zip file
-        :param path: relative path to the file
-        :param zipf: zipfile object to the directory to be added to
-        '''
-        filesIn = zipf.namelist()
-        for fileNum in range(len(filesIn)):
-            filesIn[fileNum] = filesIn[fileNum].split('/')[-1]
-        for root, dirs, files in os.walk(path):  # @UnusedVariable
-            for fileObj in files:
-                if fileObj not in filesIn:
-                    if not fileObj.endswith('~'):
-                        zipf.write(os.path.join(root, fileObj))
-
-    def setUp(self):
-        '''
-        Starts the Assistance Service
-        '''
-        self.ioFile = open("LOG/ioFile.txt", 'w')
-        Assistance.setup()
-
-    def tearDown(self):
-        '''
-        Shuts down Assistance Service
-        '''
-        self.dual_print("All tests are done. Saving  the LOGs")
-        self.ioFile.close()
-        Launcher.getOfficerInstance().saveLogs()
-        zipf = zipfile.ZipFile('LOGs.zip', 'a')
-        self.zipdir('LOG/', zipf)
-        self.zipdir('AssistanceApps/data/', zipf)
-        self.zipdir('AssistanceApps/outputs/', zipf)
-        self.zipdir('testsResults/', zipf)
-        self.zipdir('testsData/', zipf)
-        zipf.close()
-        print("Created ZIP file")
-        Assistance.shutdown()
-        print("Finished everything")
-
-    def test(self):
-        '''
-        Basic functionality tests:
-            request a ticket (in 3 different apps, 2-3 times each)
-            checks the status of the task (probably it will be "waiting")
-            synchronizes the results
-        The EchoTest app sends a string, and receives it back in all caps.
-            All as immediates. The performer runs in python
-        The SHA256test sends the path to a local file to a pre-compiled C app,
-            that outputs the results in files, and returns the paths to stderr and stdout back  # @IgnorePep8
-        The SHA256remoteTest does almost the same that the last test, but this time,  # @IgnorePep8
-            a file is submit by a socket and the results are returned by another  # @IgnorePep8
-        '''
-        self.dual_print("---------------- NEW TEST RUN - "+str(time.time())+" ----------------")  # @IgnorePep8
-        self.dual_print("Echo Test")
-        ticket1 = EchoTest.request("Hello World")
-        ticket2 = EchoTest.request("Hello, World!")
-        ticket3 = EchoTest.request("HeII0, W0r1d!!!111!")
-        self.dual_print("Tickets: ")
-        self.dual_print(ticket1)
-        self.dual_print(ticket2)
-        self.dual_print(ticket3)
-        self.dual_print("Status: ")
-        self.dual_print(EchoTest.checkStatus(ticket1))
-        self.dual_print(EchoTest.checkStatus(ticket2))
-        self.dual_print(EchoTest.checkStatus(ticket3))
-        self.dual_print("Synch: ")
-        self.dual_print(EchoTest.synch(ticket1))
-        self.dual_print(EchoTest.synch(ticket2))
-        self.dual_print(EchoTest.synch(ticket3))
-
-        self.dual_print("\nSHA256 test")
-        ticket3 = SHA256Test.request()
-        ticket4 = SHA256Test.request()
-        self.dual_print("Tickets: ")
-        self.dual_print(ticket3)
-        self.dual_print(ticket4)
-        self.dual_print("Status: ")
-        self.dual_print(SHA256Test.checkStatus(ticket3))
-        self.dual_print(SHA256Test.checkStatus(ticket4))
-        self.dual_print("Synch: ")
-        self.dual_print(SHA256Test.synch(ticket3))
-        self.dual_print(SHA256Test.synch(ticket4))
-
-        self.dual_print("\nSHA256 by Remote File test")
-        ticket5 = SHA256remoteTest.request(
-            "testsData/experimentData.dat")  # @IgnorePep8
-        ticket6 = SHA256remoteTest.request(
-            "testsData/experimentData.dat")  # @IgnorePep8
-        self.dual_print("Tickets: ")
-        self.dual_print(ticket5)
-        self.dual_print(ticket6)
-        self.dual_print("Status: ")
-        self.dual_print(SHA256remoteTest.checkStatus(ticket5))
-        self.dual_print(SHA256remoteTest.checkStatus(ticket6))
-        self.dual_print("Submitting data ")
-        SHA256remoteTest.submit(
-            ticket5,
-            "testsData/experimentData.dat")  # @IgnorePep8
-        SHA256remoteTest.submit(
-            ticket6,
-            "testsData/experimentData.dat")  # @IgnorePep8
-        self.dual_print("Synch: ")
-        self.dual_print(SHA256remoteTest.synch(ticket5))
-        self.dual_print(SHA256remoteTest.synch(ticket6))
-
-        self.dual_print("\nWEKA J48 tree classifier by Remote File test")
-        ticket7 = WEKA.request("weka.classifiers.trees.J48",
-                               "-t",
-                               "testsData/weather.nominal.arff")
-        ticket8 = WEKA.request("weka.classifiers.trees.J48",
-                               "-t",
-                               "testsData/weather.numeric.arff")
-        self.dual_print("Tickets: ")
-        self.dual_print(ticket7)
-        self.dual_print(ticket8)
-        self.dual_print("Status: ")
-        self.dual_print(WEKA.checkStatus(ticket7))
-        self.dual_print(WEKA.checkStatus(ticket8))
-        self.dual_print("Submitting data ")
-        WEKA.submit(
-            ticket7,
-            "testsData/weather.nominal.arff")
-        WEKA.submit(
-            ticket8,
-            "testsData/weather.numeric.arff")
-        self.dual_print("Synch: ")
-        self.dual_print(WEKA.synch(ticket7))
-        self.dual_print(WEKA.synch(ticket8))
 
 
 '''
 Runs this file
 '''
 if __name__ == '__main__':
-    run()
+    parser = OptionParser()
+    parser.add_option("-s", "--server",
+                      dest="isServer", action="store_true",
+                      help="Starts a Assistance Server in this machine")
+    parser.add_option("-e", "--client-experiment",
+                      dest="isExperiment", action="store_true",
+                      help="Sets this machine as a Test Client of the Assistance Experiment in this LAN for each of the IPs provided in this option.")  # @IgnorePep8
+    parser.add_option("-f", "--client-functionality",
+                      dest="isFunctionality", action="store_true",
+                      help="Sets this machine as a Test Client of the functionality of Assistance in this LAN")  # @IgnorePep8
+    parser.add_option("-a", "--assistanceServer",
+                      dest="peerIPs", action="append", type="string",
+                      help="List of the IPs of Assistance Servers in this LAN")  # @IgnorePep8
+    (options, args) = parser.parse_args()
+
+    if options.isServer:
+        Assistance.setup()
+        stall = raw_input("\nAssistance Server Up! Press ENTER to finish")  # @UnusedVariable @IgnorePep8
+        Launcher.getOfficerInstance().saveLogs()
+        saveAll()
+        Assistance.shutdown()
+    if options.peerIPs is None:
+        ipList = ['']
+    else:
+        ipList = options.peerIPs
+    if options.isFunctionality:
+        localFuncTest = AssistanceUnitTests()
+        localFuncTest.setUp()
+        for peerIP in ipList:
+            localFuncTest.testFuncionality(peerIP)
+        localFuncTest.tearDown()
+    #elif options.isExperiment:
+    #    stall=1

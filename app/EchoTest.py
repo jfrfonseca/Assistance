@@ -14,11 +14,13 @@ def request(messageToEcho, peerIP=HOST):
     MAKE MSG
     '''
     header = TOKEN_TESTS_VERSION+'\n'+TYPE_API_REQUEST_MSG+'\n'
-    apiRequestMsg = AppID_LOCAL_ECHO_TEST+'\n'+messageToEcho+'\n'+NULL+'\n'+NULL+'\n'+CHANNEL_IMMEDIATE+'\n'
+    apiRequestMsg = AppID_LOCAL_ECHO_TEST + '\n'\
+        + messageToEcho + '\n' + NULL + '\n'\
+        + NULL + '\n'\
+        + CHANNEL_IMMEDIATE + '\n'
     '''
     SEND
     '''
-    print "requesting to "+str(peerIP)+":"+str(PORT_API_REQUESTS)
     dummySocket = AssistanceSocketClient(peerIP, PORT_API_REQUESTS)
     dummySocket.sendData(header+apiRequestMsg)
     '''

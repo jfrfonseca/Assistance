@@ -10,7 +10,7 @@ import threading
 import time
 # ASSISTANCE CONSTANTS IMPORTS -----
 from cpnLibrary.implementation.Constants import NOT_APPLYED, NULL,\
-    STATUS_DRAFT, STATUS_WAITING, DIR_APPS_CWD
+    STATUS_DRAFT, STATUS_WAITING
 
 
 class TaskDescription():
