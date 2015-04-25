@@ -23,7 +23,7 @@ import WEKA
 # ASSISTANCE CONSTANTS IMPORTS ----
 from cpnLibrary.implementation.Constants import DIR_APPS_CWD
 # LOCAL CONSTANTS ---------------------------
-TIME_WATCHDOG = 5
+TIME_WATCHDOG = 30
 MANUAL = "\nUsage:"\
     + "\n\t ./testAssistance -server"\
     + "\n\t ./testAssistance -client (-functionality | -fullExperiment)"\
@@ -96,15 +96,19 @@ class AssistanceUnitTests():
             process = multiprocessing.Process(target=singleTest, args=(testsResults, peerIP,))  # @IgnorePep8
             testsArray.append(process)
             process.start()
+
+        print "\n\nJust sent tests to "+peerIP+". Waiting.\n"
         time.sleep(TIME_WATCHDOG)
+
         for testNum in range(len(testSuite)):
             if testsArray[testNum].is_alive():
                 testsArray[testNum].terminate()
                 self.printer.dual_print("WatchdogThread<TestFunctionality>::: ######## ERROR! ######## Test "  # @IgnorePep8
-                                        + testSuite[testNum] + " to "+peerIP+" has timed-out, (not ended in "+TIME_WATCHDOG+" seconds) and was terminated.")  # @IgnorePep8
+                                        + testSuite[testNum] + " to "+peerIP+" has timed-out, (not ended in "+str(TIME_WATCHDOG)+" seconds) and was terminated.")  # @IgnorePep8
             else:
                 self.printer.dual_print("WatchdogThread<TestFunctionality>:::Test "  # @IgnorePep8
                                         + testSuite[testNum] + " to "+peerIP+" has ended successfully.")  # @IgnorePep8
+
         results = [testsResults.get() for process in testsArray]
         for line in results:
             self.printer.dual_print(line)

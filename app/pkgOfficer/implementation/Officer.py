@@ -22,7 +22,7 @@ from TaskDescription import TaskDescription
 from cpnLibrary.implementation.Constants import STATUS_WAITING, STATUS_REJECTED,\
     STATUS_GATHERING_DATA, STATUS_STANDBY, STATUS_READY, STATUS_DATA_READY,\
     TOKEN_TESTS_VERSION, NULL, CHANNEL_FTP,\
-    CHANNEL_LOCAL_FILE, DIR_APPS_CWD, LOG_OFFICER
+    CHANNEL_LOCAL_FILE, DIR_APPS_CWD, LOG_OFFICER, LOG_OFFICERHF
 
 
 class Officer():
@@ -143,13 +143,14 @@ appended to the (#TODO signed) SHA256 of the task's
         '''
         task = self.getTask(ticket)
         if self.enoughLocalResources(ticket):
-            task.updateStatus(STATUS_GATHERING_DATA)
             if task.DATA_CHANNEL == CHANNEL_LOCAL_FILE:
+                task.updateStatus(STATUS_GATHERING_DATA)
                 for dataFile in task.DATA_DELIVERY:
                     task.DATA_FILES.append(os.path.relpath(dataFile, os.getcwd()))  # @IgnorePep8
                 task.updateStatus(STATUS_DATA_READY)
             elif task.DATA_CHANNEL == CHANNEL_FTP:
                 os.makedirs(DIR_APPS_CWD+task.TICKET)
+                task.updateStatus(STATUS_GATHERING_DATA)
                 task.lock.wait()
                 task.lock.clear()
             else:
@@ -167,9 +168,14 @@ appended to the (#TODO signed) SHA256 of the task's
         '''
         Saves all the tasks logs to a log file
         '''
+        # If for human eyes:
+        logFileHF = open(LOG_OFFICERHF, 'a')
         logFile = open(LOG_OFFICER, 'a')
         for ticket in self.taskBuffer.keys():
-            logFile.write("\n<BEGIN><TICKET=" + str(ticket)
-                          + "><STATUS=" + self.getTask(ticket).STATUS
-                          + ">\n"+self.getTask(ticket).LOG + "\n<END>")
+            task = self.getTask(ticket)
+            logFileHF.write("\n<BEGIN><TICKET=" + str(ticket)
+                            + "><STATUS=" + task.STATUS
+                            + ">\n"+task.LOG + "\n<END>")
+            logFile.write("\n<BEGIN>\n" + task.printOut() + "<END>")
+        logFileHF.close()
         logFile.close()

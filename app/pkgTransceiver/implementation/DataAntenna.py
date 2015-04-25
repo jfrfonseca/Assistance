@@ -6,7 +6,7 @@ See Attached License file
 '''
 # NATIVE MODULE IMPORTS ------------------
 import time
-import os.path
+import sys
 # ASSISTANCE MODULE IMPORTS ----------
 import pkgMissionControl.implementation.Launcher
 from AssistanceGenericAntenna import AssistanceGenericAntenna
@@ -31,7 +31,7 @@ class DataAntenna (AssistanceGenericAntenna):
         '''
         return pkgMissionControl.implementation.Launcher.getOfficerInstance().getTask(ticket)  # @IgnorePep8
 
-    def transceiverLOG(self, message, token, timeReceived, ticket, status):
+    def transceiverLOG(self, message, timeReceived, token, ticket, status, onScreen=False):  # @IgnorePep8
         '''
         Logs the current situation to the transceiver's LOG
         :param message: message to be logged
@@ -40,12 +40,15 @@ class DataAntenna (AssistanceGenericAntenna):
         :param ticket: the ticket included in the received message
         :param status: the status of the task with the received ticket
         '''
+        logMsg = '\n' + str(message) + str(token)\
+            + ";\n\ton port " + str(self.client_address[0])\
+            + ";\n\tat: " + str(timeReceived)\
+            + ";\n\tfor Assistance ServiceTicket " + str(ticket)\
+            + ";\n\twhose status was: '" + str(status) + "' ;"
+        if True:
+            print logMsg
         pkgMissionControl.implementation.Launcher.getTransceiverInstance().logEvent(  # @IgnorePep8
-            message+token
-            + ";\n\ton port " + str(self.client_address[0])
-            + ";\n\tat: " + str(timeReceived)
-            + ";\n\tfor Assistance ServiceTicket " + str(ticket)
-            + ";\n\twhose status was: '" + status + "' ;")
+            logMsg)
 
     def handleStatusCheck(self, timeReceived, authToken):
         '''
@@ -141,24 +144,34 @@ class DataAntenna (AssistanceGenericAntenna):
         '''
         Handles a new connection, parsing it header, dealing with threats,
         choosing the proper way to handle the data-related request
+        and breaking it if it fails!
         '''
-        self.localToken = TOKEN_TESTS_VERSION
-        timeReceived = time.time()
-        msgType, authToken = self.parseMessageHeader()
-        # check the kind of message we are dealing with, and deal accordingly
-        # handles the message to check the status
-        if msgType == TYPE_STATUS_CHECK_MSG:
-            self.handleStatusCheck(timeReceived, authToken)
+        try:
+            self.localToken = TOKEN_TESTS_VERSION
+            timeReceived = time.time()
+            msgType, authToken = self.parseMessageHeader()
+            # check the kind of message we are dealing with, and deal accordingly @IgnorePep8
+            # handles the message to check the status
+            if msgType == TYPE_STATUS_CHECK_MSG:
+                self.handleStatusCheck(timeReceived, authToken)
 
-        # handle the message to recover the results
-        elif msgType == TYPE_RECOVER_RESULTS_MSG:
-            self.handleRecoverResults(timeReceived, authToken)
+            # handle the message to recover the results
+            elif msgType == TYPE_RECOVER_RESULTS_MSG:
+                self.handleRecoverResults(timeReceived, authToken)
 
-        # if this is a message to submit a file
-        elif msgType == TYPE_DATA_SUBMIT_MSG:
-            self.handleDataSubmit(timeReceived, authToken)
+            # if this is a message to submit a file
+            elif msgType == TYPE_DATA_SUBMIT_MSG:
+                self.handleDataSubmit(timeReceived, authToken)
 
-        else:
-            errorString = "Assistance DataTransfer Server ERROR: Message of the wrong type sent to Assistance DataTransfer Server!\tMessage Type received: '"+msgType+'\n'  # @IgnorePep8
-            self.wfile.write(errorString)
-            raise ValueError(errorString)
+            else:
+                errorString = "Assistance DataTransfer Server ERROR: Message of the wrong type sent to Assistance DataTransfer Server!\tMessage Type received: '"+msgType+'\n'  # @IgnorePep8
+                self.wfile.write(errorString)
+                raise ValueError(errorString)
+        except IOError as ioerr:
+            message = "I/O error({0}): {1}".format(ioerr.errno, ioerr.strerror)
+            print message
+            # self.transceiverLOG(message, time.time())
+        #except:
+            #message = "Unexpected error:", sys.exc_info()[0]
+            #print message
+            # self.transceiverLOG(message, time.time())

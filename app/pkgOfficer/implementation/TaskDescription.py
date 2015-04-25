@@ -41,6 +41,7 @@ class TaskDescription():
             '%Y-%m-%d %H:%M:%S:%f')\
             + " |- New task (APPID '" + str(appID)\
             + "') received by Assistance from token " + authToken + ";\n"
+        self.PRO_LOG = '\n' + str(timeReceived) + '\t' + str(self.STATUS)
         self.TOKEN = authToken
         self.TIME_RECEIVED = timeReceived
         self.TIME_LABELED = NOT_APPLYED
@@ -68,8 +69,6 @@ class TaskDescription():
         self.lock = threading.Event()
         self.PROCESS_PRIORITY = NULL
 
-        self.onlineLog = False
-
     def updateStatus(self, newStatus):
         '''
         Updates and logs the status of the task
@@ -79,8 +78,8 @@ class TaskDescription():
             time.time()).strftime('%Y-%m-%d %H:%M:%S:%f')\
             + " |- Status update: (" + str(self.STATUS) + " --> " + str(newStatus) + ");\n"  # @IgnorePep8
         self.LOG += appendString
+        self.PRO_LOG += '\n' + str(time.time()) + '\t' + str(newStatus)
         self.STATUS = newStatus
-        self.seeLog()
 
     def changePriority(self, newPriority):
         '''
@@ -91,8 +90,8 @@ class TaskDescription():
             time.time()).strftime('%Y-%m-%d %H:%M:%S:%f')\
             + " |- Changed Local processing priority from "\
             + str(self.PROCESS_PRIORITY) + " to " + str(newPriority) + ");\n"
-        self.STATUS = newPriority
-        self.seeLog()
+        self.PROCESS_PRIORITY = newPriority
+        self.PRO_LOG += '\n' + str(time.time()) + '\t PRIORITY=' + str(self.PROCESS_PRIORITY)  # @IgnorePep8
 
     def logResourcesStatus(self, cpuMemDiskUsage):
         '''
@@ -106,7 +105,10 @@ class TaskDescription():
             + str(cpuMemDiskUsage["space"]) + ";\t"
         self.LOG += "--memory usage: "+str(cpuMemDiskUsage["memory"])+"%;\t"
         self.LOG += "--CPU usage: "+str(cpuMemDiskUsage["CPU"])+"%;\n"
-        self.seeLog()
+        self.PRO_LOG += '\n' + str(time.time())\
+            + '\t CPU=' + str(cpuMemDiskUsage["CPU"])\
+            + '\t mem=' + str(cpuMemDiskUsage["memory"])\
+            + '\t freeDisk=' + str(cpuMemDiskUsage["space"])
 
     def setTicket(self, ticketValue):
         '''
@@ -123,11 +125,15 @@ class TaskDescription():
                     '%Y-%m-%d %H:%M:%S:%f') + " |- Assigned TICKET '"\
                 + str(self.TICKET) + "';\n"
             self.updateStatus(STATUS_WAITING)
-        self.seeLog()
 
-    def seeLog(self):
+    def printOut(self):
         '''
         Prints the log of the task to the screen
         '''
-        if self.onlineLog:
-            print >> open('LOG/0000_onlineLog.dat', 'a'), self.TICKET, "\t", self.LOG  # @IgnorePep8
+        data = str(self.TICKET) + '\n' + str(self.TOKEN) + '\n' + str(self.TIME_RECEIVED) + '\n'\
+            + str(self.APPID) + '\n'\
+            + str(self.ARGUMENTS) + '\n' + str(self.DATA_FILES) + '\n'\
+            + str(self.SCRIPT) + '\n' + str(self.STATUS) + '\n'\
+            + str(self.TIME_COMPLETED) + '\n' + str(self.TIME_INTERRUPTED) + '\n'\
+            + str(self.STDOUT) + '\n' + str(self.STDERR) + '\n' + str(self.PRO_LOG) + '\n'  # @IgnorePep8
+        return data

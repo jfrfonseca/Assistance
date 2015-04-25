@@ -55,6 +55,14 @@ class APIRequestAntenna (AssistanceGenericAntenna):
             self.wfile.write(self.localToken+"\n"
                              + TYPE_API_REQUEST_ANS + "\n"
                              + ticket + "\n")
+            logMessage = "\nReceived a new AssistanceRequest from " + str(authToken)\
+                + ";\n\ton port " + str(self.client_address[0])\
+                + ";\n\tat: " + str(timeReceived) + "' ;"
+            if True:
+                print logMessage
+            pkgMissionControl.implementation.Launcher.getTransceiverInstance().logEvent(  # @IgnorePep8
+                logMessage)
+
         else:
             errorString = "Assistance APIRequest Server ERROR: Message of the wrong type sent to Assistance APIRequest Server!\tMessage Type received: '"+msgType  # @IgnorePep8
             self.wfile.write(errorString)

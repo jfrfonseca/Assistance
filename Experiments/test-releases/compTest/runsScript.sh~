@@ -1,0 +1,28 @@
+#!/bin/bash
+# runs a few times the current test
+# 10 runs
+cd build
+echo "run1"
+./testAssistance -f -a 10.2.9.14 -a 10.2.9.20 -a 10.2.9.21 -a 10.2.9.13 -a 10.2.9.22 -a 10.2.9.19 -a 10.2.9.18
+ sleep 100
+echo "run2"
+./testAssistance -f -a 10.2.9.14 -a 10.2.9.20 -a 10.2.9.21 -a 10.2.9.13 -a 10.2.9.22 -a 10.2.9.19 -a 10.2.9.18
+ sleep 100
+echo "run3"
+./testAssistance -f -a 10.2.9.14 -a 10.2.9.20 -a 10.2.9.21 -a 10.2.9.13 -a 10.2.9.22 -a 10.2.9.19 -a 10.2.9.18
+ sleep 100
+echo "run4"
+./testAssistance -f -a 10.2.9.14 -a 10.2.9.20 -a 10.2.9.21 -a 10.2.9.13 -a 10.2.9.22 -a 10.2.9.19 -a 10.2.9.18
+ sleep 100
+echo "run5"
+./testAssistance -f -a 10.2.9.14 -a 10.2.9.20 -a 10.2.9.21 -a 10.2.9.13 -a 10.2.9.22 -a 10.2.9.19 -a 10.2.9.18
+ sleep 100
+echo "run6"
+./testAssistance -f -a 10.2.9.14 -a 10.2.9.20 -a 10.2.9.21 -a 10.2.9.13 -a 10.2.9.22 -a 10.2.9.19 -a 10.2.9.18
+ sleep 100
+echo "run7"
+./testAssistance -f -a 10.2.9.14 -a 10.2.9.20 -a 10.2.9.21 -a 10.2.9.13 -a 10.2.9.22 -a 10.2.9.19 -a 10.2.9.18
+ sleep 100
+echo "run8"
+./testAssistance -f -a 10.2.9.14 -a 10.2.9.20 -a 10.2.9.21 -a 10.2.9.13 -a 10.2.9.22 -a 10.2.9.19 -a 10.2.9.18
+
