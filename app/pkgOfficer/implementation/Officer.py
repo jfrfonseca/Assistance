@@ -7,7 +7,6 @@ See Attached License file
 '''
 # NATIVE MODULE IMPORTS ------------------
 import time
-import datetime
 import threading
 import hashlib
 import SystemStats
@@ -16,13 +15,14 @@ from random import randint
 # ASSISTANCE MODULE IMPORTS ----------
 from pkgPerformer.implementation import Performer
 from AssistanceRules import getThresholds,\
-    getTaskPriority, getCallerScript, volunteer
+    getTaskPriority, getCallerScript, volunteer, schedule
 from TaskDescription import TaskDescription
 # ASSISTANCE CONSTANTS IMPORTS -----
 from cpnLibrary.implementation.Constants import STATUS_WAITING, STATUS_REJECTED,\
     STATUS_GATHERING_DATA, STATUS_STANDBY, STATUS_READY, STATUS_DATA_READY,\
     TOKEN_TESTS_VERSION, NULL, CHANNEL_FTP,\
-    CHANNEL_LOCAL_FILE, DIR_APPS_CWD, LOG_OFFICER, LOG_OFFICERHF
+    CHANNEL_LOCAL_FILE, DIR_APPS_CWD, LOG_OFFICER, LOG_OFFICERHF,\
+    STATUS_PERFORMING_LOCAL
 
 
 class Officer():
@@ -34,6 +34,8 @@ and requests for remote executions
     BUFFER THAT CONTAINS ALL THE NON-FINISHED TASKS
     '''
     taskBuffer = {}
+    schedulerLock = threading.Event()
+    scheduler = threading.Thread(target=schedule)
 
     def include(self, taskDescription):
         '''
@@ -98,6 +100,14 @@ appended to the (#TODO signed) SHA256 of the task's
             # #TODO check the dead archive
             return TaskDescription(NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
+    def getStandbyTaskTickets(self):
+        return [ticket for ticket in self.taskBuffer.keys()
+                if self.getTask(ticket).STATUS == STATUS_STANDBY]
+
+    def getPerformingTaskTickets(self):
+        return [ticket for ticket in self.taskBuffer.keys()
+                if self.getTask(ticket).STATUS == STATUS_PERFORMING_LOCAL]
+
     def decide(self, ticket):  # @UnusedVariable
         '''
         Recovers the decision to run or not a task, given its ticket
@@ -155,12 +165,15 @@ appended to the (#TODO signed) SHA256 of the task's
                 task.lock.clear()
             else:
                 task.updateStatus(STATUS_DATA_READY)
-            # print task.DATA_FILES
             task.SCRIPT = getCallerScript(task)
             task.updateStatus(STATUS_STANDBY)
+            self.schedulerLock.set()
+            task.lock.wait()
+            task.lock.clear()
             Performer.perform(task)
+            self.schedulerLock.set()
         # if it will be performed remotely, #TODO request remote assistance
-
+        # waits until the data is sent to mark as finished
         task.lock.wait()
         task.updateStatus(STATUS_READY)
 

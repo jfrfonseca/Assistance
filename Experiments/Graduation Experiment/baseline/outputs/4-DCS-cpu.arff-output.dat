@@ -1,0 +1,33 @@
+
+Decision Stump
+
+Classifications
+
+MMAX <= 48000.0 : 88.92682926829268
+MMAX > 48000.0 : 961.25
+MMAX is missing : 105.622009569378
+
+
+Time taken to build model: 0.05 seconds
+Time taken to test model on training data: 0.13 seconds
+
+=== Error on training data ===
+
+Correlation coefficient                  0.7449
+Mean absolute error                     75.461 
+Root mean squared error                107.0416
+Relative absolute error                 78.6744 %
+Root relative squared error             66.7152 %
+Total Number of Instances              209     
+
+
+
+=== Cross-validation ===
+
+Correlation coefficient                  0.5901
+Mean absolute error                     79.0502
+Root mean squared error                129.9931
+Relative absolute error                 82.1394 %
+Root relative squared error             80.815  %
+Total Number of Instances              209     
+

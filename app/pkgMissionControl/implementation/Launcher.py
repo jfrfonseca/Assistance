@@ -14,6 +14,7 @@ from pkgOfficer.implementation.Officer import Officer
 global transceiver
 global officer
 global performer
+scheduling = ''
 
 
 def shutdown():
@@ -24,16 +25,18 @@ def shutdown():
     transceiver.shutdown()
 
 
-def setup():
+def setup(schedulingMode):
     '''
     Boots up the system
     '''
     global transceiver
     global officer
     global performer
-    global assistanceAppRootDirectory
+    global scheduling
     officer = Officer()
+    officer.scheduler.start()
     transceiver = Transceiver()
+    scheduling = schedulingMode
 
 
 def getTransceiverInstance():
@@ -50,3 +53,7 @@ def getOfficerInstance():
     '''
     global officer
     return officer
+
+
+def getSchedulingMode():
+    return scheduling

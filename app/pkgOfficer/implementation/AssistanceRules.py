@@ -5,10 +5,12 @@ from the data warehouse facility
 Jose F. R. Fonseca
 See Attached License file
 '''
+import pkgMissionControl.implementation.Launcher
 # ASSISTANCE CONSTANTS IMPORTS -----
 from cpnLibrary.implementation.Constants import\
     AppID_LOCAL_ECHO_TEST, AppID_SHA256_TEST, AppID_SHA256_REMOTE_TEST,\
-    NULL, DIR_APPS_CWD, TUNNING_DEFAULT_PROCESS_PRIORITY, AppID_WEKA
+    NULL, DIR_APPS_CWD, TUNNING_DEFAULT_PROCESS_PRIORITY, AppID_WEKA,\
+    SCHEDULE_NONE, SCHEDULE_FIFO, SCHEDULE_FIFO_MAX_PARALLEL_TASKS
 
 
 def stringfy(myList, mySeparator):
@@ -20,6 +22,10 @@ def stringfy(myList, mySeparator):
         return myOutput
     else:
         return ''
+
+
+def getOfficer():
+    return pkgMissionControl.implementation.Launcher.getOfficerInstance()
 
 
 def volunteer(taskDescription):  # @UnusedVariable
@@ -106,3 +112,23 @@ def getTaskPriority(taskDescription, CPUusage, memoryUsage, freeSpace):  # @Unus
     :param freeSpace: the disk space usage to priorize relative to
     '''
     return TUNNING_DEFAULT_PROCESS_PRIORITY
+
+
+def schedule():
+    while True:
+        schedulingMode = pkgMissionControl.implementation.Launcher.getSchedulingMode()  # @IgnorePep8
+        if schedulingMode == SCHEDULE_NONE:
+            standbyTasks = getOfficer().getStandbyTaskTickets()
+            for ticket in standbyTasks:
+                getOfficer().getTask(ticket).lock.set()
+            getOfficer().schedulerLock.wait()
+            getOfficer().schedulerLock.clear()
+        elif  schedulingMode == SCHEDULE_FIFO:
+            maxRunningTasks = SCHEDULE_FIFO_MAX_PARALLEL_TASKS
+            runningTasks = len(getOfficer().getPerformingTaskTickets())
+            standbyTasks = getOfficer().getStandbyTaskTickets()
+            while (runningTasks < maxRunningTasks) and (len(standbyTasks) > 0):
+                ticket = standbyTasks.pop(0)
+                getOfficer().getTask(ticket).lock.set()
+            getOfficer().schedulerLock.wait()
+            getOfficer().schedulerLock.clear()

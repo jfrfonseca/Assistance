@@ -5,13 +5,11 @@ Jose F. R. Fonseca
 See Attached License file
 '''
 # NATIVE MODULE IMPORTS ------------------
-import time
-import zipfile
 import os
 # ASSISTANCE MODULE IMPORTS ----------
 from pkgMissionControl.implementation import Launcher
 # ASSISTANCE CONSTANTS IMPORTS -----
-from cpnLibrary.implementation.Constants import DIR_APPS_CWD
+from cpnLibrary.implementation.Constants import DIR_APPS_CWD, SCHEDULE_NONE
 
 
 def shutdown(cleanUp=False):
@@ -26,11 +24,11 @@ def shutdown(cleanUp=False):
                 os.remove(DIR_APPS_CWD+dirType+f)
 
 
-def setup():
+def setup(schedulingMode=SCHEDULE_NONE):
     '''
     Starts the Assistance Service
     '''
-    Launcher.setup()
+    Launcher.setup(schedulingMode)
 
 '''
 Starts this file, if run independently

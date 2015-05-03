@@ -6,7 +6,6 @@ See Attached License file
 '''
 # NATIVE MODULE IMPORTS ------------------
 import time
-import sys
 # ASSISTANCE MODULE IMPORTS ----------
 import pkgMissionControl.implementation.Launcher
 from AssistanceGenericAntenna import AssistanceGenericAntenna
@@ -31,7 +30,7 @@ class DataAntenna (AssistanceGenericAntenna):
         '''
         return pkgMissionControl.implementation.Launcher.getOfficerInstance().getTask(ticket)  # @IgnorePep8
 
-    def transceiverLOG(self, message, timeReceived, token, ticket, status, onScreen=False):  # @IgnorePep8
+    def transceiverLOG(self, message, timeReceived, token, ticket, status):  # @IgnorePep8
         '''
         Logs the current situation to the transceiver's LOG
         :param message: message to be logged
@@ -59,7 +58,7 @@ class DataAntenna (AssistanceGenericAntenna):
         ticket2check = self.rfile.readline().strip()
         task = self.getTask(ticket2check)
         self.transceiverLOG("Assistance DataTransfer Server: received an AssistanceStatusCheck message\n\tfrom API token ", # @IgnorePep8
-                            authToken, timeReceived, ticket2check, task.STATUS)
+                            timeReceived, authToken, ticket2check, task.STATUS)
         self.wfile.write(self.localToken + '\n'
                          + TYPE_RECOVER_RESULTS_ANS + '\n'
                          + ticket2check + '\n'
@@ -75,7 +74,7 @@ class DataAntenna (AssistanceGenericAntenna):
         ticket2check = self.rfile.readline().strip()
         task = self.getTask(ticket2check)
         self.transceiverLOG("Assistance DataTransfer Server: received an Assistance RecoverResults message\n\tfrom API token ", # @IgnorePep8
-                            authToken, timeReceived,
+                            timeReceived, authToken,
                             ticket2check, task.STATUS)
         while task.STATUS != STATUS_READY:
             task = self.getTask(ticket2check)
@@ -114,7 +113,7 @@ class DataAntenna (AssistanceGenericAntenna):
         ticket = self.rfile.readline().strip()
         task = self.getTask(ticket)
         self.transceiverLOG("Assistance DataTransfer Server: received an AssistanceStatusCheck message\n\tfrom API token ", # @IgnorePep8
-                            authToken, timeReceived,
+                            timeReceived, authToken,
                             ticket, task.STATUS)
         while task.STATUS != STATUS_GATHERING_DATA:
             task = self.getTask(ticket)
@@ -170,8 +169,3 @@ class DataAntenna (AssistanceGenericAntenna):
         except IOError as ioerr:
             message = "I/O error({0}): {1}".format(ioerr.errno, ioerr.strerror)
             print message
-            # self.transceiverLOG(message, time.time())
-        #except:
-            #message = "Unexpected error:", sys.exc_info()[0]
-            #print message
-            # self.transceiverLOG(message, time.time())

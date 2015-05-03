@@ -1,6 +1,0 @@
-#!/bin/bash
-#Installing dependencies
-sudo apt-get install pip
-pip install --no-index --find-links=pkgOfficer/external-sources/used/psutil-2.2.1-cp27-none-win_amd64.whl psutil
-#running the test
-python testAssistance.py

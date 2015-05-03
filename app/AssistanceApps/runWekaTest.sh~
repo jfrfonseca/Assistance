@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# Defult values
+CV=10		# Cross Validation, intially 10, change by (-x)
+files=*.arff	# List of files to be processed, initially all *.arff files in the current directory, change by (-t)
+
+
+args=("$@")
+argsNo=$#
+
+validation=""
+for (( i=0;i<$argsNo;i++ )); do
+	#echo ${args[$i]}
+
+	if [ ${args[$i]} = "-x" ]; then
+		CV=${args[$i+1]}
+	fi
+
+	if [ ${args[$i]} = "-t" ]; then
+		files=${args[$i+1]}
+	fi
+	
+	if [ ${args[$i]} = "-T" ]; then
+		validation=${args[$i+1]}
+	fi
+done
+
+WEKA="-cp $(dirname $0)/weka-3-6-12/all/weka.jar"
+SEPARATOR="IxxxI"
+
+for inp in $files; do
+	#inp  : input file name with extension (e.g. Her2_Neg.arff)
+	#tmp1 : all blanks ' ' are replaced by '_'
+	#tmp2 : without extention, just file name
+	#out  : output file name, which is (e.g. Her2_Neg_Result.txt), you can modify it as you wish
+	
+	#In order to see these varables add a line like this
+	#echo $tmp2
+	tmp1=${inp//' '/'_'}
+	tmp2=${tmp1%.arff}
+	out="testResults/${tmp2}_Result.txt"
+	
+	echo "$inp"
+	echo $SEPARATOR
+    time -p java $WEKA weka.classifiers.functions.SMO       -t $inp -x $CV >  $out
+	echo $SEPARATOR
+    time -p java $WEKA weka.classifiers.trees.J48           -t $inp -x $CV >> $out
+	echo $SEPARATOR
+    time -p java $WEKA weka.classifiers.trees.DecisionStump -t $inp -x $CV >> $out
+	echo $SEPARATOR
+    time -p java $WEKA weka.classifiers.meta.AdaBoostM1     -t $inp -x $CV >> $out
+	echo $SEPARATOR
+    time -p java $WEKA weka.classifiers.bayes.NaiveBayes    -t $inp -x $CV >> $out
+	echo $SEPARATOR
+    time -p java $WEKA weka.classifiers.functions.MultilayerPerceptron 	-t $inp -x $CV -o >> $out
+	echo $SEPARATOR
+	echo ""
+done
+

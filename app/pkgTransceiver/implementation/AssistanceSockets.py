@@ -9,7 +9,6 @@ See Attached License file
 import SocketServer
 import threading
 import socket
-from cpnLibrary.implementation.Constants import SYMBOL_SEPARATOR
 
 
 class AssistanceSocketServer():
@@ -86,20 +85,6 @@ class AssistanceSocketClient():
             received = self.socketObject.recv(bufferSize)
         finally:
             return received
-
-    '''def receiveFile(self, fileName):
-        with open(fileName, 'wb') as fileReceived:
-            while True:
-                received = self.socketObject.recv(self.bufferSize)
-                while (received):
-                    if received.endswith(SYMBOL_SEPARATOR):
-                        str2write = received[:-len(SYMBOL_SEPARATOR)]
-                        fileReceived.write(str2write)
-                        break
-                    else:
-                        fileReceived.write(received)
-                        received = self.socketObject.recv(self.bufferSize)
-                break'''
 
     def sendFile(self, fileName):
         while True:

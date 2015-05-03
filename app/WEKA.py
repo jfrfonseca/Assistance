@@ -134,4 +134,4 @@ Then recovers the answers
     # stdoutFile.close()
     # stderrFile.close()
     dummySocket.close()
-    return stdout+'\n'+stderr
+    return stdout, stderr
