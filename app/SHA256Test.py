@@ -8,14 +8,15 @@ See Attached License file
 # NATIVE MODULE IMPORTS ------------------
 import time
 # ASSISTANCE MODULE IMPORTS ----------
-from pkgTransceiver.implementation.AssistanceSockets import AssistanceSocketClient  # @IgnorePep8
+from pkgTransceiver.AssistanceSockets import AssistanceSocketClient  # @IgnorePep8
 # ASSISTANCE CONSTANTS IMPORTS -----
-from cpnLibrary.implementation.Constants import TOKEN_TESTS_VERSION,\
+from cpnLibrary.Constants import \
     AppID_SHA256_TEST, CHANNEL_LOCAL_FILE, PORT_API_REQUESTS, PORT_DATA_REQUESTS,\
     TYPE_STATUS_CHECK_MSG, TYPE_API_REQUEST_MSG, TYPE_RECOVER_RESULTS_MSG,\
     STATUS_READY
 # LOCAL CONSTANTS ----------------------------
 ASSISTANCE_SERVER = '127.0.0.1'
+TOKEN_TESTS_VERSION = "0123456789ABCDF"
 
 
 def request():

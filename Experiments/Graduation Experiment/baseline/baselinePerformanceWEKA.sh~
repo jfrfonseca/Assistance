@@ -1,5 +1,5 @@
-for (( i=0;i<10;i++ )); do
-	echo "Run $i"
+#!/bin/bash
+for (( i=0;i<5;i++ )); do
 
 	time -p java -cp weka.jar weka.classifiers.functions.SMO       -t data/breast-cancer.arff -x 10   >  outputs/$i-SMO-breast-cancer.arff-output.dat
 	time -p java -cp weka.jar weka.classifiers.functions.SMO       -t data/labor.arff -x 10           >  outputs/$i-SMO-labor.arff-output.dat
@@ -19,5 +19,4 @@ for (( i=0;i<10;i++ )); do
 	time -p java -cp weka.jar weka.classifiers.functions.MultilayerPerceptron -t data/credit-g.arff -x 10 >  outputs/$i-MLP-credit-g.arff-output.dat
 	time -p java -cp weka.jar weka.classifiers.functions.MultilayerPerceptron -t data/iris.2D.arff -x 10  >  outputs/$i-MLP-iris.2D.arff-output.dat
 
-	echo "END"
 done

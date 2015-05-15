@@ -8,23 +8,27 @@ See Attached License file
 # NATIVE MODULE IMPORTS ------------------
 import time
 # ASSISTANCE MODULE IMPORTS ----------
-from pkgTransceiver.implementation.AssistanceSockets\
-    import AssistanceSocketClient
+from pkgTransceiver.AssistanceSockets import AssistanceSocketClient
 # ASSISTANCE CONSTANTS IMPORTS -----
-from cpnLibrary.implementation.Constants import AppID_WEKA,\
+from cpnLibrary.Constants import AppID_WEKA,\
     TYPE_API_REQUEST_MSG, TYPE_DATA_SUBMIT_MSG, TYPE_STATUS_CHECK_MSG,\
     TYPE_RECOVER_RESULTS_MSG, PORT_API_REQUESTS, PORT_DATA_REQUESTS,\
     STATUS_GATHERING_DATA, STATUS_READY, SYMBOL_SEPARATOR,\
-    TIME_DATA_SERVER_INTERVAL, CHANNEL_FTP,\
-    TOKEN_TESTS_VERSION
+    TIME_DATA_SERVER_INTERVAL, CHANNEL_FTP
 # LOCAL CONSTANTS ----------------------------
 HOST = '127.0.0.1'
-MYTOKEN = TOKEN_TESTS_VERSION
 # LAMBDA FUNCTIONS --------------------------
 fileLength = lambda filePath: str(len(open(filePath, 'rb').read()))
 
 
-def request(wekaFunction, arguments, filePath, peerIP=HOST):
+def request(wekaFunction, arguments, filePath, peerIP=HOST, MYTOKEN="0123456789ABCDF"):  # @IgnorePep8
+    '''
+    Requests a WEKA APP_ID Quest to the Assistance System
+    :param wekaFunction: WEKA function to be run
+    :param arguments: arguments for the WEKA function
+    :param filePath: path to the WEKA data file
+    :param peerIP: IP to send the request to
+    '''
     # Checks if it is a known WEKA function
     wekaFunctionsList = open("testsData/assistanceWEKAfunctions.txt", 'r').read()  # @IgnorePep8
     if str(wekaFunction) not in wekaFunctionsList:
@@ -50,7 +54,7 @@ def request(wekaFunction, arguments, filePath, peerIP=HOST):
     return ticket
 
 
-def submit(serviceTicket, filePath, peerIP=HOST):
+def submit(serviceTicket, filePath, peerIP=HOST, MYTOKEN="0123456789ABCDF"):
     '''
     Sends a file over Assistance.
 Waits until the task is ready to receive data, then sends it
@@ -67,7 +71,7 @@ Waits until the task is ready to receive data, then sends it
     dummySocket.close()
 
 
-def checkStatus(serviceTicket, peerIP=HOST):
+def checkStatus(serviceTicket, peerIP=HOST, MYTOKEN="0123456789ABCDF"):
     '''
     Sends a message checking the current status of the given ticket, and returns  # @IgnorePep8
         that status
@@ -92,7 +96,7 @@ def checkStatus(serviceTicket, peerIP=HOST):
     return status
 
 
-def synch(serviceTicket, peerIP=HOST):
+def synch(serviceTicket, peerIP=HOST, MYTOKEN="0123456789ABCDF"):
     '''
     Waits until the task is completed, and ready for redeem.
 Then recovers the answers

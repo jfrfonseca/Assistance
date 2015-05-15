@@ -8,24 +8,23 @@ See Attached License file
 import time
 import multiprocessing
 from optparse import OptionParser
+from random import shuffle
 # Assistance IMPORTS --------------------------
 import WEKA
-# LOCAL CONSTANTS ---------------------------
-TIME_WATCHDOG = 360
 
 
-def handleQuest(resultsBuffer, quest):
+def handleQuest(resultsBuffer, quest, myname):
     results = "\n<BEGIN>\n"
     results += "<"+str(time.time())+">\n"
     ticket = WEKA.request(quest["APPID"],
                           quest["ARGS"],
                           quest["DATA"],
-                          quest["PEER"])
+                          quest["PEER"], myname)
     results += str(time.time())+":::"+ticket+"\n"
     results += str(time.time())+":::BEGIN Submitting data\n"
-    WEKA.submit(ticket, quest["DATA"], quest["PEER"])
+    WEKA.submit(ticket, quest["DATA"], quest["PEER"], myname)
     results += str(time.time())+":::FINISHED Submitting data\n"
-    answer = WEKA.synch(ticket, quest["PEER"])
+    answer = WEKA.synch(ticket, quest["PEER"], myname)
     results += str(time.time())+":::"+answer[0] + '\n'
     results += str(time.time())+":::"+answer[1] + '\n'
     results += "<END>"
@@ -40,6 +39,9 @@ if __name__ == '__main__':
     parser.add_option("-n", "--myName",
                       dest="myName", action="store", type="string",
                       help="Names the Assistance LOGs in this machine")
+    parser.add_option("-t", "--timeToRun",
+                      dest="timeToRun", action="store", type="string",
+                      help="Sets the time to run the test")
     parser.add_option("-a", "--assistanceServer",
                       dest="peerIPs", action="append", type="string",
                       help="List of the IPs of Assistance Servers in this LAN")  # @IgnorePep8
@@ -54,6 +56,10 @@ if __name__ == '__main__':
     else:
         ipList = options.peerIPs
 
+    TIME_WATCHDOG = 100
+    if options.timeToRun is not None:
+        TIME_WATCHDOG = int(options.timeToRun)
+
     # Forms the list of quests
     # Lists of quests parameters: APPID, ARGS, DATA files, and PEER IP
     appTouples = [
@@ -66,10 +72,11 @@ if __name__ == '__main__':
         ("weka.classifiers.meta.AdaBoostM1", "-t", "testsData/breast-cancer.arff"),  # @IgnorePep8
         ("weka.classifiers.meta.AdaBoostM1", "-t", "testsData/labor.arff"),
         ("weka.classifiers.bayes.NaiveBayes", "-t", "testsData/credit-g.arff"),
-        ("weka.classifiers.bayes.NaiveBayes", "-t", "testsData/iris.2D.arff")] #,
-        #("weka.classifiers.functions.MultilayerPerceptron", "-t", "testsData/credit-g.arff"),  # @IgnorePep8
-        #("weka.classifiers.functions.MultilayerPerceptron", "-t", "testsData/iris.2D.arff")  # @IgnorePep8
-        #]
+        ("weka.classifiers.bayes.NaiveBayes", "-t", "testsData/iris.2D.arff")
+        ]
+
+    # ("weka.classifiers.functions.MultilayerPerceptron", "-t", "testsData/credit-g.arff"),  # @IgnorePep8
+    # ("weka.classifiers.functions.MultilayerPerceptron", "-t", "testsData/iris.2D.arff"),  # @IgnorePep8
 
     questsList = []
     for ipNum in ipList:
@@ -85,8 +92,9 @@ if __name__ == '__main__':
     # and commissions it by the quest handling function
     threadsArray = []
     resultsQueue = multiprocessing.Queue()
+    shuffle(questsList)
     for quest in questsList:
-        process = multiprocessing.Process(target=handleQuest, args=(resultsQueue, quest,))  # @IgnorePep8
+        process = multiprocessing.Process(target=handleQuest, args=(resultsQueue, quest, myname,))  # @IgnorePep8
         threadsArray.append(process)
         process.start()
 
@@ -95,5 +103,7 @@ if __name__ == '__main__':
     # Waits for the answers, and prints them after time out
     time.sleep(TIME_WATCHDOG)
     results = [resultsQueue.get() for process in threadsArray]
-    for resultsLine in results:
-        print resultsLine
+    with open(myname+".results.dat", "w") as resultsFile:
+        for resultsLine in results:
+            resultsFile.write(resultsLine+"\n")
+            print resultsLine

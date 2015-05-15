@@ -8,16 +8,17 @@ See Attached License file
 # NATIVE MODULE IMPORTS ------------------
 import time
 # ASSISTANCE MODULE IMPORTS ----------
-from pkgTransceiver.implementation.AssistanceSockets\
+from pkgTransceiver.AssistanceSockets\
     import AssistanceSocketClient
 # ASSISTANCE CONSTANTS IMPORTS -----
-from cpnLibrary.implementation.Constants import TOKEN_TESTS_VERSION,\
+from cpnLibrary.Constants import \
     TYPE_API_REQUEST_MSG, TYPE_DATA_SUBMIT_MSG, TYPE_STATUS_CHECK_MSG,\
     TYPE_RECOVER_RESULTS_MSG, PORT_API_REQUESTS, PORT_DATA_REQUESTS,\
     STATUS_GATHERING_DATA, STATUS_READY, SYMBOL_SEPARATOR,\
     TIME_DATA_SERVER_INTERVAL, AppID_SHA256_TEST, CHANNEL_FTP
 # LOCAL CONSTANTS ----------------------------
 HOST = '127.0.0.1'
+TOKEN_TESTS_VERSION = "0123456789ABCDF"
 # LAMBDA FUNCTIONS --------------------------
 fileLength = lambda filePath: str(len(open(filePath, 'rb').read()))
 

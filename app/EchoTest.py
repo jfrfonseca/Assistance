@@ -1,12 +1,13 @@
-from pkgTransceiver.implementation.AssistanceSockets import AssistanceSocketClient
+from pkgTransceiver.AssistanceSockets import AssistanceSocketClient
 import time
-from cpnLibrary.implementation.Constants import NULL, TOKEN_TESTS_VERSION,\
+from cpnLibrary.Constants import NULL, \
     AppID_LOCAL_ECHO_TEST, TYPE_API_REQUEST_MSG, PORT_API_REQUESTS,\
     TYPE_STATUS_CHECK_MSG, PORT_DATA_REQUESTS, STATUS_READY,\
     TYPE_RECOVER_RESULTS_MSG, CHANNEL_IMMEDIATE
 
 
 HOST = ''
+TOKEN_TESTS_VERSION = "0123456789ABCDF"
 
 
 def request(messageToEcho, peerIP=HOST):

@@ -1,0 +1,277 @@
+
+AdaBoostM1: Base classifiers and their weights: 
+
+Decision Stump
+
+Classifications
+
+deg-malig = 3 : recurrence-events
+deg-malig != 3 : no-recurrence-events
+deg-malig is missing : no-recurrence-events
+
+Class distributions
+
+deg-malig = 3
+no-recurrence-events	recurrence-events	
+0.47058823529411764	0.5294117647058824	
+deg-malig != 3
+no-recurrence-events	recurrence-events	
+0.8009950248756219	0.19900497512437812	
+deg-malig is missing
+no-recurrence-events	recurrence-events	
+0.7027972027972028	0.2972027972027972	
+
+
+Weight: 0.95
+
+Decision Stump
+
+Classifications
+
+tumor-size = 10-14 : no-recurrence-events
+tumor-size != 10-14 : no-recurrence-events
+tumor-size is missing : no-recurrence-events
+
+Class distributions
+
+tumor-size = 10-14
+no-recurrence-events	recurrence-events	
+0.9661876584953508	0.03381234150464917	
+tumor-size != 10-14
+no-recurrence-events	recurrence-events	
+0.6156109040988428	0.3843890959011571	
+tumor-size is missing
+no-recurrence-events	recurrence-events	
+0.6407766990291262	0.3592233009708738	
+
+
+Weight: 0.58
+
+Decision Stump
+
+Classifications
+
+tumor-size = 10-14 : no-recurrence-events
+tumor-size != 10-14 : recurrence-events
+tumor-size is missing : no-recurrence-events
+
+Class distributions
+
+tumor-size = 10-14
+no-recurrence-events	recurrence-events	
+0.9412432396341057	0.05875676036589428	
+tumor-size != 10-14
+no-recurrence-events	recurrence-events	
+0.47308179533447714	0.5269182046655229	
+tumor-size is missing
+no-recurrence-events	recurrence-events	
+0.5000000000000004	0.4999999999999994	
+
+
+Weight: 0.2
+
+Decision Stump
+
+Classifications
+
+inv-nodes = 0-2 : no-recurrence-events
+inv-nodes != 0-2 : recurrence-events
+inv-nodes is missing : no-recurrence-events
+
+Class distributions
+
+inv-nodes = 0-2
+no-recurrence-events	recurrence-events	
+0.6147089706032929	0.3852910293967071	
+inv-nodes != 0-2
+no-recurrence-events	recurrence-events	
+0.3694951269723762	0.6305048730276238	
+inv-nodes is missing
+no-recurrence-events	recurrence-events	
+0.545373245110025	0.45462675488997506	
+
+
+Weight: 0.49
+
+Decision Stump
+
+Classifications
+
+tumor-size = 10-14 : no-recurrence-events
+tumor-size != 10-14 : recurrence-events
+tumor-size is missing : recurrence-events
+
+Class distributions
+
+tumor-size = 10-14
+no-recurrence-events	recurrence-events	
+0.9303317914189803	0.06966820858101977	
+tumor-size != 10-14
+no-recurrence-events	recurrence-events	
+0.4732884291697031	0.5267115708302968	
+tumor-size is missing
+no-recurrence-events	recurrence-events	
+0.49320710900557585	0.5067928909944242	
+
+
+Weight: 0.18
+
+Decision Stump
+
+Classifications
+
+tumor-size = 10-14 : no-recurrence-events
+tumor-size != 10-14 : no-recurrence-events
+tumor-size is missing : no-recurrence-events
+
+Class distributions
+
+tumor-size = 10-14
+no-recurrence-events	recurrence-events	
+0.9178979567292467	0.08210204327075336	
+tumor-size != 10-14
+no-recurrence-events	recurrence-events	
+0.5176740742541737	0.48232592574582633	
+tumor-size is missing
+no-recurrence-events	recurrence-events	
+0.5339138374023907	0.4660861625976094	
+
+
+Weight: 0.14
+
+Decision Stump
+
+Classifications
+
+tumor-size = 10-14 : no-recurrence-events
+tumor-size != 10-14 : recurrence-events
+tumor-size is missing : no-recurrence-events
+
+Class distributions
+
+tumor-size = 10-14
+no-recurrence-events	recurrence-events	
+0.9070604121179034	0.0929395878820965	
+tumor-size != 10-14
+no-recurrence-events	recurrence-events	
+0.48372120709919003	0.5162787929008099	
+tumor-size is missing
+no-recurrence-events	recurrence-events	
+0.5000000000000006	0.4999999999999994	
+
+
+Weight: 0.13
+
+Decision Stump
+
+Classifications
+
+tumor-size = 10-14 : no-recurrence-events
+tumor-size != 10-14 : no-recurrence-events
+tumor-size is missing : no-recurrence-events
+
+Class distributions
+
+tumor-size = 10-14
+no-recurrence-events	recurrence-events	
+0.8959369234553571	0.10406307654464275	
+tumor-size != 10-14
+no-recurrence-events	recurrence-events	
+0.5150575403967452	0.48494245960325466	
+tumor-size is missing
+no-recurrence-events	recurrence-events	
+0.529011759251518	0.470988240748482	
+
+
+Weight: 0.12
+
+Decision Stump
+
+Classifications
+
+tumor-size = 10-14 : no-recurrence-events
+tumor-size != 10-14 : recurrence-events
+tumor-size is missing : recurrence-events
+
+Class distributions
+
+tumor-size = 10-14
+no-recurrence-events	recurrence-events	
+0.88459632976489	0.11540367023510995	
+tumor-size != 10-14
+no-recurrence-events	recurrence-events	
+0.4860213550994959	0.5139786449005042	
+tumor-size is missing
+no-recurrence-events	recurrence-events	
+0.49999999999999883	0.5000000000000011	
+
+
+Weight: 0.11
+
+Decision Stump
+
+Classifications
+
+menopause = ge40 : no-recurrence-events
+menopause != ge40 : recurrence-events
+menopause is missing : no-recurrence-events
+
+Class distributions
+
+menopause = ge40
+no-recurrence-events	recurrence-events	
+0.6095029750763478	0.39049702492365224	
+menopause != ge40
+no-recurrence-events	recurrence-events	
+0.45994150884143187	0.5400584911585681	
+menopause is missing
+no-recurrence-events	recurrence-events	
+0.5251577824738695	0.47484221752613054	
+
+
+Weight: 0.28
+
+Number of performed Iterations: 10
+
+
+Time taken to build model: 0.14 seconds
+Time taken to test model on training data: 0.02 seconds
+
+=== Error on training data ===
+
+Correctly Classified Instances         216               75.5245 %
+Incorrectly Classified Instances        70               24.4755 %
+Kappa statistic                          0.3574
+Mean absolute error                      0.341 
+Root mean squared error                  0.4188
+Relative absolute error                 81.5216 %
+Root relative squared error             91.6302 %
+Total Number of Instances              286     
+
+
+=== Confusion Matrix ===
+
+   a   b   <-- classified as
+ 179  22 |   a = no-recurrence-events
+  48  37 |   b = recurrence-events
+
+
+
+=== Stratified cross-validation ===
+
+Correctly Classified Instances         201               70.2797 %
+Incorrectly Classified Instances        85               29.7203 %
+Kappa statistic                          0.2557
+Mean absolute error                      0.3526
+Root mean squared error                  0.4329
+Relative absolute error                 84.2743 %
+Root relative squared error             94.711  %
+Total Number of Instances              286     
+
+
+=== Confusion Matrix ===
+
+   a   b   <-- classified as
+ 165  36 |   a = no-recurrence-events
+  49  36 |   b = recurrence-events
+

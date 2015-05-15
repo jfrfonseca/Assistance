@@ -1,9 +1,0 @@
-from testHello import TEST_STRING
-string1 = "Test Text"
-string2 = TEST_STRING
-print string1
-print string2
-resultsFile = open("results.txt", 'w')
-resultsFile.write(string1+'\n')
-resultsFile.write(string2+'\n')
-resultsFile.close()

@@ -1,0 +1,277 @@
+
+AdaBoostM1: Base classifiers and their weights: 
+
+Decision Stump
+
+Classifications
+
+pension = none : bad
+pension != none : good
+pension is missing : good
+
+Class distributions
+
+pension = none
+bad	good	
+1.0	0.0	
+pension != none
+bad	good	
+0.4375	0.5625	
+pension is missing
+bad	good	
+0.06666666666666667	0.9333333333333333	
+
+
+Weight: 1.67
+
+Decision Stump
+
+Classifications
+
+wage-increase-first-year <= 2.9 : bad
+wage-increase-first-year > 2.9 : good
+wage-increase-first-year is missing : good
+
+Class distributions
+
+wage-increase-first-year <= 2.9
+bad	good	
+0.9366197183098591	0.06338028169014084	
+wage-increase-first-year > 2.9
+bad	good	
+0.3076923076923076	0.6923076923076924	
+wage-increase-first-year is missing
+bad	good	
+0.0	1.0	
+
+
+Weight: 1.49
+
+Decision Stump
+
+Classifications
+
+statutory-holidays <= 10.5 : bad
+statutory-holidays > 10.5 : good
+statutory-holidays is missing : good
+
+Class distributions
+
+statutory-holidays <= 10.5
+bad	good	
+0.9550212164073549	0.04497878359264498	
+statutory-holidays > 10.5
+bad	good	
+0.40519399249061383	0.5948060075093862	
+statutory-holidays is missing
+bad	good	
+0.0	1.0	
+
+
+Weight: 1.51
+
+Decision Stump
+
+Classifications
+
+longterm-disability-assistance = yes : bad
+longterm-disability-assistance != yes : bad
+longterm-disability-assistance is missing : bad
+
+Class distributions
+
+longterm-disability-assistance = yes
+bad	good	
+0.6317289573270473	0.3682710426729527	
+longterm-disability-assistance != yes
+bad	good	
+1.0	0.0	
+longterm-disability-assistance is missing
+bad	good	
+0.560343410988447	0.43965658901155297	
+
+
+Weight: 1.16
+
+Decision Stump
+
+Classifications
+
+longterm-disability-assistance = yes : good
+longterm-disability-assistance != yes : bad
+longterm-disability-assistance is missing : good
+
+Class distributions
+
+longterm-disability-assistance = yes
+bad	good	
+0.3503406673678132	0.6496593326321868	
+longterm-disability-assistance != yes
+bad	good	
+1.0	0.0	
+longterm-disability-assistance is missing
+bad	good	
+0.2860538500043587	0.7139461499956414	
+
+
+Weight: 1.21
+
+Decision Stump
+
+Classifications
+
+pension = none : bad
+pension != none : bad
+pension is missing : good
+
+Class distributions
+
+pension = none
+bad	good	
+1.0	0.0	
+pension != none
+bad	good	
+0.8669501658652812	0.1330498341347189	
+pension is missing
+bad	good	
+0.23313506503975467	0.7668649349602453	
+
+
+Weight: 1.78
+
+Decision Stump
+
+Classifications
+
+longterm-disability-assistance = yes : good
+longterm-disability-assistance != yes : bad
+longterm-disability-assistance is missing : bad
+
+Class distributions
+
+longterm-disability-assistance = yes
+bad	good	
+0.37533677560979417	0.6246632243902058	
+longterm-disability-assistance != yes
+bad	good	
+1.0	0.0	
+longterm-disability-assistance is missing
+bad	good	
+0.5140375689764457	0.4859624310235543	
+
+
+Weight: 0.92
+
+Decision Stump
+
+Classifications
+
+working-hours <= 37.5 : good
+working-hours > 37.5 : bad
+working-hours is missing : good
+
+Class distributions
+
+working-hours <= 37.5
+bad	good	
+0.08160392839577206	0.918396071604228	
+working-hours > 37.5
+bad	good	
+0.7714343407425067	0.2285656592574933	
+working-hours is missing
+bad	good	
+0.13510054499441984	0.8648994550055801	
+
+
+Weight: 1.43
+
+Decision Stump
+
+Classifications
+
+education-allowance = yes : bad
+education-allowance != yes : bad
+education-allowance is missing : good
+
+Class distributions
+
+education-allowance = yes
+bad	good	
+0.5813072234612106	0.4186927765387895	
+education-allowance != yes
+bad	good	
+0.9141937329179072	0.0858062670820928	
+education-allowance is missing
+bad	good	
+0.16671461890838463	0.8332853810916153	
+
+
+Weight: 1.37
+
+Decision Stump
+
+Classifications
+
+wage-increase-first-year <= 4.15 : bad
+wage-increase-first-year > 4.15 : good
+wage-increase-first-year is missing : good
+
+Class distributions
+
+wage-increase-first-year <= 4.15
+bad	good	
+0.657789739269301	0.34221026073069893	
+wage-increase-first-year > 4.15
+bad	good	
+0.0996407490938907	0.9003592509061092	
+wage-increase-first-year is missing
+bad	good	
+0.0	1.0	
+
+
+Weight: 1.12
+
+Number of performed Iterations: 10
+
+
+Time taken to build model: 0.12 seconds
+Time taken to test model on training data: 0 seconds
+
+=== Error on training data ===
+
+Correctly Classified Instances          56               98.2456 %
+Incorrectly Classified Instances         1                1.7544 %
+Kappa statistic                          0.9619
+Mean absolute error                      0.0263
+Root mean squared error                  0.0827
+Relative absolute error                  5.7564 %
+Root relative squared error             17.3207 %
+Total Number of Instances               57     
+
+
+=== Confusion Matrix ===
+
+  a  b   <-- classified as
+ 20  0 |  a = bad
+  1 36 |  b = good
+
+
+
+=== Stratified cross-validation ===
+
+Correctly Classified Instances          50               87.7193 %
+Incorrectly Classified Instances         7               12.2807 %
+Kappa statistic                          0.7273
+Mean absolute error                      0.1519
+Root mean squared error                  0.3414
+Relative absolute error                 33.2028 %
+Root relative squared error             71.5013 %
+Total Number of Instances               57     
+
+
+=== Confusion Matrix ===
+
+  a  b   <-- classified as
+ 16  4 |  a = bad
+  3 34 |  b = good
+

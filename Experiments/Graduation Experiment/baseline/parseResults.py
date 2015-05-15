@@ -1,3 +1,9 @@
+#!/usr/bin/env python
+'''
+Parses the results of the Baseline Test
+Jose F. R. Fonseca
+See Attached License file
+'''
 if __name__ == '__main__':
 	total = 0
 	with open("times.txt", "r") as timesFile:

@@ -6,32 +6,65 @@ See Attached License file
 '''
 # NATIVE MODULE IMPORTS ------------------
 import os
+import shutil
 # ASSISTANCE MODULE IMPORTS ----------
-from pkgMissionControl.implementation import Launcher
+from pkgTransceiver.Transceiver import Transceiver
+from pkgOfficer.Officer import Officer
+from IOUtils import saveAll
 # ASSISTANCE CONSTANTS IMPORTS -----
-from cpnLibrary.implementation.Constants import DIR_APPS_CWD, SCHEDULE_NONE
+from cpnLibrary.Constants import SCHEDULE_ROUNDROBIN
 
 
-def shutdown(cleanUp=False):
+class Assistance():
     '''
-    Shuts down the active Assistance Components
+    Mission Control and main Object for a instance of the Assistance System
     '''
-    Launcher.shutdown()
-    for dirType in ["data/", "outputs/"]:
-        if cleanUp:
-            filelist = os.listdir(DIR_APPS_CWD+dirType) # @IgnorePep8
-            for f in filelist:
-                os.remove(DIR_APPS_CWD+dirType+f)
+    def __init__(self, schedulingMode=SCHEDULE_ROUNDROBIN, token="0123456789ABCDEF"):  # @IgnorePep8
+        '''
+        Initiates a new Assistance System Instance in the local Machine
+        :param schedulingMode:
+        '''
+        self.token = token
+        self.scheduling = schedulingMode
+        self.officer = Officer(self)
+        self.transceiver = Transceiver(self)
 
+    def shutdown(self, zipName=''):
+        '''
+        Deactivates the current running instance of the Assistance System
+        Saves the LOGs, shuts down the Office, shuts down the Trasnceiver, zips the LOGs  # @IgnorePep8
+        AND deletes all the logs BUT the zipped ones!
+        :param zipName: name to give for the ZIPfile logs, as LOGs-zipName-scheduleStrategy.zip  # @IgnorePep8
+        '''
+        self.officer.saveLogs()
+        self.officer.shutdown()
+        self.transceiver.shutdown()
+        saveAll(zipName)
+        dirs2Clean = ['LOG', 'AssistanceApps/runtimeIO']
+        for folder in dirs2Clean:
+            for root, dirs, files in os.walk(folder):  # @UnusedVariable
+                for fileName in files:
+                    os.remove(os.path.join(folder, fileName))
+                for dirName in dirs:
+                    shutil.rmtree(os.path.join(folder, dirName))
 
-def setup(schedulingMode=SCHEDULE_NONE):
-    '''
-    Starts the Assistance Service
-    '''
-    Launcher.setup(schedulingMode)
+    def getTransceiverInstance(self):
+        '''
+        returns the running instance of the Transceiver
+        '''
+        return self.transceiver
 
-'''
-Starts this file, if run independently
-'''
-if __name__ == '__main__':
-    setup()
+    def getOfficerInstance(self):
+        '''
+        Returns the running instance of the Officer
+        '''
+        return self.officer
+
+    def getSchedulingMode(self):
+        '''
+        Returns the used Scheduling mode
+        '''
+        return self.scheduling
+
+    def getToken(self):
+        return self.token

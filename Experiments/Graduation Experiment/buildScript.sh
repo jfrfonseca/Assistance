@@ -1,4 +1,4 @@
 #!/bin/bash
-#Compiles Assistance! The first argument must be the name of the build!
-cxfreeze ../../../app/testAssistance.py --target-dir build
+cxfreeze ../../app/startAssistance.py --target-dir build-Server
+cxfreeze ../../app/ClientScript_Pyhton.py --target-dir build-Client
 

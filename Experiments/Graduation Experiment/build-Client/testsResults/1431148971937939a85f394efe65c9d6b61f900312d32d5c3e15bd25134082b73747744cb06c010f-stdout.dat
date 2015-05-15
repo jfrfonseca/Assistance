@@ -1,0 +1,95 @@
+
+SMO
+
+Kernel used:
+  Linear Kernel: K(x,y) = <x,y>
+
+Classifier for classes: no-recurrence-events, recurrence-events
+
+BinarySMO
+
+Machine linear: showing attribute weights, not support vectors.
+
+        -0.0026 * (normalized) age=20-29
+ +      -0.0438 * (normalized) age=30-39
+ +      -0.1693 * (normalized) age=40-49
+ +      -0.1756 * (normalized) age=50-59
+ +       0.3913 * (normalized) age=60-69
+ +       0      * (normalized) age=70-79
+ +      -0.2931 * (normalized) menopause=lt40
+ +      -0.0716 * (normalized) menopause=ge40
+ +       0.3647 * (normalized) menopause=premeno
+ +       0      * (normalized) tumor-size=0-4
+ +       0      * (normalized) tumor-size=5-9
+ +      -0.2108 * (normalized) tumor-size=10-14
+ +       0.0658 * (normalized) tumor-size=15-19
+ +      -0.025  * (normalized) tumor-size=20-24
+ +       0.1073 * (normalized) tumor-size=25-29
+ +       0.1979 * (normalized) tumor-size=30-34
+ +      -0.2456 * (normalized) tumor-size=35-39
+ +      -0.1217 * (normalized) tumor-size=40-44
+ +       0.232  * (normalized) tumor-size=50-54
+ +      -0.5056 * (normalized) inv-nodes=0-2
+ +      -0.0489 * (normalized) inv-nodes=3-5
+ +       0.2666 * (normalized) inv-nodes=6-8
+ +       0.2645 * (normalized) inv-nodes=9-11
+ +       0.076  * (normalized) inv-nodes=12-14
+ +      -0.0526 * (normalized) inv-nodes=15-17
+ +      -0.5631 * (normalized) node-caps
+ +      -0.2523 * (normalized) deg-malig=1
+ +      -0.383  * (normalized) deg-malig=2
+ +       0.6353 * (normalized) deg-malig=3
+ +      -0.0981 * (normalized) breast
+ +      -0.2391 * (normalized) breast-quad=left_up
+ +      -0.0178 * (normalized) breast-quad=left_low
+ +       0.3913 * (normalized) breast-quad=right_up
+ +       0.0153 * (normalized) breast-quad=right_low
+ +      -0.1497 * (normalized) breast-quad=central
+ +      -0.0925 * (normalized) irradiat
+ +       0.1347
+
+Number of kernel evaluations: 33776 (91.653% cached)
+
+
+
+Time taken to build model: 1.46 seconds
+Time taken to test model on training data: 0.11 seconds
+
+=== Error on training data ===
+
+Correctly Classified Instances         218               76.2238 %
+Incorrectly Classified Instances        68               23.7762 %
+Kappa statistic                          0.3615
+Mean absolute error                      0.2378
+Root mean squared error                  0.4876
+Relative absolute error                 56.8377 %
+Root relative squared error            106.691  %
+Total Number of Instances              286     
+
+
+=== Confusion Matrix ===
+
+   a   b   <-- classified as
+ 183  18 |   a = no-recurrence-events
+  50  35 |   b = recurrence-events
+
+
+
+=== Stratified cross-validation ===
+
+Correctly Classified Instances         199               69.5804 %
+Incorrectly Classified Instances        87               30.4196 %
+Kappa statistic                          0.1983
+Mean absolute error                      0.3042
+Root mean squared error                  0.5515
+Relative absolute error                 72.7021 %
+Root relative squared error            120.6668 %
+Total Number of Instances              286     
+
+
+=== Confusion Matrix ===
+
+   a   b   <-- classified as
+ 171  30 |   a = no-recurrence-events
+  57  28 |   b = recurrence-events
+

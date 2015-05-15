@@ -9,7 +9,7 @@ import zipfile
 import os
 import threading
 # ASSISTANCE CONSTANTS IMPORTS ----
-from cpnLibrary.implementation.Constants import DIR_APPS_CWD
+from cpnLibrary.Constants import DIR_APPS_CWD
 
 
 class ResultsPrinter():

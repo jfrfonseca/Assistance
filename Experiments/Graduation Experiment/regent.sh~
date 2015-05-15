@@ -1,0 +1,31 @@
+#!/bin/bash
+# DEPENDS OF ME HAVING SSH AND SCP IN THE LAN
+# MUST HAVE A SERVERLIST FILE ON THE SAME DIRECTORY
+# SERVERLIST CONTAINS ONE VISIBLE IP ADRESS PER LINE
+
+# CONSTANTS:
+REGENTNAME=127.0.0.1
+MYUSERNAME=405808
+SERVERBUILD=build-Server
+BUILDSPATH=/home/$MYUSERNAME/home
+
+# FUNCTIONS:
+function setUpServer(){
+	local servername = $1
+	cd $BUILDSPATH/$SERVERBUILD
+	
+}
+
+function setUpFreshServer(){
+	local serverName = $1
+	local serverMode = $2
+	rm -rf $SERVERBUILD
+	scp -r $MYUSERNAME@$REGENTNAME:$BUILDSPATH/$SERVERBUILD $BUILDSPATH
+	setUpServer $serverName $serverMode
+}
+
+# Sets up multiple assistance Servers
+for server in 'cat freshServersList' do
+	printf "Installing an Assistance Server in %-20s" $server;
+	ssh -q -o "BatchMode yes" $server setUpFreshServer $server 2>&1;
+done

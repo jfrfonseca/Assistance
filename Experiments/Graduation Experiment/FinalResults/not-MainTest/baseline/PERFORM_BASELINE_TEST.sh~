@@ -1,0 +1,16 @@
+#!/bin/bash
+echo "BASELINE TEST FOR $1 - ALL WEKA FUNCTIONS, SEQUENTIAL AND TIMED"
+echo "Setting up"
+chmod 755 baselinePerformanceWEKA.sh
+chmod 755 parseResults.py
+echo "Performing tests"
+./baselinePerformanceWEKA.sh &> times.txt
+echo "Parsing results"
+(python parseResults.py) >> parsedResults.txt
+echo "Saving results"
+mv *.zip results
+mv parsedResults.txt results
+zip results . -i "baseline$1.zip"
+echo "Cleaning up"
+rm results/*
+rm times.txt

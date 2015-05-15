@@ -1,0 +1,219 @@
+#!/usr/bin/env python
+import sqlite3
+import os
+import sys
+import math
+import plotly.plotly as py
+from plotly.graph_objs import *
+
+
+'''results (configuration text, run text, serverIP text, scheduling text, appTouple text, response real, transfer real, execution real)'''
+
+def sqliteLog(val):
+    return math.log(val)
+
+
+def sqliteExp(val):
+    return math.exp(val)
+
+
+def sumDigits(conf):
+    config = int(conf)/10
+    total = 0
+    while config >= 1:
+        total += config % 10
+        config /= 10
+    return total
+
+'''
+def getYvalues(xNamesList, results):
+    # Gets the Y axis values
+    rnroRespTimes = []
+    rnroProcTimes = []
+    fifoRespTimes = []
+    fifoProcTimes = []
+    sjfRespTimes = []
+    sjfProcTimes = []
+    # For each configuration
+    for index, conf in enumerate(xNamesList):
+        # scheOnServer, response, execution
+        times = [(lin[2], lin[3], lin[4]) for lin in results if lin[0] == conf]
+        timesDict = {}
+        for itm in times:
+            # The values for each schedule
+            timesDict[itm[0]] = (itm[1], itm[2])
+        if "RNRO" in [conf[0] for conf in times]:
+            rnroRespTimes.append(float(timesDict["RNRO"][0]))
+            rnroProcTimes.append(float(timesDict["RNRO"][1]))
+        else:
+            rnroRespTimes.append(0)
+            rnroProcTimes.append(0)
+        if "FIFO" in [conf[0] for conf in times]:
+            fifoRespTimes.append(float(timesDict["FIFO"][0]))
+            fifoProcTimes.append(float(timesDict["FIFO"][1]))
+        else:
+            fifoRespTimes.append(0)
+            fifoProcTimes.append(0)
+        if "SJF" in [conf[0] for conf in times]:
+            sjfRespTimes.append(float(timesDict["SJF"][0]))
+            sjfProcTimes.append(float(timesDict["SJF"][1]))
+        else:
+            sjfRespTimes.append(0)
+            sjfProcTimes.append(0)
+    return     rnroRespTimes, rnroProcTimes, fifoRespTimes, fifoProcTimes, sjfRespTimes, sjfProcTimes
+
+
+def getDataCols(results, allConfigurations):
+    respCol = []
+    procCol = []
+    
+    # results is a select configuration, serverIP, scheduling, exp(avg(log(rsp))), exp(avg(log(exe)))
+    # for each configuration, in order
+    for conf in sorted(allConfigurations):
+        # data is a [(configuration, scheduling, exp(avg(log(rsp))), exp(avg(log(exe))))]
+        currentCol = 0
+        # for each line of data with the given configuration, in the order: RNRO, FIFO, SJF
+        for serverData in sorted([(dat[2], dat[3], dat[4], ) for dat in results if dat[0] == conf],
+                            key=lambda x: ["RNRO", "FIFO", "SJF"].index(x[0])):
+            print serverData
+            print currentCol
+            print respCol
+            if len(respCol) == sumDigits(allConfs[0]):
+                respCol[currentCol].append(serverData[1])
+                procCol[currentCol].append(serverData[2])
+            else:
+                respCol.append([serverData[1]])
+                procCol.append([serverData[2]])
+            currentCol += 1
+
+    return respCol, procCol
+'''
+
+if __name__ == '__main__':
+    
+    QUERY = "select configuration, scheduling, serverIP, exp(avg(log(response))), exp(avg(log(execution))) from ("\
+                        +"select configuration, scheduling, serverIP, response, execution, run"\
+                                +" from results group by configuration, scheduling, serverIP, run"\
+                    +") group by configuration, scheduling, serverIP"
+    
+    alldb = sqlite3.connect('allResults')
+    alldb.create_function("log", 1, sqliteLog)
+    alldb.create_function("exp", 1, sqliteExp)
+    allCursor = alldb.cursor()
+    # Gets the lines of the DatSet
+    queryResults = []
+    allCursor.execute(QUERY)
+    queryResults = allCursor.fetchall()
+    allResults = sorted(queryResults, key=lambda x: 10*int(x[0])+int(["RNRO", "FIFO", "SJF"].index(x[1])))
+    results = []
+    # Remove the unneeded results
+
+    numServers = 4
+    numClients = 1
+
+    for line in allResults:
+        if sumDigits(line[0]) == numServers and int(line[0]) % 10 == numClients:
+            results.append(line)
+
+    for lin in results:
+        print str(lin)
+
+    # Creates the output structure
+    allGroupsResp = []
+    allGroupsProc = []
+    for grp in range(numServers):
+        allGroupsResp.append([])
+        allGroupsProc.append([])
+    
+    for offset in range(numServers):
+        for line in results[offset::numServers]:
+            allGroupsResp[offset].append(line[3])
+            allGroupsProc[offset].append(line[4])
+    
+    '''
+    numServers = 9
+    numClients = 1
+    # Gest all appliable configurations
+    allConfigurations = []
+    for comb in range(int(math.pow(10, 4))):
+        if comb % 10 == numClients and sumDigits(int(comb/10)) == numServers:
+            allConfigurations.append(comb)
+    allConfigurations = sorted(allConfigurations)
+    print allConfigurations
+    '''
+
+
+    
+    '''
+    for confNum, config in enumerate(allConfigurations):
+        for scheNum, sche in enumerate(["RNRO", "FIFO", "SJF"]):
+            columnNum = 0
+            for line in queryResults:
+                if line[1] == sche and line[0] == str(config):
+                    allGroupsResp[columnNum].append(line[3])
+                    allGroupsProc[columnNum].append(line[4])
+                    columnNum += 1
+    '''
+
+    print len(list(set([lin[0] for lin in results])))
+    print "\n"
+    for conf in allGroupsProc:
+        print len(conf)
+
+    alldb.close()
+
+'''
+
+            results = sorted(results, key=lambda x: 10*int(x[0])+int(["RNRO", "FIFO", "SJF"].index(x[1])))
+    
+    for index, analisys in enumerate(analisysList):
+        allCursor.execute(analisys)
+        results = allCursor.fetchall()
+
+    # Sorts the results list per configuration and scheduling
+    results = sorted(results, key=lambda x: 10*int(x[0])+int(["RNRO", "FIFO", "SJF"].index(x[1])))
+
+    for lin in results:
+        print str(lin)+"---"+str(10*int(lin[0])+int(["RNRO", "FIFO", "SJF"].index(lin[1])))
+
+
+    
+    Stacked Bar Charts of time of execution per configuration, per server, per scheduling - 4 Servers, 1 Client
+    
+    # Gets the X axis names
+    allConfs = sorted(list(set([str(config[0]) for config in results
+                                if str(config[0])[-1] == "1" and sumDigits(str(config[0])) == 4])),
+                      key=lambda x: lambda x: str(10*int(x[0])+int(["RNRO", "FIFO", "SJF"].index(x[1]))))
+    respCol, procCol = getDataCols(results, allConfs)
+    # Prints the Response Times Graph
+    responseList = []
+    processingList = []
+    xNamesList = ["Conf. "+config for config in allConfs]
+    for col in range(len(respCol)):
+        responseList.append(Bar(
+            x=xNamesList,
+            y=respCol[col],
+            name="Response Time"
+        ))
+        processingList.append(Bar(
+            x=xNamesList,
+            y=procCol[col],
+            name="Processing Time"
+        ))
+    data = Data(responseList)
+    layout = Layout(
+        barmode='group'
+    )
+    responseTimesGraph = Figure(data=data, layout=layout)
+    plot_url = py.plot(responseTimesGraph, filename='Response Times Per Server per Schedule Strategy, 4 Servers, 1 Client')
+    
+    data = Data(processingList)
+    layout = Layout(
+        barmode='group'
+    )
+    processingTimesGraph = Figure(data=data, layout=layout)
+    plot_url = py.plot(responseTimesGraph, filename='Processing Times Per Server per Schedule Strategy, 4 Servers, 1 Client')
+    '''
+
+    
+

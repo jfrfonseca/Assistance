@@ -1,4 +1,0 @@
-#!/bin/bash
-#Compiles Assistance! The first argument must be the name of the build!
-cxfreeze ../../testAssistance.py --target-dir build
-

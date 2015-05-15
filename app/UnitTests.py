@@ -8,13 +8,12 @@ See Attached License file
 import time
 import multiprocessing
 # ASSISTANCE MODULE IMPORTS ----------
-import Assistance
-from pkgMissionControl.implementation import Launcher
+from Assistance import Assistance
 import SHA256Test
 import SHA256remoteTest
 import EchoTest
 import WEKA
-from IOUtils import ResultsPrinter, saveAll
+from IOUtils import ResultsPrinter
 # LOCAL CONSTANTS ---------------------------
 TIME_WATCHDOG = 30
 
@@ -29,16 +28,14 @@ class AssistanceUnitTests():
         Starts the Assistance Service
         '''
         self.printer = ResultsPrinter("LOG/terminalIO.log")
-        Assistance.setup()
+        self.AssistanceInstance = Assistance()
 
     def tearDown(self, myname=''):
         '''
         Shuts down Assistance Service
         '''
         self.printer.shutdown()
-        Launcher.getOfficerInstance().saveLogs()
-        saveAll(myname)
-        Assistance.shutdown()
+        self.AssistanceInstance.shutdown(myname)
         print("Finished everything")
 
     def testFuncionality(self, bigResults, peerIP):

@@ -1,0 +1,141 @@
+
+<BEGIN><TICKET=1431647901085197df17cdc36f232e0a892b752acebbbd565656aa1b66e96150e6ddc0802ede2cba><STATUS=FINISHED>
+	2015-05-14 20:58:21:075672 |- New task (APPID 'WEKA_3_6_12') received by Assistance from token ;
+	2015-05-14 20:58:21:075783 |- Status update: (DRAFT --> WAITING);
+	2015-05-14 20:58:22:077993 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 39.0G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 18.4}%;	--CPU usage: 0.75%;
+	2015-05-14 20:58:22:078052 |- Status update: (WAITING --> GATHERING);
+	2015-05-14 20:58:22:229644 |- Status update: (GATHERING --> DATA READY);
+	2015-05-14 20:58:22:229765 |- Status update: (DATA READY --> STANDBY);
+	2015-05-14 20:58:22:452013 |- Status update: (STANDBY --> PERFORMING_LOCAL);
+	2015-05-14 20:58:23:205235 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-05-14 20:58:23:205359 |- Status update: (COMPLETED_LOCAL --> READY);
+	2015-05-14 20:58:23:243644 |- Status update: (READY --> SENDING_DATA);
+	2015-05-14 20:58:23:243701 |- Status update: (SENDING_DATA --> FINISHED);
+
+<END>
+<BEGIN><TICKET=14316479010607413a7dcd641940b99d5dc6786990c39939d0570bf6bba900bb5f89d5fab43d788c><STATUS=FINISHED>
+	2015-05-14 20:58:21:058145 |- New task (APPID 'WEKA_3_6_12') received by Assistance from token ;
+	2015-05-14 20:58:21:058308 |- Status update: (DRAFT --> WAITING);
+	2015-05-14 20:58:22:060174 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 39.0G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 18.3}%;	--CPU usage: 1.0%;
+	2015-05-14 20:58:22:060266 |- Status update: (WAITING --> GATHERING);
+	2015-05-14 20:58:22:073673 |- Status update: (GATHERING --> DATA READY);
+	2015-05-14 20:58:22:073740 |- Status update: (DATA READY --> STANDBY);
+	2015-05-14 20:58:22:073928 |- Status update: (STANDBY --> PERFORMING_LOCAL);
+	2015-05-14 20:58:23:082243 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-05-14 20:58:23:082293 |- Status update: (COMPLETED_LOCAL --> READY);
+	2015-05-14 20:58:23:583237 |- Status update: (READY --> SENDING_DATA);
+	2015-05-14 20:58:23:583331 |- Status update: (SENDING_DATA --> FINISHED);
+
+<END>
+<BEGIN><TICKET=14316479010719668873cc87b32e0943aa71e7548e3d90fac50101481084ba8be3c4e140f0ac887f><STATUS=FINISHED>
+	2015-05-14 20:58:21:065343 |- New task (APPID 'WEKA_3_6_12') received by Assistance from token ;
+	2015-05-14 20:58:21:068927 |- Status update: (DRAFT --> WAITING);
+	2015-05-14 20:58:22:070927 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 39.0G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 18.3}%;	--CPU usage: 1.0%;
+	2015-05-14 20:58:22:070995 |- Status update: (WAITING --> GATHERING);
+	2015-05-14 20:58:22:207008 |- Status update: (GATHERING --> DATA READY);
+	2015-05-14 20:58:22:207140 |- Status update: (DATA READY --> STANDBY);
+	2015-05-14 20:58:22:207375 |- Status update: (STANDBY --> PERFORMING_LOCAL);
+	2015-05-14 20:58:22:943369 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-05-14 20:58:22:943429 |- Status update: (COMPLETED_LOCAL --> READY);
+	2015-05-14 20:58:23:400293 |- Status update: (READY --> SENDING_DATA);
+	2015-05-14 20:58:23:400400 |- Status update: (SENDING_DATA --> FINISHED);
+
+<END>
+<BEGIN><TICKET=1431647901083698820a9a6f2c5e4e8ccdd51c5bb2a4ad6b1dd22cc160d0501d3721524b182bea4c><STATUS=FINISHED>
+	2015-05-14 20:58:21:076784 |- New task (APPID 'WEKA_3_6_12') received by Assistance from token ;
+	2015-05-14 20:58:21:076864 |- Status update: (DRAFT --> WAITING);
+	2015-05-14 20:58:22:078812 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 39.0G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 18.4}%;	--CPU usage: 0.75%;
+	2015-05-14 20:58:22:078867 |- Status update: (WAITING --> GATHERING);
+	2015-05-14 20:58:22:302509 |- Status update: (GATHERING --> DATA READY);
+	2015-05-14 20:58:22:302584 |- Status update: (DATA READY --> STANDBY);
+	2015-05-14 20:58:22:455597 |- Status update: (STANDBY --> PERFORMING_LOCAL);
+	2015-05-14 20:58:23:132587 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-05-14 20:58:23:132660 |- Status update: (COMPLETED_LOCAL --> READY);
+	2015-05-14 20:58:23:311219 |- Status update: (READY --> SENDING_DATA);
+	2015-05-14 20:58:23:311317 |- Status update: (SENDING_DATA --> FINISHED);
+
+<END>
+<BEGIN><TICKET=1431647901095612499af3986ea04055debd31ecb3c44465595f08e5fde284c94a1c29bed97d274e><STATUS=FINISHED>
+	2015-05-14 20:58:21:093070 |- New task (APPID 'WEKA_3_6_12') received by Assistance from token ;
+	2015-05-14 20:58:21:093164 |- Status update: (DRAFT --> WAITING);
+	2015-05-14 20:58:22:094956 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 39.0G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 18.4}%;	--CPU usage: 1.25%;
+	2015-05-14 20:58:22:095107 |- Status update: (WAITING --> GATHERING);
+	2015-05-14 20:58:22:232561 |- Status update: (GATHERING --> DATA READY);
+	2015-05-14 20:58:22:232632 |- Status update: (DATA READY --> STANDBY);
+	2015-05-14 20:58:22:452127 |- Status update: (STANDBY --> PERFORMING_LOCAL);
+	2015-05-14 20:58:23:072567 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-05-14 20:58:23:072630 |- Status update: (COMPLETED_LOCAL --> READY);
+	2015-05-14 20:58:23:244204 |- Status update: (READY --> SENDING_DATA);
+	2015-05-14 20:58:23:244261 |- Status update: (SENDING_DATA --> FINISHED);
+
+<END>
+<BEGIN><TICKET=1431647901074108ae6a6eb324b599a1bd461ce81183c8ea7cd04169e17ab0cfc1ce87fe22c6fe08><STATUS=FINISHED>
+	2015-05-14 20:58:21:069407 |- New task (APPID 'WEKA_3_6_12') received by Assistance from token ;
+	2015-05-14 20:58:21:074918 |- Status update: (DRAFT --> WAITING);
+	2015-05-14 20:58:22:077560 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 39.0G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 18.3}%;	--CPU usage: 0.75%;
+	2015-05-14 20:58:22:077699 |- Status update: (WAITING --> GATHERING);
+	2015-05-14 20:58:22:225669 |- Status update: (GATHERING --> DATA READY);
+	2015-05-14 20:58:22:225979 |- Status update: (DATA READY --> STANDBY);
+	2015-05-14 20:58:22:226077 |- Status update: (STANDBY --> PERFORMING_LOCAL);
+	2015-05-14 20:58:22:591062 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-05-14 20:58:22:591132 |- Status update: (COMPLETED_LOCAL --> READY);
+	2015-05-14 20:58:22:741168 |- Status update: (READY --> SENDING_DATA);
+	2015-05-14 20:58:22:741256 |- Status update: (SENDING_DATA --> FINISHED);
+
+<END>
+<BEGIN><TICKET=1431647901084075ceda0b41e07aea0638a2621977c8f79d46c1c3b1e65079150d754a6b68ebb279><STATUS=FINISHED>
+	2015-05-14 20:58:21:075176 |- New task (APPID 'WEKA_3_6_12') received by Assistance from token ;
+	2015-05-14 20:58:21:075251 |- Status update: (DRAFT --> WAITING);
+	2015-05-14 20:58:22:078104 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 39.0G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 18.4}%;	--CPU usage: 0.75%;
+	2015-05-14 20:58:22:078161 |- Status update: (WAITING --> GATHERING);
+	2015-05-14 20:58:22:227570 |- Status update: (GATHERING --> DATA READY);
+	2015-05-14 20:58:22:228601 |- Status update: (DATA READY --> STANDBY);
+	2015-05-14 20:58:22:453166 |- Status update: (STANDBY --> PERFORMING_LOCAL);
+	2015-05-14 20:58:23:074754 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-05-14 20:58:23:074816 |- Status update: (COMPLETED_LOCAL --> READY);
+	2015-05-14 20:58:23:243425 |- Status update: (READY --> SENDING_DATA);
+	2015-05-14 20:58:23:243493 |- Status update: (SENDING_DATA --> FINISHED);
+
+<END>
+<BEGIN><TICKET=1431647901081773faa4c015ae3421133633ad1215336ba4e866eb5d51a026c7deefc121d239ad5a><STATUS=FINISHED>
+	2015-05-14 20:58:21:079298 |- New task (APPID 'WEKA_3_6_12') received by Assistance from token ;
+	2015-05-14 20:58:21:079611 |- Status update: (DRAFT --> WAITING);
+	2015-05-14 20:58:22:081150 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 39.0G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 18.4}%;	--CPU usage: 1.0%;
+	2015-05-14 20:58:22:081214 |- Status update: (WAITING --> GATHERING);
+	2015-05-14 20:58:22:231572 |- Status update: (GATHERING --> DATA READY);
+	2015-05-14 20:58:22:231643 |- Status update: (DATA READY --> STANDBY);
+	2015-05-14 20:58:22:454361 |- Status update: (STANDBY --> PERFORMING_LOCAL);
+	2015-05-14 20:58:23:192893 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-05-14 20:58:23:192945 |- Status update: (COMPLETED_LOCAL --> READY);
+	2015-05-14 20:58:23:243819 |- Status update: (READY --> SENDING_DATA);
+	2015-05-14 20:58:23:243882 |- Status update: (SENDING_DATA --> FINISHED);
+
+<END>
+<BEGIN><TICKET=14316479010692386e7bd302d55be62b4764e0ebd19e9310e9f1c0106390ef418d63ad06d9d727c4><STATUS=FINISHED>
+	2015-05-14 20:58:21:059936 |- New task (APPID 'WEKA_3_6_12') received by Assistance from token ;
+	2015-05-14 20:58:21:060767 |- Status update: (DRAFT --> WAITING);
+	2015-05-14 20:58:22:062614 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 39.0G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 18.3}%;	--CPU usage: 1.0%;
+	2015-05-14 20:58:22:062701 |- Status update: (WAITING --> GATHERING);
+	2015-05-14 20:58:22:100369 |- Status update: (GATHERING --> DATA READY);
+	2015-05-14 20:58:22:100487 |- Status update: (DATA READY --> STANDBY);
+	2015-05-14 20:58:22:100733 |- Status update: (STANDBY --> PERFORMING_LOCAL);
+	2015-05-14 20:58:22:451815 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-05-14 20:58:22:451874 |- Status update: (COMPLETED_LOCAL --> READY);
+	2015-05-14 20:58:22:605573 |- Status update: (READY --> SENDING_DATA);
+	2015-05-14 20:58:22:605695 |- Status update: (SENDING_DATA --> FINISHED);
+
+<END>
+<BEGIN><TICKET=1431647901083335873e4c923ca9c08973557569a1a5af56d67a39de82deea128604cbbb1505951b><STATUS=FINISHED>
+	2015-05-14 20:58:21:076186 |- New task (APPID 'WEKA_3_6_12') received by Assistance from token ;
+	2015-05-14 20:58:21:076292 |- Status update: (DRAFT --> WAITING);
+	2015-05-14 20:58:22:078614 |- The current usage of system resources is: --free space (in AssistanceApps CWD partition): 39.0G;	--memory usage: {'swap': 0.0, 'virtual': 0.0, 'physical': 18.4}%;	--CPU usage: 0.75%;
+	2015-05-14 20:58:22:078700 |- Status update: (WAITING --> GATHERING);
+	2015-05-14 20:58:22:230653 |- Status update: (GATHERING --> DATA READY);
+	2015-05-14 20:58:22:230716 |- Status update: (DATA READY --> STANDBY);
+	2015-05-14 20:58:22:454996 |- Status update: (STANDBY --> PERFORMING_LOCAL);
+	2015-05-14 20:58:23:205140 |- Status update: (PERFORMING_LOCAL --> COMPLETED_LOCAL);
+	2015-05-14 20:58:23:205518 |- Status update: (COMPLETED_LOCAL --> READY);
+	2015-05-14 20:58:23:243997 |- Status update: (READY --> SENDING_DATA);
+	2015-05-14 20:58:23:244053 |- Status update: (SENDING_DATA --> FINISHED);
+
+<END>

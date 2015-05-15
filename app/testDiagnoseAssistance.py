@@ -12,7 +12,6 @@ import os
 # ASSISTANCE MODULE IMPORTS ----------
 import Assistance
 # ASSISTANCE OBJECT IMPORTS ------------
-from pkgMissionControl.implementation import Launcher
 import SHA256Test
 import SHA256remoteTest
 import EchoTest
@@ -25,6 +24,10 @@ class TestDiagnose(unittest.TestCase):  # @IgnorePep8
     '''
 
     def dual_print(self, string2Print):
+        '''
+        Print a string both to a file and to the screen
+        :param string2Print: string to print
+        '''
         self.ioFile.write(string2Print+'\n')
         print string2Print
 
@@ -48,7 +51,7 @@ class TestDiagnose(unittest.TestCase):  # @IgnorePep8
         Starts the Assistance Service
         '''
         self.ioFile = open("LOG/ioFile.txt", 'w')
-        Assistance.setup()
+        self.AssistanceInstance = Assistance()
 
     def tearDown(self):
         '''
@@ -56,7 +59,7 @@ class TestDiagnose(unittest.TestCase):  # @IgnorePep8
         '''
         self.dual_print("All tests are done. Saving  the LOGs")
         self.ioFile.close()
-        Launcher.getOfficerInstance().saveLogs()
+        self.AssistanceInstance.getOfficerInstance().saveLogs()
         zipf = zipfile.ZipFile('LOGs.zip', 'a')
         self.zipdir('LOG/', zipf)
         self.zipdir('AssistanceApps/data/', zipf)
@@ -65,7 +68,7 @@ class TestDiagnose(unittest.TestCase):  # @IgnorePep8
         self.zipdir('testsData/', zipf)
         zipf.close()
         print("Created ZIP file")
-        Assistance.shutdown()
+        self.AssistanceInstance.shutdown()
         print("Finished everything")
 
     def test(self):
