@@ -1,7 +1,0 @@
-#!/bin/bash
-ls
-cd ../
-ls
-cd build-Client/
-ls
-./ClientScript_Pyhton $1

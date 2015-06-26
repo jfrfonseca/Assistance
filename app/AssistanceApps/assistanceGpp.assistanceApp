@@ -1,0 +1,8 @@
+#!/bin/bash
+currentDirectory=$(dirname $0)
+processPriority=$1
+dataFiles=$2
+serviceTicket=$3
+arguments=$4
+echo "nice -n $processPriority time -p g++ $dataFiles $arguments -o $currentDirectory/runtimeIO/$serviceTicket/$serviceTicket-stdout.dat 2> $currentDirectory/runtimeIO/$serviceTicket/$serviceTicket-stderr.dat" >> $currentDirectory/runtimeIO/$serviceTicket/$serviceTicket-script.dat
+nice -n $processPriority time -p g++ $dataFiles $arguments -o $currentDirectory/runtimeIO/$serviceTicket/$serviceTicket-stdout.dat 2> $currentDirectory/runtimeIO/$serviceTicket/$serviceTicket-stderr.dat

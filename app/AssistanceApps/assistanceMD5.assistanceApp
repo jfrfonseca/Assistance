@@ -1,0 +1,6 @@
+#!/bin/bash
+currentDirectory=$(dirname $0)
+processPriority=$1
+dataFiles=$2
+serviceTicket=$3
+nice -n $processPriority time -p md5sum $dataFiles >> $currentDirectory/runtimeIO/$serviceTicket/$serviceTicket-stdout.dat 2> $currentDirectory/runtimeIO/$serviceTicket/$serviceTicket-stderr.dat

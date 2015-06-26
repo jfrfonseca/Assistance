@@ -1,3 +1,0 @@
-cd build-Server/Scripts
-chmod 755 authorize.sh
-./authorize.sh
