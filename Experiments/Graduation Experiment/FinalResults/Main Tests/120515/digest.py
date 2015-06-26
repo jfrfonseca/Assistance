@@ -5,7 +5,7 @@ import os
 
 # Constants
 BASEDIR = "Results"
-
+ALL_RUNS = ["RunO"]
 
 # analisys queries
 CREATE_TABLE = '''CREATE TABLE results (configuration text, run text, serverIP text, scheduling text, appTouple text, response real, transfer real, execution real)'''
@@ -56,24 +56,37 @@ def getValues(directory, logChunk):
 	return response, transfer, execution
 
 
+# UPDATE! Makes a conversion list to the names of the servers OF EACH RUN, IN ORDER, GIVEN THE SERVERLIST FILE OF THE RUN!
+# that replaces the name of the server for a standard value, simplifying further processing
+# The standard values are greek letterns, in order (24 OF THEM!)
+greekAlphabet = ["ALPHA", "BETA", "GAMMA", "DELTA", "EPSILON", "ZETA",
+				"ETA", "THETA", "IOTA", "KAPPA", "LAMBDA", "MU",
+				"NU", "XI", "OMICRON", "PI", "RHO", "SIGMA",
+				"TAU", "UPSILON", "PHI", "CHI", "PSI", "OMEGA"]
+
 if __name__ == '__main__':
 	db = sqlite3.connect('experimentResults')
 	c = db.cursor()
 	# Create table
 	c.execute(CREATE_TABLE)
-	for serverFolder in (next(os.walk('RunO/'))[1]):
-		include = []
-		config, serverIP, run, serverType = parse_Config_ServerName_Run_Type(serverFolder)
-		with open('RunO/'+serverFolder+"/LOG/officerLogFile.log", 'r') as logFile:
-			for logChunk in splitLog(logFile.read()):
-				try:
-					response, transfer, execution = getValues('RunO/'+serverFolder, logChunk)
-					insert = (config, run, serverIP, serverType, appTouple2string(logChunk), response, transfer, execution, )
-					include.append(insert)
-				except IOError:
-					pass
-			c.executemany("INSERT INTO results VALUES (?, ?, ?, ?, ?, ?, ?, ?)", include)
-			db.commit()
+	for RUN in ALL_RUNS:
+		for serverFolder in (next(os.walk(RUN+'/'))[1]):
+			# fill the servers list
+			allServers = []
+			with open(RUN+".serverlist", 'r') as serversList:
+				allServers = (serversList.read()).splitlines()
+			include = []
+			config, serverIP, run, serverType = parse_Config_ServerName_Run_Type(serverFolder)
+			with open(RUN+'/'+serverFolder+"/LOG/officerLogFile.log", 'r') as logFile:
+				for logChunk in splitLog(logFile.read()):
+					try:
+						response, transfer, execution = getValues(RUN+'/'+serverFolder, logChunk)
+						insert = (config, run, greekAlphabet[allServers.index(serverIP)], serverType, appTouple2string(logChunk), response, transfer, execution, )
+						include.append(insert)
+					except IOError:
+						pass
+				c.executemany("INSERT INTO results VALUES (?, ?, ?, ?, ?, ?, ?, ?)", include)
+				db.commit()
 	#c.execute(TEST1)
 	#results = c.fetchall()
 	#for line in results:

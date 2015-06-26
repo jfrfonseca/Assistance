@@ -1,12 +1,12 @@
 import math
 
-TEMP_TEST = 110
+TEMP_TEST = 50
 NRUNS = 3
 NSCHEDULES = 3
-NSERVERS = [9]
+NSERVERS = [4]
 NCLIENTS = [1]
 
-NQUESTS = 10
+NQUESTS = 8
 TEMP_TEST_LOC = 180
 
 def sum_digits(n):

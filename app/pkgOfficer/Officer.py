@@ -21,7 +21,7 @@ from pkgOfficer import TaskDescription
 from cpnLibrary.Constants import STATUS_WAITING, STATUS_REJECTED,\
     STATUS_GATHERING_DATA, STATUS_STANDBY, STATUS_READY, STATUS_DATA_READY,\
     NULL, CHANNEL_FTP, CHANNEL_LOCAL_FILE, DIR_APPS_CWD, LOG_OFFICER, LOG_OFFICERHF,\
-    STATUS_PERFORMING_LOCAL
+    STATUS_PERFORMING_LOCAL, CHANNEL_ZIP_FTP
 
 
 class Officer():
@@ -159,7 +159,8 @@ appended to the (#TODO signed) SHA256 of the task's
                 for dataFile in task.DATA_DELIVERY:
                     task.DATA_FILES.append(os.path.relpath(dataFile, os.getcwd()))  # @IgnorePep8
                 task.updateStatus(STATUS_DATA_READY)
-            elif task.DATA_CHANNEL == CHANNEL_FTP:
+            elif task.DATA_CHANNEL == CHANNEL_FTP\
+                    or task.DATA_CHANNEL == CHANNEL_ZIP_FTP:
                 os.makedirs(DIR_APPS_CWD+task.TICKET)
                 task.updateStatus(STATUS_GATHERING_DATA)
                 task.lock.wait()

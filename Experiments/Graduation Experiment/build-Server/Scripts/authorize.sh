@@ -10,4 +10,7 @@ chmod ${AUTH_LEVEL} ../startAssistance
 chmod ${AUTH_LEVEL} ${APPS_DIR}/assistanceWEKA.assistanceApp
 chmod ${AUTH_LEVEL} ${APPS_DIR}/echoInAllCaps.assistanceApp
 chmod ${AUTH_LEVEL} ${APPS_DIR}/sha256Example.assistanceApp
+chmod ${AUTH_LEVEL} ${APPS_DIR}/assistanceGcc.assistanceApp
+chmod ${AUTH_LEVEL} ${APPS_DIR}/assistanceGpp.assistanceApp
+chmod ${AUTH_LEVEL} ${APPS_DIR}/assistanceMD5.assistanceApp
 chmod ${AUTH_LEVEL} ${APPS_DIR}/sha256/V0.5/linux/bin/main.build

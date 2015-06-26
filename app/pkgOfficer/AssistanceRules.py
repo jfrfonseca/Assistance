@@ -10,7 +10,7 @@ from cpnLibrary.Constants import\
     AppID_LOCAL_ECHO_TEST, AppID_SHA256_TEST, AppID_SHA256_REMOTE_TEST,\
     NULL, DIR_APPS_CWD, TUNNING_DEFAULT_PROCESS_PRIORITY, AppID_WEKA,\
     SCHEDULE_SJF, SCHEDULE_FIFO, SCHEDULE_FIFO_MAX_PARALLEL_TASKS,\
-    SCHEDULE_ROUNDROBIN, SCHEDULE_SJF_MAX_PARALLEL_TASKS
+    SCHEDULE_ROUNDROBIN, SCHEDULE_SJF_MAX_PARALLEL_TASKS, AppID_GPP, AppID_GCC
 
 
 def stringfy(myList, mySeparator):
@@ -57,6 +57,10 @@ SO THE APP CAN CALL ITS FILES FROM THE DEFAULT
         scriptSettings["assistanceAppFile"] = "sha256Example.assistanceApp"
     elif taskDescription.APPID == AppID_WEKA:
         scriptSettings["assistanceAppFile"] = "assistanceWEKA.assistanceApp"
+    elif taskDescription.APPID == AppID_GPP:
+        scriptSettings["assistanceAppFile"] = "assistanceGpp.assistanceApp"
+    elif taskDescription.APPID == AppID_GCC:
+        scriptSettings["assistanceAppFile"] = "assistanceGcc.assistanceApp"
     return [
         str(DIR_APPS_CWD).split('/')[0] + '/' + scriptSettings["assistanceAppFile"],  # @IgnorePep8
         scriptSettings["processPriority"],
@@ -118,6 +122,12 @@ def priorityPop(ticketsList, myOfficer):
                          "weka.classifiers.bayes.NaiveBayes",
                          "weka.classifiers.meta.AdaBoostM1",
                          "weka.classifiers.functions.SMO",
+                         "6000",  # Parameters used for SHA256 1kb Test! @IgnorePep8
+                         "6001",  # Parameters used for SHA256 8kb Test! @IgnorePep8
+                         "6002",  # Parameters used for SHA256 16kb Test! @IgnorePep8
+                         "2003",  # Parameters used for SHA256 128kb Test! @IgnorePep8
+                         "-lcrypto",  # Parameters of the Gcc to hashblock
+                         "",  # GPP/gcc for the others has no parameters!
                          "weka.classifiers.functions.MultilayerPerceptron"]
     for index, ticket in enumerate(ticketsList):
         taskApp = myOfficer.getTask(ticket).ARGUMENTS.split(" ")[0]  # @IgnorePep8

@@ -16,6 +16,7 @@ import WEKA
 def handleQuest(resultsBuffer, quest, myname):
     results = "\n<BEGIN>\n"
     results += "<"+str(time.time())+">\n"
+    results += "<WEKA QUEST= "+str(quest)+">\n"
     ticket = WEKA.request(quest["APPID"],
                           quest["ARGS"],
                           quest["DATA"],

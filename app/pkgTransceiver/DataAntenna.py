@@ -6,6 +6,7 @@ See Attached License file
 '''
 # NATIVE MODULE IMPORTS ------------------
 import time
+import zipfile
 # ASSISTANCE MODULE IMPORTS ----------
 from AssistanceGenericAntenna import AssistanceGenericAntenna
 # ASSISTANCE CONSTANTS IMPORTS -----
@@ -13,7 +14,7 @@ from cpnLibrary.Constants import SYMBOL_SEPARATOR,\
     STATUS_READY, STATUS_SENDING_DATA, STATUS_FINISHED, STATUS_GATHERING_DATA,\
     STATUS_DATA_READY, TIME_DATA_SERVER_INTERVAL, CHANNEL_FTP, CHANNEL_IMMEDIATE,\
     TYPE_STATUS_CHECK_MSG, TYPE_RECOVER_RESULTS_ANS, TYPE_RECOVER_RESULTS_MSG,\
-    TYPE_DATA_SUBMIT_MSG, DIR_APPS_CWD
+    TYPE_DATA_SUBMIT_MSG, DIR_APPS_CWD, CHANNEL_ZIP_FTP
 
 
 class DataAntenna (AssistanceGenericAntenna):
@@ -81,12 +82,15 @@ class DataAntenna (AssistanceGenericAntenna):
         # outputs the data of the task
         if task.ANSWER_CHANNEL == CHANNEL_FTP:
             task.updateStatus(STATUS_SENDING_DATA)
-            with open(task.STDOUT, 'rb') as stdoutFile:
-                while True:
-                    fileData = stdoutFile.read()
-                    if fileData == '':
-                        break
-                    self.request.sendall(fileData)
+            try:
+                with open(task.STDOUT, 'rb') as stdoutFile:
+                    while True:
+                        fileData = stdoutFile.read()
+                        if fileData == '':
+                            break
+                        self.request.sendall(fileData)
+            except IOError:
+                self.request.sendall("No STDOUT generated!")
             self.request.sendall(SYMBOL_SEPARATOR)
             with open(task.STDERR, 'rb') as stderrFile:
                 while True:
@@ -133,6 +137,13 @@ class DataAntenna (AssistanceGenericAntenna):
                         break
                     else:
                         dataFile.write(recoveredData)
+        if task.DATA_CHANNEL == CHANNEL_ZIP_FTP:
+            for fileNum in range(len(task.DATA_DELIVERY)):
+                with zipfile.ZipFile(task.DATA_FILES[fileNum]) as zipf:
+                    zipf.extractall(DIR_APPS_CWD + task.TICKET + '/')
+                    task.DATA_FILES = []
+                    for fileName in zipf.namelist():
+                        task.DATA_FILES.append(DIR_APPS_CWD+task.TICKET+'/'+fileName)  # @IgnorePep8
         # updates the task data location and status
         # and unlocks the task's setup thread
         task.updateStatus(STATUS_DATA_READY)

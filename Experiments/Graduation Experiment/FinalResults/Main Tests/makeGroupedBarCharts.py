@@ -49,6 +49,19 @@ def colIndexesOfConf(numColumns, conf, results):
     return response
 
 
+def calculateGeoMean(dataList):
+    somatory = 0
+    for dat in dataList:
+        somatory += math.log(dat)
+    return math.exp(somatory/len(dataList))
+
+
+greekAlphabet = ["ALPHA", "BETA", "GAMMA", "DELTA", "EPSILON", "ZETA",
+				"ETA", "THETA", "IOTA", "KAPPA", "LAMBDA", "MU",
+				"NU", "XI", "OMICRON", "PI", "RHO", "SIGMA",
+				"TAU", "UPSILON", "PHI", "CHI", "PSI", "OMEGA"]
+
+
 if __name__ == '__main__':
     
     QUERY = "select configuration, scheduling, serverIP, exp(avg(log(response))), exp(avg(log(execution))) from ("\
@@ -103,28 +116,45 @@ if __name__ == '__main__':
     data2graph = []
     title =  "Total Response time per Configuration, Per Server - "+str(numServers)+" Servers, 1 Client"
         # Make the Data:
-    for group in allGroupsResp:
+    for grpIndex, group in enumerate(allGroupsResp):
         data2graph.append(
                           Bar(
                               x=xNamesList,
                               y=group,
-                              name="Response time for Server"
+                              name="Response time for Server "+greekAlphabet[grpIndex]
                               )
                           )
+		# Get the GeoMean of the data for each configuration
+    geoMeanOfConf = lambda confIndex, timeTypeGroups: calculateGeoMean([group[confIndex] for group in timeTypeGroups])
+    geoMeansGroup = lambda timeTypeGroups: [geoMeanOfConf(confIndex, timeTypeGroups) for confIndex, conf in enumerate(allConfigurations)]
+    data2graph.append(
+                      Bar(
+                          x=xNamesList,
+                          y=geoMeansGroup(allGroupsResp),
+                          name="Geometric Mean of Configuration"
+                          )
+                      )
         # Perform the plotting
     plot_utl = py.plot(Figure(data=data2graph, layout=Layout(barmode='group')), filename=title)
     # Processing time:
     data2graph = []
     title =  "Total Processing time per Configuration, Per Server - "+str(numServers)+" Servers, 1 Client"
         # Make the Data:
-    for group in allGroupsProc:
+    for grpIndex, group in enumerate(allGroupsProc):
         data2graph.append(
                           Bar(
                               x=xNamesList,
                               y=group,
-                              name="Processing time for Server"
+                              name="Processing time for Server "+greekAlphabet[grpIndex]
                               )
                           )
+    data2graph.append(
+                      Bar(
+                          x=xNamesList,
+                          y=geoMeansGroup(allGroupsProc),
+                          name="Geometric Mean of Configuration"
+                          )
+                      )
         # Perform the plotting
     plot_utl = py.plot(Figure(data=data2graph, layout=Layout(barmode='group')), filename=title)
 

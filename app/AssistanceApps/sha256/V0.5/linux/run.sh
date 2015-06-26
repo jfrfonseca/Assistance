@@ -7,4 +7,4 @@ currentDirectory=$(dirname $0)
 # LICENSE: MIT (http://opensource.org/licenses/MIT)
 #
 
-time -p ./$currentDirectory/bin/main.build $currentDirectory/../tests/experimentData.dat 50000
+time -p ./$currentDirectory/bin/main.build $currentDirectory/../tests/randomFile16kb 6000 -verbose 2000

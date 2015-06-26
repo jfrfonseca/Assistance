@@ -56,6 +56,15 @@ def getValues(directory, logChunk):
 	return response, transfer, execution
 
 
+# UPDATE! Makes a conversion list to the names of the servers OF EACH RUN, IN ORDER, GIVEN THE SERVERLIST FILE OF THE RUN!
+# that replaces the name of the server for a standard value, simplifying further processing
+# The standard values are greek letterns, in order (24 OF THEM!)
+greekAlphabet = ["ALPHA", "BETA", "GAMMA", "DELTA", "EPSILON", "ZETA",
+				"ETA", "THETA", "IOTA", "KAPPA", "LAMBDA", "MU",
+				"NU", "XI", "OMICRON", "PI", "RHO", "SIGMA",
+				"TAU", "UPSILON", "PHI", "CHI", "PSI", "OMEGA"]
+
+
 if __name__ == '__main__':
 	db = sqlite3.connect('experimentResults')
 	c = db.cursor()
@@ -63,13 +72,17 @@ if __name__ == '__main__':
 	c.execute(CREATE_TABLE)
 	for runFolder in (next(os.walk('PC24'))[1]):
 		for serverFolder in (next(os.walk('PC24/'+runFolder))[1]):
+			# fill the servers list
+			allServers = []
+			with open(runFolder+".serverlist", 'r') as serversList:
+				allServers = (serversList.read()).splitlines()
 			include = []
 			config, serverIP, run, serverType = parse_Config_ServerName_Run_Type(serverFolder)
 			with open('PC24/'+runFolder+'/'+serverFolder+"/LOG/officerLogFile.log", 'r') as logFile:
 				for logChunk in splitLog(logFile.read()):
 					try:
 						response, transfer, execution = getValues('PC24/'+runFolder+'/'+serverFolder, logChunk)
-						insert = (config[:-1]+'0'+config[-1], run, serverIP, serverType, appTouple2string(logChunk), response, transfer, execution, )
+						insert = (config[:-1]+'0'+config[-1], run, greekAlphabet[allServers.index(serverIP)], serverType, appTouple2string(logChunk), response, transfer, execution, )
 						include.append(insert)
 					except IOError:
 						pass
@@ -77,13 +90,17 @@ if __name__ == '__main__':
 				db.commit()
 	for runFolder in (next(os.walk('PC25/'))[1]):
 		for serverFolder in (next(os.walk('PC25/'+runFolder))[1]):
+			# fill the servers list
+			allServers = []
+			with open(runFolder+".serverlist", 'r') as serversList:
+				allServers = (serversList.read()).splitlines()
 			include = []
 			config, serverIP, run, serverType = parse_Config_ServerName_Run_Type(serverFolder)
 			with open('PC25/'+runFolder+'/'+serverFolder+"/LOG/officerLogFile.log", 'r') as logFile:
 				for logChunk in splitLog(logFile.read()):
 					try:
 						response, transfer, execution = getValues('PC25/'+runFolder+'/'+serverFolder, logChunk)
-						insert = (config, run, serverIP, serverType, appTouple2string(logChunk), response, transfer, execution, )
+						insert = (config, run, greekAlphabet[allServers.index(serverIP)], serverType, appTouple2string(logChunk), response, transfer, execution, )
 						include.append(insert)
 					except IOError:
 						pass

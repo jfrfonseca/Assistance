@@ -10,4 +10,4 @@ chmod ${AUTH_LEVEL} ../testAssistance
 chmod ${AUTH_LEVEL} ${APPS_DIR}/assistanceWEKA.assistanceApp
 chmod ${AUTH_LEVEL} ${APPS_DIR}/echoInAllCaps.assistanceApp
 chmod ${AUTH_LEVEL} ${APPS_DIR}/sha256Example.assistanceApp
-chmod ${AUTH_LEVEL} ${APPS_DIR}/sha256/V0.5/linux/bin/main.build
+chmod ${AUTH_LEVEL} ${APPS_DIR}/sha256/V0.5/lunix/bin/main.build
