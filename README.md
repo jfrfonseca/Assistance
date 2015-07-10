@@ -2,9 +2,9 @@
 # ASSISTANCE #
 ===================
 
-# Este trabalho foi desenvolvido por José F. R. Fonseca como parte dos requisitos para graduação em Ciências da Computação pela PUC Minas. O documento PDF na pasta public consiste na monografia produzida a partir do projeto. Espero que Assistance ajude em suas necessidades de High Performance Computing doméstica!
+### Este trabalho foi desenvolvido por José F. R. Fonseca como parte dos requisitos para graduação em Ciências da Computação pela PUC Minas. O documento PDF na pasta public consiste na monografia produzida a partir do projeto. Espero que Assistance ajude em suas necessidades de High Performance Computing doméstica!
 
-# About the project: This academic novelty was developed by José F. R. Fonseca as a requirement for his graduation on Computer Science on PUC Minas, Brazil. Accompanying academic documentation can be found on the folder "public" in portuguese only. A brief description of the project follows:
+### About the project: This academic novelty was developed by José F. R. Fonseca as a requirement for his graduation on Computer Science on PUC Minas, Brazil. Accompanying academic documentation can be found on the folder "public" in portuguese only. A brief description of the project follows:
 
 ### Assistance is a seamless, secure and geek-free Computing Resources Sharing Network. Let your devices, and your friends', unite and share their power!
 
